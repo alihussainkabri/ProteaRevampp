@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "ProteaESS",
+    "slug": "ProteaESS",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "ProteaESS"
+}
