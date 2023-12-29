@@ -8,6 +8,8 @@ import { Image } from 'react-native';
 import MobilePunch from '../screens/MobilePunch';
 import PunchPhoto from '../screens/PunchPhoto';
 import Calendar from '../screens/Calendar';
+import Profile from '../screens/Profile';
+import Request from '../screens/Request';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -40,6 +42,21 @@ function MobilePunchStack() {
         >
             <Stack.Screen name="MobilePunch" component={MobilePunch} />
             <Stack.Screen name="PunchPhoto" component={PunchPhoto} />
+        </Stack.Navigator>
+    )
+}
+
+function RequestStack() {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerShown: false,
+                contentStyle: {
+                    backgroundColor: 'white'
+                }
+            }}
+        >
+            <Stack.Screen name="Request" component={Request} />
         </Stack.Navigator>
     )
 }
@@ -79,6 +96,17 @@ export default function DrawerNavigator() {
                 }}
             />
 
+            <Drawer.Screen name="Profile" component={Profile}
+                options={{
+                    drawerIcon: ({ color }) => (
+                        <Image style={{ tintColor: color, width: 20, height: undefined, aspectRatio: 1 }} source={require('../assets/icons/profile.png')} />
+                    ),
+                    drawerItemStyle: { paddingHorizontal: 16, },
+                    title: 'Profile',
+                    sceneContainerStyle: { backgroundColor: 'white' }
+                }}
+            />
+
             <Drawer.Screen name="MobilePunch" component={MobilePunchStack}
                 options={{
                     drawerIcon: ({ color }) => (
@@ -86,6 +114,17 @@ export default function DrawerNavigator() {
                     ),
                     drawerItemStyle: { paddingHorizontal: 16, },
                     title: 'Punch',
+                    sceneContainerStyle: { backgroundColor: 'white' }
+                }}
+            />
+
+            <Drawer.Screen name="Request" component={RequestStack}
+                options={{
+                    drawerIcon: ({ color }) => (
+                        <Image style={{ tintColor: color, width: 20, height: undefined, aspectRatio: 1 }} source={require('../assets/icons/request.png')} />
+                    ),
+                    drawerItemStyle: { paddingHorizontal: 16, },
+                    title: 'Request',
                     sceneContainerStyle: { backgroundColor: 'white' }
                 }}
             />
