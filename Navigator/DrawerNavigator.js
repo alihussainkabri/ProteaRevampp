@@ -10,6 +10,16 @@ import PunchPhoto from '../screens/PunchPhoto';
 import Calendar from '../screens/Calendar';
 import Profile from '../screens/Profile';
 import Request from '../screens/Request';
+import ListOfLeave from '../screens/Requests/Leave/ListOfLeave';
+import CreateLeave from '../screens/Requests/Leave/CreateLeave';
+import CreateOnDutyRequest from '../screens/Requests/On Duty/CreateOnDutyRequest';
+import ListofOnDutyRequests from '../screens/Requests/On Duty/ListofOnDutyRequests';
+import ListOfShiftChangeRequests from '../screens/Requests/Shift Change/ListOfShiftChangeRequests';
+import CreateShiftChangeRequest from '../screens/Requests/Shift Change/CreateShiftChangeRequest';
+import ListOfEHCRequests from '../screens/Requests/EHC OT/ListOfEHCRequests';
+import CreateEHCRequest from '../screens/Requests/EHC OT/CreateEHCRequest';
+import CreateCOffRequest from '../screens/Requests/C_Off/CreateCOffRequest';
+import ListOfCOffRequests from '../screens/Requests/C_Off/ListOfCOffRequests';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -57,6 +67,16 @@ function RequestStack() {
             }}
         >
             <Stack.Screen name="Request" component={Request} />
+            <Stack.Screen name="ListOfLeave" component={ListOfLeave} />
+            <Stack.Screen name="CreateLeave" component={CreateLeave} />
+            <Stack.Screen name="ListofOnDutyRequests" component={ListofOnDutyRequests} />
+            <Stack.Screen name="CreateOnDutyRequest" component={CreateOnDutyRequest} />
+            <Stack.Screen name="ListOfShiftChangeRequests" component={ListOfShiftChangeRequests} />
+            <Stack.Screen name="CreateShiftChangeRequest" component={CreateShiftChangeRequest} />
+            <Stack.Screen name="ListOfEHCRequests" component={ListOfEHCRequests} />
+            <Stack.Screen name="CreateEHCRequest" component={CreateEHCRequest} />
+            <Stack.Screen name="ListOfCOffRequests" component={ListOfCOffRequests} />
+            <Stack.Screen name="CreateCOffRequest" component={CreateCOffRequest} />
         </Stack.Navigator>
     )
 }

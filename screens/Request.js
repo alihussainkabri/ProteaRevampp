@@ -34,35 +34,35 @@ const Request = ({ navigation }) => {
             <ScrollView style={{ marginTop: -120 }}>
                 <VStack px={Dimensions.get('window').width / 100 * 3}>
                     <HStack flexWrap='wrap' justifyContent='space-between'>
-                        <VStack backgroundColor='rgba(238, 227, 231, .9)' style={styles.summaryBlock}>
+                        <TouchableOpacity onPress={() => navigation.navigate('ListOfLeave')} style={[styles.summaryBlock, { backgroundColor: 'rgba(238, 227, 231, .9)' }]}>
                             <Text style={styles.summaryTitle}>Leave</Text>
                             <Image source={require('../assets/images/leave-icon.png')} style={styles.summaryBlockImg} />
-                        </VStack>
+                        </TouchableOpacity>
 
-                        <VStack backgroundColor='rgba(238, 201, 210, .9)' style={styles.summaryBlock}>
+                        <TouchableOpacity onPress={() => navigation.navigate('ListofOnDutyRequests')} style={[styles.summaryBlock, { backgroundColor: 'rgba(238, 201, 210, .9)' }]}>
                             <Text style={styles.summaryTitle}>On Duty</Text>
                             <Image source={require('../assets/images/on-duty.png')} style={styles.summaryBlockImg} />
-                        </VStack>
+                        </TouchableOpacity>
 
                         <VStack backgroundColor='rgba(179, 205, 224, .7)' style={styles.summaryBlock}>
                             <Text style={styles.summaryTitle}>Attendance Regularization</Text>
                             <Image source={require('../assets/images/attendance.png')} style={styles.summaryBlockImg} />
                         </VStack>
 
-                        <VStack backgroundColor='rgba(249, 244, 244, 1)' style={styles.summaryBlock}>
+                        <TouchableOpacity onPress={() => navigation.navigate('ListOfShiftChangeRequests')} style={[styles.summaryBlock, { backgroundColor: 'rgba(249, 244, 244, 1)' }]}>
                             <Text style={styles.summaryTitle}>Shift Change</Text>
-                            <Image source={require('../assets/images/shift-change.png')} style={[styles.summaryBlockImg, {opacity: .8}]} />
-                        </VStack>
+                            <Image source={require('../assets/images/shift-change.png')} style={[styles.summaryBlockImg, { opacity: .8 }]} />
+                        </TouchableOpacity>
 
-                        <VStack backgroundColor='rgba(179, 205, 224, .9)' style={styles.summaryBlock}>
+                        <TouchableOpacity onPress={() => navigation.navigate('ListOfEHCRequests')} style={[styles.summaryBlock, { backgroundColor: 'rgba(179, 205, 224, .9)' }]}>
                             <Text style={styles.summaryTitle}>EHC / OT</Text>
                             <Image source={require('../assets/images/EHC.png')} style={styles.summaryBlockImg} />
-                        </VStack>
+                        </TouchableOpacity>
 
-                        <VStack backgroundColor='rgba(202, 202, 235, .9)' style={styles.summaryBlock}>
+                        <TouchableOpacity onPress={() => navigation.navigate('ListOfCOffRequests')} style={[styles.summaryBlock, { backgroundColor: 'rgba(202, 202, 235, .9)' }]}>
                             <Text style={styles.summaryTitle}>C-OFF</Text>
                             <Image source={require('../assets/images/C-off.png')} style={styles.summaryBlockImg} />
-                        </VStack>
+                        </TouchableOpacity>
 
                         <VStack backgroundColor='rgba(250, 235, 215, .8)' style={styles.summaryBlock}>
                             <Text style={styles.summaryTitle}>Late Coming / Early Going</Text>

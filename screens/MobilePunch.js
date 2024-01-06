@@ -73,7 +73,26 @@ const MobilePunch = ({ navigation }) => {
         fetchImage()
     }, [])
 
-    const capturePunchImage = () => {
+    function getCurrentDateTime() {
+        const currentDate = new Date();
+
+        // Get date components
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed
+        const day = String(currentDate.getDate()).padStart(2, '0');
+
+        // Get time components
+        const hours = String(currentDate.getHours()).padStart(2, '0');
+        const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+        const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+
+        // Create the formatted date-time string
+        const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+        return formattedDateTime;
+    }
+
+    const capturePunchImage = (operation) => {
         if (remark) {
             const options = {
                 title: 'Add Image',
@@ -87,31 +106,30 @@ const MobilePunch = ({ navigation }) => {
 
             launchCamera(options, async (response) => {
                 if (response?.assets?.length > 0) {
-                    let var_image = {
-                        uri: response.assets[0].uri,
-                        name: response.assets[0].fileName,
-                        type: response.assets[0].type,
-                    }
+
+                    console.log('key name', Object.keys(response.assets[0]))
 
                     setLoader(true)
+
+                    const currentDateTime = getCurrentDateTime();
 
                     var raw = JSON.stringify({
                         "EmpId": user?.EmpId,
                         "Latitude": latitude?.toString(),
                         "Longitutde": longitude?.toString(),
-                        "DateTime": "2020-10-06 10:27:15",
+                        "DateTime": currentDateTime,
                         "OffSet": "+05:30",
-                        "CardNO": "0000014",
+                        "CardNO": user?.EmployeeDetails?.CardNo,
                         "Address": "Pune",
                         "remarks": remark,
                         "IMEINO": "335def16-824b-4ddd-a543-663b3cb7107a",
-                        "MobileNO": "7359832405",
+                        "MobileNO": "",
                         "PunchType": "M",
                         "PunchCategory": "Mobile",
-                        "OriginalPunchDirection": "1",
+                        "OriginalPunchDirection": operation,
                         "PunchAddress": "",
                         "IsNewAddress": true,
-                        "EmpImage": "base64EmpImage"
+                        "EmpImage": response.assets[0].base64
                     });
 
                     const response1 = await fetch(url + 'PunchInout/PunchIn', {
@@ -197,11 +215,11 @@ const MobilePunch = ({ navigation }) => {
                     </Stack>
 
                     <HStack mt={12} justifyContent='space-between'>
-                        <TouchableOpacity onPress={() => capturePunchImage()}>
+                        <TouchableOpacity onPress={() => capturePunchImage(1)}>
                             <Image source={require('../assets/images/punch-in.png')} style={styles.puchBTN} />
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => capturePunchImage()}>
+                        <TouchableOpacity onPress={() => capturePunchImage(2)}>
                             <Image source={require('../assets/images/punch-out.png')} style={styles.puchBTN} />
                         </TouchableOpacity>
                     </HStack>
