@@ -13,11 +13,11 @@ const CreateLeave = ({ navigation }) => {
     const { user } = useContext(userContext)
     const [loader, setLoader] = useState(false)
     const [leaveBalance, setLeaveBalance] = useState('')
-    const [leaveDuration, setLeaveDuration] = useState('1st Half')
+    const [leaveDuration, setLeaveDuration] = useState('First Half')
     const [fromDate, setFromDate] = useState('');
     const [toDate, setToDate] = useState('');
-    const [fromEntire, setFromEntire] = useState(true);
-    const [toEntire, setToEntire] = useState(true);
+    const [fromEntire, setFromEntire] = useState('');
+    const [toEntire, setToEntire] = useState('');
     const [fromDateCalendarShow, setFromDateCalendarShow] = useState(false);
     const [ToDateCalendarShow, setToDateCalendarShow] = useState(false);
     const [noOfDays, setNoOfDays] = useState('');
@@ -46,7 +46,7 @@ const CreateLeave = ({ navigation }) => {
 
             if (response.ok == true) {
                 const data = await response.json()
-                console.log(data)
+                // console.log(data)
 
                 setLeaveBalance(data)
                 setLoader(false)
@@ -78,7 +78,7 @@ const CreateLeave = ({ navigation }) => {
 
             if (response.ok == true) {
                 const data = await response.json()
-                console.log('reasons', data)
+                // console.log('reasons', data)
 
                 setAllReasons(data)
                 setLoader(false)
@@ -117,7 +117,7 @@ const CreateLeave = ({ navigation }) => {
 
         if (response.ok == true) {
             const data = await response.json()
-            console.log('leave types', data)
+            // console.log('leave types', data)
 
             setAllLeaveType(data)
             setLoader(false)
@@ -135,7 +135,7 @@ const CreateLeave = ({ navigation }) => {
     }, [fromDate, toDate])
 
     const handleFromDate = (date) => {
-        console.warn("A date has been picked: ", date.toString());
+        // console.warn("A date has been picked: ", date.toString());
 
         const convertedDate = getConvertDate(date.toString());
         setFromDate(convertedDate)
@@ -143,7 +143,7 @@ const CreateLeave = ({ navigation }) => {
     };
 
     const handleToDate = (date) => {
-        console.warn("A date has been picked: ", date.toString());
+        // console.warn("A date has been picked: ", date.toString());
 
         const convertedDate = getConvertDate(date.toString());
         setToDate(convertedDate)
@@ -151,8 +151,74 @@ const CreateLeave = ({ navigation }) => {
     };
 
     useEffect(() => {
-        
+        console.log('from date: ', fromDate, 'to date:', toDate)
     }, [leaveDuration, fromDate, toDate, fromEntire, toEntire])
+
+
+    async function submitLeave() {
+        setLoader(true)
+
+        var raw = JSON.stringify({
+            "Id": 0,
+            "EmpId": user?.EmpId,
+            "LeaveDuration": leaveDuration,
+            "LeaveFrom": fromDate,
+            "LeaveTo": toDate ? toDate : fromDate,
+            "FromDateSection": "",
+            "ToDateSection": "2020-10-08",
+            "NoOfDaysr": 0.5,
+            "LocumId": user?.EmpId,
+            "ELId": 44,
+            "LeaveTypeId": 7,
+            "RId": 24,
+            "Reason": "Personal Leave",
+            "ContactNo": "8849999698",
+            "DB": false,
+            "UserId": 1021,
+            "UserOSId": 0,
+            "UserCId": 0,
+            "Offset": "+05:30",
+            "TraingDetails": null,
+            "TraingSubject": null,
+            "DateOfDeath": "2020-10-08",
+            "ExpectedDateofDelivery": "2020-10-08",
+            "ShortLeaveTime": null,
+            "DateofTransfer": null,
+            "ShortLeaveZone": null,
+            "DoctorsCertificateFilePath": null,
+            "ExtensionOfLeave": false,
+            "ReductionOfLeave": false,
+            "LeaveCancellationAllowed": false
+
+
+
+        });
+
+        const response = await fetch(url + 'LeaveRequests/AddLeaveRequest', {
+            method: 'POST',
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body: raw
+        })
+
+        if (response.ok == true) {
+            const data = await response.json()
+            // console.log('leave types', data)
+
+            setAllLeaveType(data)
+            setLoader(false)
+
+        } else {
+            Toast.show('Internal server error', {
+                duration: 3000,
+            })
+            setLoader(false)
+        }
+
+
+
+    }
 
     // function calculateNoOfDays(FirstDayLeaveType, LastDayLeaveType) {
     //     const date1 = new Date(fromDate);
@@ -223,12 +289,12 @@ const CreateLeave = ({ navigation }) => {
                     <Radio.Group name="leaveDuration" defaultValue={leaveDuration} onChange={e => setLeaveDuration(e)} accessibilityLabel="pick duration">
                         <HStack justifyContent='space-between' alignItems='center' flexWrap='wrap'>
                             <Stack w='50%' my={.5}>
-                                <Radio value="1st Half" colorScheme="blue" size="sm" my={1}>
+                                <Radio value="First Half" colorScheme="blue" size="sm" my={1}>
                                     <Text fontFamily={fonts.UrbanM}>1st Half</Text>
                                 </Radio>
                             </Stack>
                             <Stack w='50%' my={.5}>
-                                <Radio value="2nd Half" colorScheme="blue" size="sm" my={1}>
+                                <Radio value="Second Half" colorScheme="blue" size="sm" my={1}>
                                     <Text fontFamily={fonts.UrbanM}>2nd Half</Text>
                                 </Radio>
                             </Stack>
@@ -261,11 +327,11 @@ const CreateLeave = ({ navigation }) => {
 
                     {leaveDuration == 'Multi Day' && <>
                         <HStack backgroundColor='ghostwhite' mt={1.5} rounded={2}>
-                            <TouchableOpacity onPress={() => setFromEntire(true)} style={[styles.leaveFromToView, { backgroundColor: fromEntire ? '#dee8f4' : 'transparent' }]}>
-                                <Text style={[styles.leaveFromToText, { color: fromEntire ? '#1875e2' : 'gray' }]}>Entire Day</Text>
+                            <TouchableOpacity onPress={() => setFromEntire('Full Day')} style={[styles.leaveFromToView, { backgroundColor: fromEntire == 'Full Day' ? '#dee8f4' : 'transparent' }]}>
+                                <Text style={[styles.leaveFromToText, { color: fromEntire == 'Full Day' ? '#1875e2' : 'gray' }]}>Entire Day</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setFromEntire(false)} style={[styles.leaveFromToView, { backgroundColor: !fromEntire ? '#dee8f4' : 'transparent' }]}>
-                                <Text style={[styles.leaveFromToText, { color: !fromEntire ? '#1875e2' : 'gray' }]}>Second Half</Text>
+                            <TouchableOpacity onPress={() => setFromEntire('Second Half')} style={[styles.leaveFromToView, { backgroundColor: fromEntire == 'Second Half' ? '#dee8f4' : 'transparent' }]}>
+                                <Text style={[styles.leaveFromToText, { color: fromEntire == 'Second Half' ? '#1875e2' : 'gray' }]}>Second Half</Text>
                             </TouchableOpacity>
                         </HStack>
 
@@ -283,11 +349,11 @@ const CreateLeave = ({ navigation }) => {
                             />
                         </VStack>
                         <HStack backgroundColor='ghostwhite' mt={1.5} rounded={2}>
-                            <TouchableOpacity onPress={() => setToEntire(true)} style={[styles.leaveFromToView, { backgroundColor: toEntire ? '#dee8f4' : 'transparent' }]}>
-                                <Text style={[styles.leaveFromToText, { color: toEntire ? '#1875e2' : 'gray' }]}>Entire Day</Text>
+                            <TouchableOpacity onPress={() => setToEntire('Full Day')} style={[styles.leaveFromToView, { backgroundColor: toEntire == 'Full Day' ? '#dee8f4' : 'transparent' }]}>
+                                <Text style={[styles.leaveFromToText, { color: toEntire == 'Full Day' ? '#1875e2' : 'gray' }]}>Entire Day</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setToEntire(false)} style={[styles.leaveFromToView, { backgroundColor: !toEntire ? '#dee8f4' : 'transparent' }]}>
-                                <Text style={[styles.leaveFromToText, { color: !toEntire ? '#1875e2' : 'gray' }]}>First Half</Text>
+                            <TouchableOpacity onPress={() => setToEntire('First Half')} style={[styles.leaveFromToView, { backgroundColor: toEntire == 'First Half' ? '#dee8f4' : 'transparent' }]}>
+                                <Text style={[styles.leaveFromToText, { color: toEntire == 'First Half' ? '#1875e2' : 'gray' }]}>First Half</Text>
                             </TouchableOpacity>
                         </HStack>
                     </>}
@@ -302,7 +368,7 @@ const CreateLeave = ({ navigation }) => {
                         <Actionsheet isOpen={showLeaveType} onClose={() => setShowLeaveType(false)}>
                             <Actionsheet.Content>
                                 {allLeaveType?.length > 0 ? allLeaveType?.map((item, index) => (
-                                    <Actionsheet.Item onPress={() => {
+                                    <Actionsheet.Item key={index} onPress={() => {
                                         setParticularLeaveType(item)
                                         setShowLeaveType(false)
                                     }}>
@@ -336,7 +402,7 @@ const CreateLeave = ({ navigation }) => {
                         <Actionsheet isOpen={showReason} onClose={() => setShowReason(false)}>
                             <Actionsheet.Content>
                                 {allReasons?.length > 0 ? allReasons?.map((item, index) => (
-                                    <Actionsheet.Item onPress={() => {
+                                    <Actionsheet.Item key={index} onPress={() => {
                                         setParticularReason(item)
                                         setShowReason(false)
                                     }}>
@@ -352,6 +418,16 @@ const CreateLeave = ({ navigation }) => {
                         <Text style={styles.label}>Enter Reason</Text>
                         <Input variant='outline' style={[styles.inputView, { maxHeight: 100 }]} borderColor='#1875e2' borderRadius={2} py={1.5} multiline />
                     </VStack>
+
+                    <HStack mt={4} space={2} mb={2}>
+                        <TouchableOpacity onPress={() => navigation.goBack()} style={[styles.btn, { backgroundColor: '#f5e9e9' }]}>
+                            <Text style={{ color: '#cf0101' }} fontSize={17} textAlign='center' fontFamily={fonts.PopM}>Cancel</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={[styles.btn, { backgroundColor: '#1875e2' }]}>
+                            <Text color='white' fontSize={17} textAlign='center' fontFamily={fonts.PopM}>Submit</Text>
+                        </TouchableOpacity>
+                    </HStack>
                 </View>
             </ScrollView>
         </NativeBaseProvider>
@@ -410,6 +486,11 @@ const styles = StyleSheet.create({
         fontFamily: fonts.UrbanSB,
         textAlign: 'center',
         fontSize: 16,
+    },
+    btn: {
+        flex: 1,
+        paddingVertical: 8,
+        borderRadius: 4
     },
 })
 

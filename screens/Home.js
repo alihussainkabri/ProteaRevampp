@@ -16,7 +16,7 @@ const Home = ({ navigation }) => {
   const [monthlySummary, setMonthlySummary] = useState('')
   const [birthDays, setBirthdays] = useState([])
   const [anniversary, setAnniversary] = useState([])
-  const [birthAndWork, setBirthAndWork] = useState('')
+  const [events, setEvents] = useState('')
   const { user } = useContext(userContext)
 
   useEffect(() => {
@@ -98,8 +98,6 @@ const Home = ({ navigation }) => {
         const data = await response.json()
         setBirthdays(data?.filter(item => item?.Title == 'Birthday'))
         setAnniversary(data?.filter(item => item?.Title == 'Anniversary'))
-
-        setBirthAndWork(data)
         setLoader(false)
 
       } else {
@@ -110,10 +108,40 @@ const Home = ({ navigation }) => {
       }
     }
 
-    fetchNotification()
-    fetchMonthlySummary()
-    fetchBirthdayAndWorkAnniversary()
-    console.log('user data: ',user)
+    async function fetchEvents() {
+      setLoader(true)
+
+      var raw = JSON.stringify({
+        "EmpId": user?.EmpId,
+        "CompanyId": user?.EmployeeDetails?.CompanyId
+      });
+
+      const response = await fetch(url + 'Dashboard/GetEmployeeMonthsAndEvents', {
+        method: 'POST',
+        headers: {
+          "Content-Type": 'application/json'
+        },
+        body: raw
+      })
+
+      if (response.ok == true) {
+        const data = await response.json()
+        setEvents(data?.objEventModel)
+        setLoader(false)
+
+      } else {
+        Toast.show('Internal server error', {
+          duration: 3000,
+        })
+        setLoader(false)
+      }
+    }
+
+    fetchNotification();
+    fetchMonthlySummary();
+    fetchBirthdayAndWorkAnniversary();
+    fetchEvents();
+    console.log('user data: ', user)
   }, [])
 
   function openWhatsApp(Mobile, Name) {
@@ -241,42 +269,66 @@ const Home = ({ navigation }) => {
 
         <VStack mt={3} px={4}>
           <Text color='#333' fontFamily={fonts.PopSB} fontSize={18} mt={1}>Work Anniversary</Text>
-          <ImageBackground source={require('../assets/images/event-BG.png')} style={styles.eventBG} resizeMode='stretch'>
+
+          <LinearGradient colors={['#9ACCEB', 'rgba(15, 116, 179, .2)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.linearView}>
             {anniversary?.length > 0 ? anniversary?.map((item, index) => (
-              <HStack key={index} alignItems='flex-start' mb={1.5}>
-                <Image source={require('../assets/images/party.png')} style={[styles.eventIcon, { width: 18 }]} />
-                <Text fontSize={18} fontFamily={fonts.UrbanM} mt={-1.5} ml={3} alignSelf='center'>{item?.Name}</Text>
+              <HStack key={index} alignItems='flex-start' mb={anniversary?.length == index + 1 ? 0 : 2} ml={3}>
+                <Image source={require('../assets/images/party.png')} style={[styles.eventIcon, { width: 20 }]} />
+                <Text fontSize={18} fontFamily={fonts.UrbanM} mt={-1.5} ml={3.5} alignSelf='center'>{item?.Name}</Text>
               </HStack>
             )) :
-              <HStack justifyContent='space-between' alignItems='center'>
+              <HStack justifyContent='space-between' px={3} alignItems='center'>
                 <Text fontSize={18} fontFamily={fonts.UrbanM} mt={-1.5}>No Work Anniversary Today</Text>
                 <Image source={require('../assets/images/work-anniversary.png')} style={styles.eventIcon} />
-              </HStack>}
-          </ImageBackground>
+              </HStack>
+            }
+          </LinearGradient>
+
 
           <Text color='#333' fontFamily={fonts.PopSB} fontSize={18} mt={1}>Birthday</Text>
-          <ImageBackground source={require('../assets/images/event-BG.png')} style={styles.eventBG} resizeMode='stretch'>
+          <LinearGradient colors={['#9ACCEB', 'rgba(15, 116, 179, .2)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.linearView}>
             {birthDays?.length > 0 ? birthDays?.map((item, index) => {
               return (
-                <HStack key={index} alignItems='flex-start' mb={1.5}>
-                  <Image source={require('../assets/images/cake.png')} style={[styles.eventIcon, { width: 18 }]} />
-                  <Text fontSize={18} fontFamily={fonts.UrbanM} mt={-1.5} ml={3} alignSelf='center'>{item?.Name}</Text>
+                <HStack key={index} alignItems='flex-start' mb={birthDays?.length == index + 1 ? 0 : 2} ml={3}>
+                  <Image source={require('../assets/images/cake.png')} style={[styles.eventIcon, { width: 20 }]} />
+                  <Text fontSize={18} fontFamily={fonts.UrbanM} mt={-1.5} ml={3.5} alignSelf='center'>{item?.Name}</Text>
                 </HStack>
               )
             }) :
-              <HStack justifyContent='space-between' alignItems='flex-start'>
+              <HStack justifyContent='space-between' px={3} alignItems='flex-start'>
                 <Text fontSize={18} fontFamily={fonts.UrbanM} mt={-1.5} alignSelf='center'>No Birthday Today</Text>
                 <Image source={require('../assets/images/Bithday-icon.png')} style={styles.eventIcon} />
               </HStack>}
-          </ImageBackground>
+          </LinearGradient>
 
           <Text color='#333' fontFamily={fonts.PopSB} fontSize={18} mt={1}>Events</Text>
-          <ImageBackground source={require('../assets/images/event-BG.png')} style={styles.eventBG} resizeMode='stretch'>
-            <HStack justifyContent='space-between' alignItems='center'>
-              <Text fontSize={18} fontFamily={fonts.UrbanM} mt={-1.5}>No Event Today</Text>
-              <Image source={require('../assets/images/event-icon.png')} style={styles.eventIcon} />
-            </HStack>
-          </ImageBackground>
+          <LinearGradient colors={['#9ACCEB', 'rgba(15, 116, 179, .2)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.linearView}>
+            {events?.length > 0 ? events?.map((item, index) => (
+              <HStack key={index} alignItems='flex-start' mb={events?.length == index + 1 ? 0 : 2} ml={3}>
+                <Image source={require('../assets/images/red-carpet.png')} style={[styles.eventIcon, { width: 20 }]} />
+                <Text fontSize={18} fontFamily={fonts.UrbanM} mt={-1.5} ml={3.5} alignSelf='center'>{item?.EventName}</Text>
+              </HStack>
+            )) :
+              <HStack justifyContent='space-between' px={3} alignItems='center'>
+                <Text fontSize={18} fontFamily={fonts.UrbanM} mt={-1.5} alignSelf='center'>No Event Today</Text>
+                <Image source={require('../assets/images/event-icon.png')} style={styles.eventIcon} />
+              </HStack>}
+
+          </LinearGradient>
+
+          {/* <ImageBackground source={require('../assets/images/event-BG.png')} style={styles.eventBG} resizeMode='stretch'>
+            {events?.length > 0 ? events?.map((item, index) => (
+              <HStack key={index} alignItems='flex-start' mb={events?.length > 4 ? 1.5 : 0}>
+                <Image source={require('../assets/images/party.png')} style={[styles.eventIcon, { width: 18 }]} />
+                <Text fontSize={18} fontFamily={fonts.UrbanM} mt={-1.5} ml={3} alignSelf='center'>{item?.EventName}</Text>
+              </HStack>
+            )) :
+              <HStack justifyContent='space-between' alignItems='center'>
+                <Text fontSize={18} fontFamily={fonts.UrbanM} mt={-1.5}>No Event Today</Text>
+                <Image source={require('../assets/images/event-icon.png')} style={styles.eventIcon} />
+              </HStack>}
+
+          </ImageBackground> */}
         </VStack>
       </ScrollView>
 
@@ -374,6 +426,13 @@ const styles = StyleSheet.create({
     marginTop: 8,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  linearView: {
+    borderLeftWidth: 5,
+    borderLeftColor: '#F39320',
+    borderRadius: 10,
+    paddingVertical: 12,
+    marginBottom: 14,
   },
 })
 
