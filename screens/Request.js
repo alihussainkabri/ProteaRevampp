@@ -31,7 +31,7 @@ const Request = ({ navigation }) => {
                 </HStack>
             </ImageBackground>
 
-            <ScrollView style={{ marginTop: -120 }}>
+            <ScrollView style={{ marginTop: -100 }}>
                 <VStack px={Dimensions.get('window').width / 100 * 3}>
                     <HStack flexWrap='wrap' justifyContent='space-between'>
                         <TouchableOpacity onPress={() => navigation.navigate('ListOfLeave')} style={[styles.summaryBlock, { backgroundColor: 'rgba(238, 227, 231, .9)' }]}>

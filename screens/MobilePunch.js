@@ -144,9 +144,10 @@ const MobilePunch = ({ navigation }) => {
                         const data = await response1.json()
 
                         if (data?.Message == 'Success') {
-                            Toast.show('Punched successfull', {
+                            Toast.show(operation == 1 ? 'Punch in successfull' : 'Punch out successfull', {
                                 duration: 3000,
                             })
+                            setRemark('')
                             setLoader(false)
                         } else {
                             Toast.show(data?.error_msg, {

@@ -37,7 +37,7 @@ const Calendar = ({ navigation }) => {
                 // console.log('i m data',data)
                 const organizedData = {};
                 data.forEach(entry => {
-                    const startDate = new Date(entry.StartDate).toISOString().slice(0, 10);
+                    const startDate = new Date(entry.StartDate + 'Z').toISOString().slice(0, 10);
 
                     if (!organizedData[startDate]) {
                         organizedData[startDate] = [entry];
@@ -46,7 +46,7 @@ const Calendar = ({ navigation }) => {
                     }
                 });
 
-                // console.log(organizedData)
+                console.log('hi organise', organizedData)
                 setCalendarData(organizedData)
                 setLoader(false)
 
@@ -87,6 +87,7 @@ const Calendar = ({ navigation }) => {
     }
 
     function renderItems(val) {
+        console.log(val)
         // alert('hy')
         // console.log('ye hai',items)
         // return (
@@ -109,50 +110,58 @@ const Calendar = ({ navigation }) => {
         }
         if (val.OutTime) {
             return (
-                <Text style={styles.event}>
-                    <FontAwesome
-                        style={{ color: "#EC7063", fontSize: 17 }}
-                        name="sign-out"
-                    />
-                    {" "}
-                    {val.OutTime}
-                </Text>
+                <View style={[styles.items]}>
+                    <Text style={styles.event}>
+                        <FontAwesome
+                            style={{ color: "#EC7063", fontSize: 17 }}
+                            name="sign-out"
+                        />
+                        {" "}
+                        {val.OutTime}
+                    </Text>
+                </View>
             );
         }
         if (val.Title) {
             return (
-                <Text style={styles.event}>
-                    <Entypo
-                        style={{ color: "#7FB3D5", fontSize: 17 }}
-                        name="calendar"
-                    />
-                    {" "}
-                    {val.Title}
-                </Text>
+                <View style={[styles.items]}>
+                    <Text style={styles.event}>
+                        <Entypo
+                            style={{ color: "#7FB3D5", fontSize: 17 }}
+                            name="calendar"
+                        />
+                        {" "}
+                        {val.Title}
+                    </Text>
+                </View>
             );
         }
         if (val.Birthday) {
             return (
-                <Text style={styles.event}>
-                    <MaterialIcons
-                        style={{ color: "#F8C471", fontSize: 17 }}
-                        name="cake"
-                    />
-                    {" "}
-                    {val.Birthday}
-                </Text>
+                <View style={[styles.items]}>
+                    <Text style={styles.event}>
+                        <MaterialIcons
+                            style={{ color: "#F8C471", fontSize: 17 }}
+                            name="cake"
+                        />
+                        {" "}
+                        {val.Birthday}
+                    </Text>
+                </View>
             );
         }
         if (val?.Anniversary) {
             return (
-                <Text style={styles.event}>
-                    <FontAwesome
-                        style={{ color: "#BB8FCE", fontSize: 17 }}
-                        name="gift"
-                    />
-                    {" "}
-                    {val.Anniversary}
-                </Text>
+                <View style={[styles.items]}>
+                    <Text style={styles.event}>
+                        <FontAwesome
+                            style={{ color: "#BB8FCE", fontSize: 17 }}
+                            name="gift"
+                        />
+                        {" "}
+                        {val.Anniversary}
+                    </Text>
+                </View>
             );
         }
     }
@@ -184,7 +193,7 @@ const Calendar = ({ navigation }) => {
                     renderItem={renderItems}
                     renderEmptyData={renderEmptyDate}
                     // rowHasChanged={this.rowHasChanged.bind(this)}
-                    // // hideKnob={false}
+                    // hideKnob={false}
                     // markedDates={this.state.markeditems}
                     // // selected={min}
                     minDate={min}
@@ -226,6 +235,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderRadius: 2,
         padding: 5,
+        marginBottom: 8,
     },
     event: {
         alignItems: "center",

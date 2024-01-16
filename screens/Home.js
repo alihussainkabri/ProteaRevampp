@@ -1,4 +1,4 @@
-import { View, TouchableOpacity, StatusBar, ImageBackground, StyleSheet, Dimensions, Image, ScrollView } from 'react-native'
+import { View, TouchableOpacity, StatusBar, ImageBackground, StyleSheet, Dimensions, Image, ScrollView, Linking } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { Entypo, Ionicons } from 'react-native-vector-icons'
 import { HStack, NativeBaseProvider, Text, VStack } from 'native-base'
@@ -14,6 +14,8 @@ const Home = ({ navigation }) => {
   const [loader, setLoader] = useState(false)
   const [notification, setNotification] = useState('')
   const [monthlySummary, setMonthlySummary] = useState('')
+  const [birthDays, setBirthdays] = useState([])
+  const [anniversary, setAnniversary] = useState([])
   const [birthAndWork, setBirthAndWork] = useState('')
   const { user } = useContext(userContext)
 
@@ -94,6 +96,9 @@ const Home = ({ navigation }) => {
 
       if (response.ok == true) {
         const data = await response.json()
+        setBirthdays(data?.filter(item => item?.Title == 'Birthday'))
+        setAnniversary(data?.filter(item => item?.Title == 'Anniversary'))
+
         setBirthAndWork(data)
         setLoader(false)
 
@@ -108,7 +113,15 @@ const Home = ({ navigation }) => {
     fetchNotification()
     fetchMonthlySummary()
     fetchBirthdayAndWorkAnniversary()
+    console.log('user data: ',user)
   }, [])
+
+  function openWhatsApp(Mobile, Name) {
+    const message = `Wish you a very Happy Birthday ${Name} 🥳🥳🎂🎂`;
+    const whatsappLink = `whatsapp://send?phone=${Mobile}&text=${encodeURIComponent(message)}`;
+
+    Linking.openURL(whatsappLink)
+  }
 
   return (
     <NativeBaseProvider>
@@ -151,16 +164,26 @@ const Home = ({ navigation }) => {
       <ScrollView style={{ marginTop: -120 }}>
         <VStack px={Dimensions.get('window').width / 100 * 3}>
 
-          <Text color='#333' fontFamily={fonts.PopSB} fontSize={18} mt={2} mb={2}>Today's Birthday</Text>
-          <HStack flexWrap='wrap' justifyContent='space-between' mb={2}>
-            <VStack backgroundColor='#EEE3E7' style={[styles.summaryBlock, { paddingHorizontal: 0, paddingBottom: 0 }]} alignItems='center'>
-              <Image source={require('../assets/images/Bithday-icon.png')} style={{ width: 70, height: 70, borderRadius: 100, }} />
-              <Text style={styles.BdayName}>Sonali Baber</Text>
-              <LinearGradient colors={['#0F74B3', 'rgba(15, 116, 179, .5)']} style={styles.linearGradient}>
-                <Text color='white' fontSize={17} py={2} fontFamily={fonts.PopSB}>Wish</Text>
-              </LinearGradient>
-            </VStack>
-          </HStack>
+          {birthDays?.length > 0 && <>
+            <Text color='#333' fontFamily={fonts.PopSB} fontSize={18} mt={2} mb={2}>Today's Birthday</Text>
+
+            <HStack flexWrap='wrap' justifyContent='space-between' mb={2}>
+              {birthDays?.map((item, index) => (
+                <VStack key={index} backgroundColor='#EEE3E7' style={[styles.summaryBlock, { paddingHorizontal: 0, paddingBottom: 0 }]} alignItems='center'>
+                  {item?.EmpImage ? <Image source={{ uri: `data:image/png;base64,${item?.EmpImage}` }} style={{ width: 70, height: 70, borderRadius: 100, }} /> :
+                    <Image source={require('../assets/images/Bithday-icon.png')} style={{ width: 70, height: 70, borderRadius: 100, }} />}
+
+                  <Text style={styles.BdayName}>{item?.Name}</Text>
+
+                  <TouchableOpacity onPress={() => openWhatsApp(item?.Mobile, item?.Name)} style={{ width: '100%' }}>
+                    <LinearGradient colors={['#0F74B3', 'rgba(15, 116, 179, .5)']} style={styles.linearGradient}>
+                      <Text color='white' fontSize={17} py={2} fontFamily={fonts.PopSB}>Wish</Text>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                </VStack>
+              ))}
+            </HStack>
+          </>}
 
           <Text color='#333' fontFamily={fonts.PopSB} fontSize={18} mt={1} mb={2}>Monthly Summary</Text>
 
@@ -219,24 +242,38 @@ const Home = ({ navigation }) => {
         <VStack mt={3} px={4}>
           <Text color='#333' fontFamily={fonts.PopSB} fontSize={18} mt={1}>Work Anniversary</Text>
           <ImageBackground source={require('../assets/images/event-BG.png')} style={styles.eventBG} resizeMode='stretch'>
-            <HStack justifyContent='space-between' alignItems='center'>
-              <Text fontSize={18} fontFamily={fonts.UrbanM} ml={5} mt={-1.5}>No Work Anniversary Today</Text>
-              <Image source={require('../assets/images/work-anniversary.png')} style={styles.eventIcon} />
-            </HStack>
+            {anniversary?.length > 0 ? anniversary?.map((item, index) => (
+              <HStack key={index} alignItems='flex-start' mb={1.5}>
+                <Image source={require('../assets/images/party.png')} style={[styles.eventIcon, { width: 18 }]} />
+                <Text fontSize={18} fontFamily={fonts.UrbanM} mt={-1.5} ml={3} alignSelf='center'>{item?.Name}</Text>
+              </HStack>
+            )) :
+              <HStack justifyContent='space-between' alignItems='center'>
+                <Text fontSize={18} fontFamily={fonts.UrbanM} mt={-1.5}>No Work Anniversary Today</Text>
+                <Image source={require('../assets/images/work-anniversary.png')} style={styles.eventIcon} />
+              </HStack>}
           </ImageBackground>
 
           <Text color='#333' fontFamily={fonts.PopSB} fontSize={18} mt={1}>Birthday</Text>
           <ImageBackground source={require('../assets/images/event-BG.png')} style={styles.eventBG} resizeMode='stretch'>
-            <HStack justifyContent='space-between' alignItems='center'>
-              <Text fontSize={18} fontFamily={fonts.UrbanM} ml={5} mt={-1.5}>No Birthday Today</Text>
-              <Image source={require('../assets/images/Bithday-icon.png')} style={styles.eventIcon} />
-            </HStack>
+            {birthDays?.length > 0 ? birthDays?.map((item, index) => {
+              return (
+                <HStack key={index} alignItems='flex-start' mb={1.5}>
+                  <Image source={require('../assets/images/cake.png')} style={[styles.eventIcon, { width: 18 }]} />
+                  <Text fontSize={18} fontFamily={fonts.UrbanM} mt={-1.5} ml={3} alignSelf='center'>{item?.Name}</Text>
+                </HStack>
+              )
+            }) :
+              <HStack justifyContent='space-between' alignItems='flex-start'>
+                <Text fontSize={18} fontFamily={fonts.UrbanM} mt={-1.5} alignSelf='center'>No Birthday Today</Text>
+                <Image source={require('../assets/images/Bithday-icon.png')} style={styles.eventIcon} />
+              </HStack>}
           </ImageBackground>
 
           <Text color='#333' fontFamily={fonts.PopSB} fontSize={18} mt={1}>Events</Text>
           <ImageBackground source={require('../assets/images/event-BG.png')} style={styles.eventBG} resizeMode='stretch'>
             <HStack justifyContent='space-between' alignItems='center'>
-              <Text fontSize={18} fontFamily={fonts.UrbanM} ml={5} mt={-1.5}>No Event Today</Text>
+              <Text fontSize={18} fontFamily={fonts.UrbanM} mt={-1.5}>No Event Today</Text>
               <Image source={require('../assets/images/event-icon.png')} style={styles.eventIcon} />
             </HStack>
           </ImageBackground>
@@ -315,19 +352,21 @@ const styles = StyleSheet.create({
     bottom: 4,
   },
   eventBG: {
-    width: '100%',
+    width: '100%' + 36,
     paddingTop: 14,
     paddingBottom: 18,
     marginBottom: 14,
+    paddingLeft: 20,
+    paddingRight: 16
   },
   eventIcon: {
     width: 44,
     height: undefined,
     aspectRatio: 1,
-    marginRight: 16
+    // marginRight: 16
   },
   linearGradient: {
-    flex: 1,
+    // flex: 1,
     paddingLeft: 15,
     paddingRight: 15,
     borderRadius: 5,

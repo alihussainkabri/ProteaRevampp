@@ -21,6 +21,9 @@ const CreateLeave = ({ navigation }) => {
     const [fromDateCalendarShow, setFromDateCalendarShow] = useState(false);
     const [ToDateCalendarShow, setToDateCalendarShow] = useState(false);
     const [noOfDays, setNoOfDays] = useState('');
+    const [showLeaveType, setShowLeaveType] = useState(false);
+    const [particularLeaveType, setParticularLeaveType] = useState('');
+    const [allLeaveType, setAllLeaveType] = useState('');
     const [showReason, setShowReason] = useState(false);
     const [allReasons, setAllReasons] = useState('');
     const [particularReason, setParticularReason] = useState('');
@@ -88,9 +91,48 @@ const CreateLeave = ({ navigation }) => {
             }
         }
 
+
+
         fetchLeaveBalance();
         fetchReasons();
     }, [])
+
+    async function fetchLeaveType() {
+        setLoader(true)
+
+        var raw = JSON.stringify({
+            "EmpId": user?.EmpId,
+            "FromDate": fromDate,
+            "ToDate": toDate
+
+        });
+
+        const response = await fetch(url + 'LeaveRequests/GetApplicableLeaveTypeBasedOnDates', {
+            method: 'POST',
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body: raw
+        })
+
+        if (response.ok == true) {
+            const data = await response.json()
+            console.log('leave types', data)
+
+            setAllLeaveType(data)
+            setLoader(false)
+
+        } else {
+            Toast.show('Internal server error', {
+                duration: 3000,
+            })
+            setLoader(false)
+        }
+    }
+
+    useEffect(() => {
+        fetchLeaveType();
+    }, [fromDate, toDate])
 
     const handleFromDate = (date) => {
         console.warn("A date has been picked: ", date.toString());
@@ -108,35 +150,39 @@ const CreateLeave = ({ navigation }) => {
         setToDateCalendarShow(false);
     };
 
-    function calculateNoOfDays(FirstDayLeaveType, LastDayLeaveType) {
-        const date1 = new Date(fromDate);
-        const date2 = new Date(toDate);
-
-        const differenceMs = Math.abs(date2 - date1);
-        const differenceDays = Math.ceil(differenceMs / (1000 * 60 * 60 * 24));
-
-        if (FirstDayLeaveType == 'entireDay' && LastDayLeaveType == 'entireDay') {
-            console.log('diff is here', differenceDays + 1)
-            setNoOfDays(differenceDays + 1)
-        }
-    }
-
     useEffect(() => {
-        if (leaveDuration == '1st Half') {
-            setNoOfDays(.5)
-
-        } else if (leaveDuration == '2nd Half') {
-            setNoOfDays(.5)
-
-        } else if (leaveDuration == 'Full Day') {
-            setNoOfDays(1)
-
-        } else if (leaveDuration == 'Multi Day') {
-            if (fromEntire && toEntire) {
-                calculateNoOfDays('entireDay', 'entireDay')
-            }
-        }
+        
     }, [leaveDuration, fromDate, toDate, fromEntire, toEntire])
+
+    // function calculateNoOfDays(FirstDayLeaveType, LastDayLeaveType) {
+    //     const date1 = new Date(fromDate);
+    //     const date2 = new Date(toDate);
+
+    //     const differenceMs = Math.abs(date2 - date1);
+    //     const differenceDays = Math.ceil(differenceMs / (1000 * 60 * 60 * 24));
+
+    //     if (FirstDayLeaveType == 'entireDay' && LastDayLeaveType == 'entireDay') {
+    //         console.log('diff is here', differenceDays + 1)
+    //         setNoOfDays(differenceDays + 1)
+    //     }
+    // }
+
+    // useEffect(() => {
+    //     if (leaveDuration == '1st Half') {
+    //         setNoOfDays(.5)
+
+    //     } else if (leaveDuration == '2nd Half') {
+    //         setNoOfDays(.5)
+
+    //     } else if (leaveDuration == 'Full Day') {
+    //         setNoOfDays(1)
+
+    //     } else if (leaveDuration == 'Multi Day') {
+    //         if (fromEntire && toEntire) {
+    //             calculateNoOfDays('entireDay', 'entireDay')
+    //         }
+    //     }
+    // }, [leaveDuration, fromDate, toDate, fromEntire, toEntire])
 
     // useEffect(() => {console.log(show)}, [show])
 
@@ -247,6 +293,28 @@ const CreateLeave = ({ navigation }) => {
                     </>}
 
                     <VStack>
+                        <Text style={styles.label}>Select Leave Type</Text>
+                        <TouchableOpacity onPress={() => setShowLeaveType(true)} style={styles.selectDate}>
+                            <Text style={styles.placeHolder}>{particularLeaveType ? particularLeaveType?.RDescription : 'Select Leave Type'}</Text>
+                            <Entypo name="chevron-small-down" size={24} color="#737373" />
+                        </TouchableOpacity>
+
+                        <Actionsheet isOpen={showLeaveType} onClose={() => setShowLeaveType(false)}>
+                            <Actionsheet.Content>
+                                {allLeaveType?.length > 0 ? allLeaveType?.map((item, index) => (
+                                    <Actionsheet.Item onPress={() => {
+                                        setParticularLeaveType(item)
+                                        setShowLeaveType(false)
+                                    }}>
+                                        <Text fontSize={16} fontFamily={fonts.UrbanSB}>{item?.RDescription}</Text>
+                                    </Actionsheet.Item>
+
+                                )) : <Actionsheet.Item>No data found</Actionsheet.Item>}
+                            </Actionsheet.Content>
+                        </Actionsheet>
+                    </VStack>
+
+                    <VStack>
                         <Text style={styles.label}>Number Of Days</Text>
                         <TouchableOpacity disabled style={styles.selectDate}>
                             <Text style={styles.placeHolder}>{noOfDays}</Text>
@@ -280,6 +348,10 @@ const CreateLeave = ({ navigation }) => {
                         </Actionsheet>
                     </VStack>
 
+                    <VStack>
+                        <Text style={styles.label}>Enter Reason</Text>
+                        <Input variant='outline' style={[styles.inputView, { maxHeight: 100 }]} borderColor='#1875e2' borderRadius={2} py={1.5} multiline />
+                    </VStack>
                 </View>
             </ScrollView>
         </NativeBaseProvider>

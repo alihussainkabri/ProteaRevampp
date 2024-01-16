@@ -12,7 +12,7 @@ const Login = ({ navigation }) => {
   const [serverURL, setServerURl] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [show, setShow] = useState(true)
+  const [show, setShow] = useState(false)
   const [loader, setLoader] = useState(false)
 
   async function login() {
