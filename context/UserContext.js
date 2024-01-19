@@ -6,6 +6,16 @@ const userContext = createContext()
 function UserContext(props) {
 
     const [user, setUser] = useState('')
+    const [defaultUrl,setDefaultUrl] = useState('')
+
+    const getDefaultUrl = async () => {
+        const default_url = await AsyncStorage.getItem("protea_default_url")
+        if (default_url != null){
+            setDefaultUrl(default_url)
+        }else{
+            setDefaultUrl('protealive.com:1102')
+        }
+    }
 
     useEffect(() => {
         const getUser = async () => {
@@ -13,10 +23,11 @@ function UserContext(props) {
         }
 
         getUser();
+        getDefaultUrl()
     }, [])
 
     return (
-        <userContext.Provider value={{ user, setUser }}>
+        <userContext.Provider value={{ user, setUser,defaultUrl,setDefaultUrl }}>
             {props.children}
         </userContext.Provider>
     )

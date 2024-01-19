@@ -1,7 +1,3 @@
-const encryption = 'https://'
-const node_url = encryption + 'protealive.com:1102/'
-const url = node_url + 'api/'
-
 function getConvertDate(unOrganisedDate) {
     const date = new Date(unOrganisedDate);
 
@@ -15,4 +11,4 @@ function getConvertDate(unOrganisedDate) {
 }
 
 
-export { node_url, url, getConvertDate }
+export { getConvertDate }

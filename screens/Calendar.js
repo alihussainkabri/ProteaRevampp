@@ -11,7 +11,7 @@ import Loader from '../component/Loader';
 
 const Calendar = ({ navigation }) => {
 
-    const { user } = useContext(userContext)
+    const { user,defaultUrl } = useContext(userContext)
     const [loader, setLoader] = useState(false)
     const [calendarData, setCalendarData] = useState('')
 
@@ -22,7 +22,7 @@ const Calendar = ({ navigation }) => {
             "EmpId": user?.EmpId
         });
 
-        const response = await fetch(url + 'Dashboard/GetCalendarData', {
+        const response = await fetch("https://" + defaultUrl + 'Dashboard/GetCalendarData', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'

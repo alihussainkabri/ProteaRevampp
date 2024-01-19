@@ -12,7 +12,7 @@ import Loader from '../component/Loader';
 
 const MobilePunch = ({ navigation }) => {
 
-    const { user } = useContext(userContext)
+    const { user,defaultUrl } = useContext(userContext)
     const [img, setImg] = useState('')
     const [remark, setRemark] = useState('')
     const [loader, setLoader] = useState(false)
@@ -41,7 +41,7 @@ const MobilePunch = ({ navigation }) => {
                 "CompanyId": user?.EmployeeDetails?.CompanyId,
             });
 
-            const response = await fetch(url + 'Dashboard/GetImages', {
+            const response = await fetch("https://" + defaultUrl + 'Dashboard/GetImages', {
                 method: 'POST',
                 headers: {
                     "Content-Type": 'application/json'
@@ -132,7 +132,7 @@ const MobilePunch = ({ navigation }) => {
                         "EmpImage": response.assets[0].base64
                     });
 
-                    const response1 = await fetch(url + 'PunchInout/PunchIn', {
+                    const response1 = await fetch("https://" + defaultUrl + 'PunchInout/PunchIn', {
                         method: 'POST',
                         headers: {
                             "Content-Type": 'application/json'

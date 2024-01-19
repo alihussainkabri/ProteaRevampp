@@ -10,7 +10,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker"
 
 const CreateLeave = ({ navigation }) => {
 
-    const { user } = useContext(userContext)
+    const { user,defaultUrl } = useContext(userContext)
     const [loader, setLoader] = useState(false)
     const [leaveBalance, setLeaveBalance] = useState('')
     const [leaveDuration, setLeaveDuration] = useState('First Half')
@@ -36,7 +36,7 @@ const CreateLeave = ({ navigation }) => {
                 "EmpId": user?.EmpId
             });
 
-            const response = await fetch(url + 'LeaveRequests/GetLeaveBalance', {
+            const response = await fetch("https://" + defaultUrl + 'LeaveRequests/GetLeaveBalance', {
                 method: 'POST',
                 headers: {
                     "Content-Type": 'application/json'
@@ -68,7 +68,7 @@ const CreateLeave = ({ navigation }) => {
                 "FormName": "W_LeaveRequest"
             });
 
-            const response = await fetch(url + 'Requests/SearchReason', {
+            const response = await fetch("https://" + defaultUrl + 'Requests/SearchReason', {
                 method: 'POST',
                 headers: {
                     "Content-Type": 'application/json'
@@ -107,7 +107,7 @@ const CreateLeave = ({ navigation }) => {
 
         });
 
-        const response = await fetch(url + 'LeaveRequests/GetApplicableLeaveTypeBasedOnDates', {
+        const response = await fetch("https://" + defaultUrl  + 'LeaveRequests/GetApplicableLeaveTypeBasedOnDates', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'
@@ -194,7 +194,7 @@ const CreateLeave = ({ navigation }) => {
 
         });
 
-        const response = await fetch(url + 'LeaveRequests/AddLeaveRequest', {
+        const response = await fetch("https://" + defaultUrl + 'LeaveRequests/AddLeaveRequest', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'

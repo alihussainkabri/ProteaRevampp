@@ -10,7 +10,7 @@ import { userContext } from '../context/UserContext';
 
 const Profile = ({ navigation }) => {
 
-    const { user } = useContext(userContext)
+    const { user,defaultUrl } = useContext(userContext)
     const [loader, setLoader] = useState(false)
     const [img, setImg] = useState('')
 
@@ -22,7 +22,7 @@ const Profile = ({ navigation }) => {
                 "CompanyId": user?.EmployeeDetails?.CompanyId,
             });
 
-            const response = await fetch(url + 'Dashboard/GetImages', {
+            const response = await fetch("https://" + defaultUrl + 'Dashboard/GetImages', {
                 method: 'POST',
                 headers: {
                     "Content-Type": 'application/json'
