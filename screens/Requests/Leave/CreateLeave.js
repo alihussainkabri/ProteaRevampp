@@ -36,7 +36,7 @@ const CreateLeave = ({ navigation }) => {
                 "EmpId": user?.EmpId
             });
 
-            const response = await fetch("https://" + defaultUrl + 'LeaveRequests/GetLeaveBalance', {
+            const response = await fetch("https://" + defaultUrl + '/api/LeaveRequests/GetLeaveBalance', {
                 method: 'POST',
                 headers: {
                     "Content-Type": 'application/json'
@@ -68,7 +68,7 @@ const CreateLeave = ({ navigation }) => {
                 "FormName": "W_LeaveRequest"
             });
 
-            const response = await fetch("https://" + defaultUrl + 'Requests/SearchReason', {
+            const response = await fetch("https://" + defaultUrl + '/api/Requests/SearchReason', {
                 method: 'POST',
                 headers: {
                     "Content-Type": 'application/json'
@@ -107,7 +107,7 @@ const CreateLeave = ({ navigation }) => {
 
         });
 
-        const response = await fetch("https://" + defaultUrl  + 'LeaveRequests/GetApplicableLeaveTypeBasedOnDates', {
+        const response = await fetch("https://" + defaultUrl  + '/api/LeaveRequests/GetApplicableLeaveTypeBasedOnDates', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'
@@ -194,7 +194,7 @@ const CreateLeave = ({ navigation }) => {
 
         });
 
-        const response = await fetch("https://" + defaultUrl + 'LeaveRequests/AddLeaveRequest', {
+        const response = await fetch("https://" + defaultUrl + '/api/LeaveRequests/AddLeaveRequest', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'

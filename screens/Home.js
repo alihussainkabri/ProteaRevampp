@@ -28,7 +28,7 @@ const Home = ({ navigation }) => {
         "EmpId": user?.EmpId,
       });
 
-      const response = await fetch("https://" + defaultUrl + 'Requests/PendingNotifications', {
+      const response = await fetch("https://" + defaultUrl + '/api/Requests/PendingNotifications', {
         method: 'POST',
         headers: {
           "Content-Type": 'application/json'
@@ -58,7 +58,7 @@ const Home = ({ navigation }) => {
         "Month": new Date().getMonth() + 1 > 12 ? (new Date().getMonth() + 1) - 12 : new Date().getMonth() + 1
       });
 
-      const response = await fetch("https://" + defaultUrl + 'Dashboard/GetMonthlySummary', {
+      const response = await fetch("https://" + defaultUrl + '/api/Dashboard/GetMonthlySummary', {
         method: 'POST',
         headers: {
           "Content-Type": 'application/json'
@@ -86,7 +86,7 @@ const Home = ({ navigation }) => {
         "EmpId": user?.EmpId
       });
 
-      const response = await fetch("https://" + defaultUrl + 'Dashboard/GetBirthdayList', {
+      const response = await fetch("https://" + defaultUrl + '/api/Dashboard/GetBirthdayList', {
         method: 'POST',
         headers: {
           "Content-Type": 'application/json'
@@ -116,7 +116,7 @@ const Home = ({ navigation }) => {
         "CompanyId": user?.EmployeeDetails?.CompanyId
       });
 
-      const response = await fetch("https://" + defaultUrl + 'Dashboard/GetEmployeeMonthsAndEvents', {
+      const response = await fetch("https://" + defaultUrl + '/api/Dashboard/GetEmployeeMonthsAndEvents', {
         method: 'POST',
         headers: {
           "Content-Type": 'application/json'

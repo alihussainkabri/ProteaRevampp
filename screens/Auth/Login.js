@@ -1,5 +1,5 @@
-import { View, StatusBar, ImageBackground, Dimensions, StyleSheet, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView } from 'react-native'
-import React, { useContext, useState } from 'react'
+import { View, StatusBar, ImageBackground, Dimensions, StyleSheet, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, PermissionsAndroid, Platform } from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
 import { Input, NativeBaseProvider, Text, VStack } from 'native-base';
 import { fonts } from '../../config/Fonts'
 import { Feather } from 'react-native-vector-icons'
@@ -9,6 +9,7 @@ import Loader from '../../component/Loader'
 import { useHeaderHeight } from '@react-navigation/elements'
 import { userContext } from '../../context/UserContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { PERMISSIONS, check, RESULTS, requestMultiple } from 'react-native-permissions';
 
 const Login = ({ navigation }) => {
 
@@ -29,7 +30,9 @@ const Login = ({ navigation }) => {
         "imei": "f5252eba-c185-45a9-a4c5-1d094b8daf84"
       });
 
-      const response = await fetch("https://" + defaultUrl + 'LoginDetails/Post', {
+      console.log("https://" + defaultUrl + '/LoginDetails/Post')
+
+      const response = await fetch("https://" + defaultUrl + '/api/LoginDetails/Post', {
         method: 'POST',
         headers: {
           "Content-Type": 'application/json'
@@ -65,6 +68,61 @@ const Login = ({ navigation }) => {
   }
 
   const headerHight = useHeaderHeight()
+
+  const requestPermissions = async () => {
+    try {
+      await PermissionsAndroid.requestMultiple(
+        [
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+        ],
+        {
+          title: 'Device Permissions Required',
+          message: "Let's Influence needs access to the following permisions",
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+
+  const requestPermissionIOS = () => {
+    let Permissions_arr = [
+      PERMISSIONS.IOS.CAMERA,
+      PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+    ]
+
+    let requestable_permission = []
+
+    for (let i = 0; i < Permissions_arr.length; i++) {
+      check(Permissions_arr[i]).then(result => {
+        switch (result) {
+          case RESULTS.UNAVAILABLE:
+            break;
+          case RESULTS.DENIED:
+            requestable_permission.push(Permissions_arr[i])
+            break;
+        }
+      })
+    }
+
+    if (requestable_permission.length > 0) {
+      requestMultiple(requestable_permission)
+    }
+  }
+
+  useEffect(() => {
+
+    if (Platform.OS == 'android') {
+      requestPermissions();
+    } else {
+      requestPermissionIOS()
+    }
+  }, [])
 
   return (
     <NativeBaseProvider>

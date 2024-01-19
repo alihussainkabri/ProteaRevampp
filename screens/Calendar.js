@@ -22,7 +22,7 @@ const Calendar = ({ navigation }) => {
             "EmpId": user?.EmpId
         });
 
-        const response = await fetch("https://" + defaultUrl + 'Dashboard/GetCalendarData', {
+        const response = await fetch("https://" + defaultUrl + '/api/Dashboard/GetCalendarData', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'
