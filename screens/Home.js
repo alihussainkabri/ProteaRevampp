@@ -167,7 +167,7 @@ const Home = ({ navigation }) => {
             <Text fontFamily={fonts.PopSB} fontSize={28} ml={7} color='white'>Dashboard</Text>
           </HStack>
 
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => alert('Feature will coming soon')}>
             <Image source={require('../assets/icons/QR.png')} style={{ width: 26, height: 26 }} />
           </TouchableOpacity>
         </HStack>

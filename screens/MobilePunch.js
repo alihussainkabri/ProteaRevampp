@@ -203,7 +203,7 @@ const MobilePunch = ({ navigation }) => {
                                 <Text fontFamily={fonts.PopSB} fontSize={26} ml={7} color='white'>Mobile Punch</Text>
                             </HStack>
 
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={() => alert('Feature will coming soon')}>
                                 <Image source={require('../assets/icons/QR.png')} style={{ width: 26, height: 26 }} />
                             </TouchableOpacity>
                         </HStack>

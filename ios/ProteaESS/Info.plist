@@ -21,7 +21,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>4</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -39,10 +39,12 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Need camera permission for punch</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Need camera permission for punch</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Need location permission for punch</string>
+	<string>Need location permission for punch in and out functionality so that your manager can verify your presence</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Need location permission for punch</string>
+	<string>Need location permission for punch in and out functionality so that your manager can verify your presence</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Urbanist-Black.ttf</string>
