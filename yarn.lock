@@ -6485,6 +6485,16 @@ react-native-calendars@^1.1303.0:
   optionalDependencies:
     moment "^2.29.4"
 
+react-native-check-version@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-check-version/-/react-native-check-version-1.1.1.tgz#f469fe8d85d7575325fd13a57ce5c678447f7b86"
+  integrity sha512-/8dLMExwYeZAEWic6Dr9S4TMPdDmuTNif8wS7oaF8gEHl8/i9lABD3YjBglXwieXSqzfge/Tuo0himUOEtQMZg==
+
+react-native-device-info@^10.12.0:
+  version "10.12.0"
+  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-10.12.0.tgz#be4e71cbcc9a05e8643b1a419a4450d4cef9bbcc"
+  integrity sha512-gnBkjyZNEqRd+5BNrdzuvmlraHTCH/to2x0Gp9rtDt0O9xWWW1MTYohUVWX9A0Ad2HVYcGanDCIvjWp4ngMZFg==
+
 react-native-fast-image@^8.6.3:
   version "8.6.3"
   resolved "https://registry.npmjs.org/react-native-fast-image/-/react-native-fast-image-8.6.3.tgz"
