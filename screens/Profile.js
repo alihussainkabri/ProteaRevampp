@@ -1,4 +1,4 @@
-import { View, StatusBar, ImageBackground, TouchableOpacity, StyleSheet, Dimensions, Image, ScrollView } from 'react-native'
+import { View, StatusBar, ImageBackground, TouchableOpacity, StyleSheet, Dimensions, Image, ScrollView, Alert } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { HStack, Text, NativeBaseProvider, VStack } from 'native-base';
 import Loader from '../component/Loader';
@@ -7,10 +7,11 @@ import { fonts } from '../config/Fonts';
 import Toast from 'react-native-root-toast';
 import { url } from '../helpers';
 import { userContext } from '../context/UserContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Profile = ({ navigation }) => {
 
-    const { user } = useContext(userContext)
+    const { user,defaultUrl,setUser } = useContext(userContext)
     const [loader, setLoader] = useState(false)
     const [img, setImg] = useState('')
 
@@ -22,7 +23,7 @@ const Profile = ({ navigation }) => {
                 "CompanyId": user?.EmployeeDetails?.CompanyId,
             });
 
-            const response = await fetch(url + 'Dashboard/GetImages', {
+            const response = await fetch("https://" + defaultUrl + '/api/Dashboard/GetImages', {
                 method: 'POST',
                 headers: {
                     "Content-Type": 'application/json'
@@ -70,7 +71,7 @@ const Profile = ({ navigation }) => {
                         <Text fontFamily={fonts.PopSB} fontSize={26} ml={7} color='white'>My Profile</Text>
                     </HStack>
 
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => alert('Feature will coming soon')}>
                         <Image source={require('../assets/icons/QR.png')} style={{ width: 26, height: 26 }} />
                     </TouchableOpacity>
                 </HStack>
@@ -193,6 +194,25 @@ const Profile = ({ navigation }) => {
                         </HStack>
                         <Text style={styles.value}>{user?.EmployeeDetails?.OperationalHead}</Text>
                     </HStack>
+
+                    <TouchableOpacity onPress={() => {
+                        Alert.alert('Delete Account','Are you sure you want to delete account?',[
+                            {
+                                text : 'Cancel',
+                                onPress : () => {}
+                            },
+                            {
+                                text : 'Delete',
+                                onPress : async() => {
+                                    alert('Delete Account request raised successfully!')
+                                    await AsyncStorage.removeItem('app_user')
+                                    setUser(null)
+                                }
+                            }
+                        ])
+                    }} style={{backgroundColor : 'red',width : '100%',paddingVertical : 10,marginVertical : 20}}>
+                        <Text style={{color : 'white',textAlign : 'center'}}>Delete Account</Text>
+                    </TouchableOpacity>
                 </VStack>
             </ScrollView>
         </NativeBaseProvider>

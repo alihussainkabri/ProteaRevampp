@@ -14,7 +14,7 @@ const VerifyOTP = ({ navigation, route }) => {
 
     const [otp, setOtp] = useState("999999")
     const [loader, setLoader] = useState(false)
-    const { setUser } = useContext(userContext)
+    const { setUser,defaultUrl } = useContext(userContext)
 
     useEffect(() => {
         async function sendOTP() {
@@ -24,7 +24,7 @@ const VerifyOTP = ({ navigation, route }) => {
                 "EmpId": JSON.parse(route?.params?.data)?.EmpId
             });
 
-            const response = await fetch(url + 'Dashboard/SendOtp', {
+            const response = await fetch( "https://" + defaultUrl + '/api/Dashboard/SendOtp', {
                 method: 'POST',
                 headers: {
                     "Content-Type": 'application/json'
@@ -60,7 +60,7 @@ const VerifyOTP = ({ navigation, route }) => {
                 "Otp": otp
             });
 
-            const response = await fetch(url + 'Dashboard/CheckOTP', {
+            const response = await fetch("https://" + defaultUrl + '/api/Dashboard/CheckOTP', {
                 method: 'POST',
                 headers: {
                     "Content-Type": 'application/json'

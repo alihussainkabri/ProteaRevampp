@@ -1,4 +1,4 @@
-import { Dimensions, Image, ImageBackground, PermissionsAndroid, StatusBar, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
+import { Dimensions, Image, ImageBackground, KeyboardAvoidingView, PermissionsAndroid, Platform, ScrollView, StatusBar, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { HStack, Input, NativeBaseProvider, Stack, Text, TextArea, VStack } from 'native-base';
 import { Ionicons, AntDesign } from 'react-native-vector-icons'
@@ -9,10 +9,11 @@ import { launchCamera } from 'react-native-image-picker';
 import Toast from 'react-native-root-toast';
 import Geolocation from '@react-native-community/geolocation'
 import Loader from '../component/Loader';
+import { useHeaderHeight } from '@react-navigation/elements'
 
 const MobilePunch = ({ navigation }) => {
 
-    const { user } = useContext(userContext)
+    const { user, defaultUrl } = useContext(userContext)
     const [img, setImg] = useState('')
     const [remark, setRemark] = useState('')
     const [loader, setLoader] = useState(false)
@@ -20,15 +21,21 @@ const MobilePunch = ({ navigation }) => {
     const [longitude, setLongitude] = useState('')
 
     useEffect(() => {
-        PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then(result => {
-            console.log(result)
-            if (result == PermissionsAndroid.RESULTS.GRANTED) {
-                Geolocation.getCurrentPosition(info => {
-                    console.log('geo info', info)
-                    setLatitude(info.coords.latitude)
-                    setLongitude(info.coords.longitude)
-                })
-            }
+        // PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then(result => {
+        //     console.log(result)
+        //     if (result == PermissionsAndroid.RESULTS.GRANTED) {
+        //         Geolocation.getCurrentPosition(info => {
+        //             console.log('geo info', info)
+        //             setLatitude(info.coords.latitude)
+        //             setLongitude(info.coords.longitude)
+        //         })
+        //     }
+        // })
+
+        Geolocation.getCurrentPosition(info => {
+            console.log('geo info', info)
+            setLatitude(info.coords.latitude)
+            setLongitude(info.coords.longitude)
         })
     }, [])
 
@@ -41,7 +48,7 @@ const MobilePunch = ({ navigation }) => {
                 "CompanyId": user?.EmployeeDetails?.CompanyId,
             });
 
-            const response = await fetch(url + 'Dashboard/GetImages', {
+            const response = await fetch("https://" + defaultUrl + '/api/Dashboard/GetImages', {
                 method: 'POST',
                 headers: {
                     "Content-Type": 'application/json'
@@ -104,6 +111,8 @@ const MobilePunch = ({ navigation }) => {
                 includeBase64: true
             }
 
+            console.log('hy')
+
             launchCamera(options, async (response) => {
                 if (response?.assets?.length > 0) {
 
@@ -132,7 +141,7 @@ const MobilePunch = ({ navigation }) => {
                         "EmpImage": response.assets[0].base64
                     });
 
-                    const response1 = await fetch(url + 'PunchInout/PunchIn', {
+                    const response1 = await fetch("https://" + defaultUrl + '/api/PunchInout/PunchIn', {
                         method: 'POST',
                         headers: {
                             "Content-Type": 'application/json'
@@ -142,6 +151,8 @@ const MobilePunch = ({ navigation }) => {
 
                     if (response1.ok == true) {
                         const data = await response1.json()
+
+                        console.log(data)
 
                         if (data?.Message == 'Success') {
                             Toast.show(operation == 1 ? 'Punch in successfull' : 'Punch out successfull', {
@@ -173,59 +184,65 @@ const MobilePunch = ({ navigation }) => {
         }
     }
 
+    const headerHight = useHeaderHeight()
+
     return (
         <NativeBaseProvider>
             {loader && <Loader />}
 
             <StatusBar translucent backgroundColor='transparent' />
-            <ImageBackground source={require('../assets/images/punch-BG.png')} style={styles.titleBG} resizeMode='stretch'>
-                <HStack alignItems='center' justifyContent='space-between' mt={12 + StatusBar.currentHeight}>
-                    <HStack alignItems='center'>
-                        <TouchableOpacity onPress={() => navigation.openDrawer()}>
-                            <Ionicons name="md-menu-sharp" size={32} color="white" />
-                        </TouchableOpacity>
+            <KeyboardAvoidingView style={{ flex: 1 }} keyboardVerticalOffset={headerHight + (Dimensions.get('window').height / 100) * 10} behavior={Platform.OS === 'ios' ? 'padding' : 'position' + 1}>
+                <ScrollView>
+                    <ImageBackground source={require('../assets/images/punch-BG.png')} style={styles.titleBG} resizeMode='stretch'>
+                        <HStack alignItems='center' justifyContent='space-between' mt={12 + StatusBar.currentHeight}>
+                            <HStack alignItems='center'>
+                                <TouchableOpacity onPress={() => navigation.openDrawer()}>
+                                    <Ionicons name="md-menu-sharp" size={32} color="white" />
+                                </TouchableOpacity>
 
-                        <Text fontFamily={fonts.PopSB} fontSize={26} ml={7} color='white'>Mobile Punch</Text>
-                    </HStack>
+                                <Text fontFamily={fonts.PopSB} fontSize={26} ml={7} color='white'>Mobile Punch</Text>
+                            </HStack>
 
-                    <TouchableOpacity>
-                        <Image source={require('../assets/icons/QR.png')} style={{ width: 26, height: 26 }} />
-                    </TouchableOpacity>
-                </HStack>
+                            <TouchableOpacity onPress={() => alert('Feature will coming soon')}>
+                                <Image source={require('../assets/icons/QR.png')} style={{ width: 26, height: 26 }} />
+                            </TouchableOpacity>
+                        </HStack>
 
-                <View style={styles.imgView}>
-                    {img?.UserImage ? <Image source={{ uri: `data:image/png;base64,${img?.UserImage}` }} style={styles.img} /> :
-                        <AntDesign name="user" size={60} color="white" />
-                    }
-                </View>
-                <Text fontFamily={fonts.PopB} textAlign='center' fontSize={26} color='white' mb={7}>{user?.Name}</Text>
-            </ImageBackground>
+                        <View style={styles.imgView}>
+                            {img?.UserImage ? <Image source={{ uri: `data:image/png;base64,${img?.UserImage}` }} style={styles.img} /> :
+                                <AntDesign name="user" size={60} color="white" />
+                            }
+                        </View>
+                        <Text fontFamily={fonts.PopB} textAlign='center' fontSize={26} color='white' mb={7}>{user?.Name}</Text>
+                    </ImageBackground>
 
-            <View style={{ backgroundColor: '#0F74B3' }}>
-                <VStack backgroundColor='white' borderTopLeftRadius='65px' px={5} pt={10}>
-                    <Stack borderBottomColor='gray.400' borderBottomWidth={2} w='100%'>
-                        <Input
-                            value={remark}
-                            onChangeText={setRemark}
-                            placeholder="Enter Your Remark"
-                            style={{ fontFamily: fonts.PopM, fontSize: 16, maxHeight: 100, paddingBottom: 6 }}
-                            multiline={true}
-                            variant='unstyled'
-                            InputLeftElement={<Image source={require('../assets/icons/input-icon.png')} style={{ width: 20, height: undefined, aspectRatio: 1, alignSelf: 'flex-start', marginTop: 12 }} />}
-                        />
-                    </Stack>
+                    <View style={{ backgroundColor: '#0F74B3' }}>
+                        <VStack backgroundColor='white' borderTopLeftRadius='65px' px={5} pt={10}>
+                            <Stack borderBottomColor='gray.400' borderBottomWidth={2} w='100%'>
+                                <Input
+                                    value={remark}
+                                    onChangeText={setRemark}
+                                    placeholder="Enter Your Remark"
+                                    style={{ fontFamily: fonts.PopM, fontSize: 16, maxHeight: 100, paddingBottom: 6 }}
+                                    multiline={true}
+                                    variant='unstyled'
+                                    InputLeftElement={<Image source={require('../assets/icons/input-icon.png')} style={{ width: 20, height: undefined, aspectRatio: 1, alignSelf: 'flex-start', marginTop: 12 }} />}
+                                />
+                            </Stack>
 
-                    <HStack mt={12} justifyContent='space-between'>
-                        <TouchableOpacity onPress={() => capturePunchImage(1)}>
-                            <Image source={require('../assets/images/punch-in.png')} style={styles.puchBTN} />
-                        </TouchableOpacity>
+                            <HStack mt={12} justifyContent='space-between'>
+                                <TouchableOpacity onPress={() => capturePunchImage(1)}>
+                                    <Image source={require('../assets/images/punch-in.png')} style={styles.puchBTN} />
+                                </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => capturePunchImage(2)}>
-                            <Image source={require('../assets/images/punch-out.png')} style={styles.puchBTN} />
-                        </TouchableOpacity>
-                    </HStack>
-                </VStack>
-            </View>
+                                <TouchableOpacity onPress={() => capturePunchImage(2)}>
+                                    <Image source={require('../assets/images/punch-out.png')} style={styles.puchBTN} />
+                                </TouchableOpacity>
+                            </HStack>
+                        </VStack>
+                    </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </NativeBaseProvider>
     )
 }

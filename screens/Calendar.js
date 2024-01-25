@@ -11,7 +11,7 @@ import Loader from '../component/Loader';
 
 const Calendar = ({ navigation }) => {
 
-    const { user } = useContext(userContext)
+    const { user,defaultUrl } = useContext(userContext)
     const [loader, setLoader] = useState(false)
     const [calendarData, setCalendarData] = useState('')
 
@@ -22,7 +22,7 @@ const Calendar = ({ navigation }) => {
             "EmpId": user?.EmpId
         });
 
-        const response = await fetch(url + 'Dashboard/GetCalendarData', {
+        const response = await fetch("https://" + defaultUrl + '/api/Dashboard/GetCalendarData', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'
@@ -165,7 +165,7 @@ const Calendar = ({ navigation }) => {
                     <Text fontFamily={fonts.PopSB} fontSize={24} ml={6} color='white'>Calendar</Text>
                 </HStack>
 
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => alert('Feature will coming soon')}>
                     <Image source={require('../assets/icons/QR.png')} style={{ width: 26, height: 26 }} />
                 </TouchableOpacity>
             </HStack>
