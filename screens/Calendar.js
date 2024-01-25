@@ -88,43 +88,10 @@ const Calendar = ({ navigation }) => {
 
     function renderItems(val) {
         console.log(val)
-        // alert('hy')
-        // console.log('ye hai',items)
-        // return (
-        //     <View style={[styles.items]}>
-        //         {}
-        //     </View>
-        // );
-        if (val.InTime) {
-            return (
-                <View style={[styles.items]}>
-                    <Text style={styles.event}>
-                        <FontAwesome
-                            style={{ color: "#2ECC71", fontSize: 17 }}
-                            name="sign-in"
-                        />
-                        {val.InTime}
-                    </Text>
-                </View>
-            );
-        }
-        if (val.OutTime) {
-            return (
-                <View style={[styles.items]}>
-                    <Text style={styles.event}>
-                        <FontAwesome
-                            style={{ color: "#EC7063", fontSize: 17 }}
-                            name="sign-out"
-                        />
-                        {" "}
-                        {val.OutTime}
-                    </Text>
-                </View>
-            );
-        }
-        if (val.Title) {
-            return (
-                <View style={[styles.items]}>
+        return (
+            <View style={styles.items}>
+                {val.Title &&
+
                     <Text style={styles.event}>
                         <Entypo
                             style={{ color: "#7FB3D5", fontSize: 17 }}
@@ -133,12 +100,32 @@ const Calendar = ({ navigation }) => {
                         {" "}
                         {val.Title}
                     </Text>
-                </View>
-            );
-        }
-        if (val.Birthday) {
-            return (
-                <View style={[styles.items]}>
+                }
+
+                {val.InTime &&
+
+                    <Text style={styles.event}>
+                        <FontAwesome
+                            style={{ color: "#2ECC71", fontSize: 17 }}
+                            name="sign-in"
+                        />
+                        <Text style={{ marginLeft: 6 }}>{val.InTime}</Text>
+                    </Text>
+                }
+
+                {val.OutTime &&
+
+                    <Text style={styles.event}>
+                        <FontAwesome
+                            style={{ color: "#EC7063", fontSize: 17 }}
+                            name="sign-out"
+                        />
+                        {" "}
+                        {val.OutTime}
+                    </Text>
+                }
+
+                {val.Birthday &&
                     <Text style={styles.event}>
                         <MaterialIcons
                             style={{ color: "#F8C471", fontSize: 17 }}
@@ -147,12 +134,9 @@ const Calendar = ({ navigation }) => {
                         {" "}
                         {val.Birthday}
                     </Text>
-                </View>
-            );
-        }
-        if (val?.Anniversary) {
-            return (
-                <View style={[styles.items]}>
+                }
+
+                {val?.Anniversary &&
                     <Text style={styles.event}>
                         <FontAwesome
                             style={{ color: "#BB8FCE", fontSize: 17 }}
@@ -161,9 +145,9 @@ const Calendar = ({ navigation }) => {
                         {" "}
                         {val.Anniversary}
                     </Text>
-                </View>
-            );
-        }
+                }
+            </View >
+        );
     }
 
     return (
@@ -188,6 +172,7 @@ const Calendar = ({ navigation }) => {
 
             <View style={{ flex: 1, alignItems: 'center' }}>
                 <Agenda
+                    showClosingKnob
                     items={calendarData}
                     // //loadItemsForMonth={month => {this.loadItems.bind(this)}}
                     renderItem={renderItems}

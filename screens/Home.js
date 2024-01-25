@@ -433,6 +433,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 12,
     marginBottom: 14,
+    minHeight: 60,
+    justifyContent:'center',
   },
 })
 
