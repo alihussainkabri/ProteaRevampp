@@ -155,70 +155,70 @@ const CreateLeave = ({ navigation }) => {
     }, [leaveDuration, fromDate, toDate, fromEntire, toEntire])
 
 
-    async function submitLeave() {
-        setLoader(true)
+    // async function submitLeave() {
+    //     setLoader(true)
 
-        var raw = JSON.stringify({
-            "Id": 0,
-            "EmpId": user?.EmpId,
-            "LeaveDuration": leaveDuration,
-            "LeaveFrom": fromDate,
-            "LeaveTo": toDate ? toDate : fromDate,
-            "FromDateSection": "",
-            "ToDateSection": "2020-10-08",
-            "NoOfDaysr": 0.5,
-            "LocumId": user?.EmpId,
-            "ELId": 44,
-            "LeaveTypeId": 7,
-            "RId": 24,
-            "Reason": "Personal Leave",
-            "ContactNo": "8849999698",
-            "DB": false,
-            "UserId": 1021,
-            "UserOSId": 0,
-            "UserCId": 0,
-            "Offset": "+05:30",
-            "TraingDetails": null,
-            "TraingSubject": null,
-            "DateOfDeath": "2020-10-08",
-            "ExpectedDateofDelivery": "2020-10-08",
-            "ShortLeaveTime": null,
-            "DateofTransfer": null,
-            "ShortLeaveZone": null,
-            "DoctorsCertificateFilePath": null,
-            "ExtensionOfLeave": false,
-            "ReductionOfLeave": false,
-            "LeaveCancellationAllowed": false
-
-
-
-        });
-
-        const response = await fetch("https://" + defaultUrl + '/api/LeaveRequests/AddLeaveRequest', {
-            method: 'POST',
-            headers: {
-                "Content-Type": 'application/json'
-            },
-            body: raw
-        })
-
-        if (response.ok == true) {
-            const data = await response.json()
-            // console.log('leave types', data)
-
-            setAllLeaveType(data)
-            setLoader(false)
-
-        } else {
-            Toast.show('Internal server error', {
-                duration: 3000,
-            })
-            setLoader(false)
-        }
+    //     var raw = JSON.stringify({
+    //         "Id": 0,
+    //         "EmpId": user?.EmpId,
+    //         "LeaveDuration": leaveDuration,
+    //         "LeaveFrom": fromDate,
+    //         "LeaveTo": toDate ? toDate : fromDate,
+    //         "FromDateSection": "",
+    //         "ToDateSection": "2020-10-08",
+    //         "NoOfDaysr": 0.5,
+    //         "LocumId": user?.EmpId,
+    //         "ELId": 44,
+    //         "LeaveTypeId": 7,
+    //         "RId": 24,
+    //         "Reason": "Personal Leave",
+    //         "ContactNo": "8849999698",
+    //         "DB": false,
+    //         "UserId": 1021,
+    //         "UserOSId": 0,
+    //         "UserCId": 0,
+    //         "Offset": "+05:30",
+    //         "TraingDetails": null,
+    //         "TraingSubject": null,
+    //         "DateOfDeath": "2020-10-08",
+    //         "ExpectedDateofDelivery": "2020-10-08",
+    //         "ShortLeaveTime": null,
+    //         "DateofTransfer": null,
+    //         "ShortLeaveZone": null,
+    //         "DoctorsCertificateFilePath": null,
+    //         "ExtensionOfLeave": false,
+    //         "ReductionOfLeave": false,
+    //         "LeaveCancellationAllowed": false
 
 
 
-    }
+    //     });
+
+    //     const response = await fetch("https://" + defaultUrl + '/api/LeaveRequests/AddLeaveRequest', {
+    //         method: 'POST',
+    //         headers: {
+    //             "Content-Type": 'application/json'
+    //         },
+    //         body: raw
+    //     })
+
+    //     if (response.ok == true) {
+    //         const data = await response.json()
+    //         // console.log('leave types', data)
+
+    //         setAllLeaveType(data)
+    //         setLoader(false)
+
+    //     } else {
+    //         Toast.show('Internal server error', {
+    //             duration: 3000,
+    //         })
+    //         setLoader(false)
+    //     }
+
+
+
+    // }
 
     // function calculateNoOfDays(FirstDayLeaveType, LastDayLeaveType) {
     //     const date1 = new Date(fromDate);

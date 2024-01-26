@@ -20,6 +20,8 @@ import ListOfEHCRequests from '../screens/Requests/EHC OT/ListOfEHCRequests';
 import CreateEHCRequest from '../screens/Requests/EHC OT/CreateEHCRequest';
 import CreateCOffRequest from '../screens/Requests/C_Off/CreateCOffRequest';
 import ListOfCOffRequests from '../screens/Requests/C_Off/ListOfCOffRequests';
+import BookSeat from '../screens/BookSeat';
+import ViewSeats from '../screens/ViewSeats';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -77,6 +79,22 @@ function RequestStack() {
             <Stack.Screen name="CreateEHCRequest" component={CreateEHCRequest} />
             <Stack.Screen name="ListOfCOffRequests" component={ListOfCOffRequests} />
             <Stack.Screen name="CreateCOffRequest" component={CreateCOffRequest} />
+        </Stack.Navigator>
+    )
+}
+
+function BookSeatStack() {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerShown: false,
+                contentStyle: {
+                    backgroundColor: 'white'
+                }
+            }}
+        >
+            <Stack.Screen name="Request" component={BookSeat} />
+            <Stack.Screen name="ViewSeats" component={ViewSeats} />
         </Stack.Navigator>
     )
 }
@@ -145,6 +163,17 @@ export default function DrawerNavigator() {
                     ),
                     drawerItemStyle: { paddingHorizontal: 16, },
                     title: 'Request',
+                    sceneContainerStyle: { backgroundColor: 'white' }
+                }}
+            />
+
+            <Drawer.Screen name="BookSeat" component={BookSeatStack}
+                options={{
+                    drawerIcon: ({ color }) => (
+                        <Image style={{ tintColor: color, width: 20, height: undefined, aspectRatio: 1 }} source={require('../assets/icons/book-seat.png')} />
+                    ),
+                    drawerItemStyle: { paddingHorizontal: 16, },
+                    title: 'Book Seat',
                     sceneContainerStyle: { backgroundColor: 'white' }
                 }}
             />
