@@ -7,10 +7,11 @@ import { fonts } from '../../../config/Fonts';
 import { url, getConvertDate } from '../../../helpers';
 import { userContext } from '../../../context/UserContext';
 import DateTimePickerModal from "react-native-modal-datetime-picker"
+import Toast from 'react-native-root-toast';
 
 const CreateLeave = ({ navigation }) => {
 
-    const { user,defaultUrl } = useContext(userContext)
+    const { user, defaultUrl } = useContext(userContext)
     const [loader, setLoader] = useState(false)
     const [leaveBalance, setLeaveBalance] = useState('')
     const [leaveDuration, setLeaveDuration] = useState('First Half')
@@ -27,6 +28,8 @@ const CreateLeave = ({ navigation }) => {
     const [showReason, setShowReason] = useState(false);
     const [allReasons, setAllReasons] = useState('');
     const [particularReason, setParticularReason] = useState('');
+    const [writtenReason, setWrittenReason] = useState('');
+    const [contactNumber, setContactNumber] = useState('');
 
     useEffect(() => {
         async function fetchLeaveBalance() {
@@ -103,11 +106,13 @@ const CreateLeave = ({ navigation }) => {
         var raw = JSON.stringify({
             "EmpId": user?.EmpId,
             "FromDate": fromDate,
-            "ToDate": toDate
+            "ToDate": toDate ? toDate : fromDate
 
         });
 
-        const response = await fetch("https://" + defaultUrl  + '/api/LeaveRequests/GetApplicableLeaveTypeBasedOnDates', {
+        console.log("empid: ", user.EmpId, 'fromdate : ', fromDate, 'toDate : ', toDate)
+
+        const response = await fetch("https://" + defaultUrl + '/api/LeaveRequests/GetApplicableLeaveTypeBasedOnDates', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'
@@ -117,7 +122,7 @@ const CreateLeave = ({ navigation }) => {
 
         if (response.ok == true) {
             const data = await response.json()
-            // console.log('leave types', data)
+            // console.warn('leave types :', data)
 
             setAllLeaveType(data)
             setLoader(false)
@@ -150,75 +155,110 @@ const CreateLeave = ({ navigation }) => {
         setToDateCalendarShow(false);
     };
 
+    async function fetchLeaveDays() {
+        setLoader(true)
+
+        var raw = JSON.stringify({
+            "EmpId": user?.EmpId,
+            "FromDate": fromDate,
+            "ToDate": toDate ? toDate : fromDate,
+
+            "LeaveDuration": leaveDuration,
+            "FromDateSection": fromEntire,
+            "ToDateSection": toEntire,
+            "ELId": particularLeaveType?.ELId,
+            "LeaveTypeId": particularLeaveType?.LeaveTypeId
+
+        });
+
+        console.log("raw is here:", raw)
+
+        const response = await fetch("https://" + defaultUrl + '/api/LeaveRequests/CalculateLeaves', {
+            method: 'POST',
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body: raw
+        })
+
+        if (response.ok == true) {
+            const data = await response.json()
+
+            setNoOfDays(data)
+            setLoader(false)
+
+        } else {
+            Toast.show('Internal server error', {
+                duration: 3000,
+            })
+            setLoader(false)
+        }
+    }
+
     useEffect(() => {
-        console.log('from date: ', fromDate, 'to date:', toDate)
-    }, [leaveDuration, fromDate, toDate, fromEntire, toEntire])
+        fetchLeaveDays()
+    }, [leaveDuration, fromDate, toDate, fromEntire, toEntire, particularLeaveType])
 
 
-    // async function submitLeave() {
-    //     setLoader(true)
+    async function submitLeave() {
+        setLoader(true)
 
-    //     var raw = JSON.stringify({
-    //         "Id": 0,
-    //         "EmpId": user?.EmpId,
-    //         "LeaveDuration": leaveDuration,
-    //         "LeaveFrom": fromDate,
-    //         "LeaveTo": toDate ? toDate : fromDate,
-    //         "FromDateSection": "",
-    //         "ToDateSection": "2020-10-08",
-    //         "NoOfDaysr": 0.5,
-    //         "LocumId": user?.EmpId,
-    //         "ELId": 44,
-    //         "LeaveTypeId": 7,
-    //         "RId": 24,
-    //         "Reason": "Personal Leave",
-    //         "ContactNo": "8849999698",
-    //         "DB": false,
-    //         "UserId": 1021,
-    //         "UserOSId": 0,
-    //         "UserCId": 0,
-    //         "Offset": "+05:30",
-    //         "TraingDetails": null,
-    //         "TraingSubject": null,
-    //         "DateOfDeath": "2020-10-08",
-    //         "ExpectedDateofDelivery": "2020-10-08",
-    //         "ShortLeaveTime": null,
-    //         "DateofTransfer": null,
-    //         "ShortLeaveZone": null,
-    //         "DoctorsCertificateFilePath": null,
-    //         "ExtensionOfLeave": false,
-    //         "ReductionOfLeave": false,
-    //         "LeaveCancellationAllowed": false
+        var raw = JSON.stringify({
+            "Id": 0,
+            "EmpId": user?.EmpId,
+            "LeaveDuration": leaveDuration,
+            "LeaveFrom": fromDate,
+            "LeaveTo": toDate ? toDate : fromDate,
+            "FromDateSection": fromEntire,
+            "ToDateSection": toEntire,
+            "NoOfDaysr": noOfDays?.noOfDays,
+            "LocumId": user?.EmpId,
+            "ELId": particularLeaveType?.ELId,
+            "LeaveTypeId": particularLeaveType?.LeaveTypeId,
+            "RId": particularReason?.RId,
+            "Reason": writtenReason,
+            "ContactNo": contactNumber,
+            "DB": false,
+            "UserId": user?.EmpId,
+            "UserOSId": 0,
+            "UserCId": 0,
+            "Offset": "+05:30",
+            "TraingDetails": null,
+            "TraingSubject": null,
+            "DateOfDeath": "null",
+            "ExpectedDateofDelivery": "null",
+            "ShortLeaveTime": null,
+            "DateofTransfer": null,
+            "ShortLeaveZone": null,
+            "DoctorsCertificateFilePath": null,
+            "ExtensionOfLeave": false,
+            "ReductionOfLeave": false,
+            "LeaveCancellationAllowed": false
+        });
 
+        // console.log('leave consoled', raw)
 
+        const response = await fetch("https://" + defaultUrl + '/api/LeaveRequests/AddLeaveRequest', {
+            method: 'POST',
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body: raw
+        })
 
-    //     });
+        if (response.ok == true) {
+            const data = await response.json()
+            Toast.show(data?.error_msg ? data?.error_msg : 'Leave Request Has Been Submitted')
+            setLoader(false)
 
-    //     const response = await fetch("https://" + defaultUrl + '/api/LeaveRequests/AddLeaveRequest', {
-    //         method: 'POST',
-    //         headers: {
-    //             "Content-Type": 'application/json'
-    //         },
-    //         body: raw
-    //     })
+        } else {
+            Toast.show('Internal server error', {
+                duration: 3000,
+            })
+            setLoader(false)
+        }
+    }
 
-    //     if (response.ok == true) {
-    //         const data = await response.json()
-    //         // console.log('leave types', data)
-
-    //         setAllLeaveType(data)
-    //         setLoader(false)
-
-    //     } else {
-    //         Toast.show('Internal server error', {
-    //             duration: 3000,
-    //         })
-    //         setLoader(false)
-    //     }
-
-
-
-    // }
 
     // function calculateNoOfDays(FirstDayLeaveType, LastDayLeaveType) {
     //     const date1 = new Date(fromDate);
@@ -361,7 +401,7 @@ const CreateLeave = ({ navigation }) => {
                     <VStack>
                         <Text style={styles.label}>Select Leave Type</Text>
                         <TouchableOpacity onPress={() => setShowLeaveType(true)} style={styles.selectDate}>
-                            <Text style={styles.placeHolder}>{particularLeaveType ? particularLeaveType?.RDescription : 'Select Leave Type'}</Text>
+                            <Text style={styles.placeHolder}>{particularLeaveType ? particularLeaveType?.LeaveType : 'Select Leave Type'}</Text>
                             <Entypo name="chevron-small-down" size={24} color="#737373" />
                         </TouchableOpacity>
 
@@ -372,7 +412,7 @@ const CreateLeave = ({ navigation }) => {
                                         setParticularLeaveType(item)
                                         setShowLeaveType(false)
                                     }}>
-                                        <Text fontSize={16} fontFamily={fonts.UrbanSB}>{item?.RDescription}</Text>
+                                        <Text fontSize={16} fontFamily={fonts.UrbanSB}>{item?.LeaveType}</Text>
                                     </Actionsheet.Item>
 
                                 )) : <Actionsheet.Item>No data found</Actionsheet.Item>}
@@ -383,13 +423,13 @@ const CreateLeave = ({ navigation }) => {
                     <VStack>
                         <Text style={styles.label}>Number Of Days</Text>
                         <TouchableOpacity disabled style={styles.selectDate}>
-                            <Text style={styles.placeHolder}>{noOfDays}</Text>
+                            <Text style={styles.placeHolder}>{noOfDays?.NoOfDays ? noOfDays?.NoOfDays : 1}</Text>
                         </TouchableOpacity>
                     </VStack>
 
                     <VStack>
                         <Text style={styles.label}>Contact Number While On Leave</Text>
-                        <Input variant='outline' style={styles.inputView} borderColor='#1875e2' borderRadius={2} py={1.5} keyboardType='phone-pad' />
+                        <Input variant='outline' style={styles.inputView} borderColor='#1875e2' borderRadius={2} py={1.5} keyboardType='phone-pad' value={contactNumber} onChangeText={setContactNumber} />
                     </VStack>
 
                     <VStack>
@@ -416,7 +456,7 @@ const CreateLeave = ({ navigation }) => {
 
                     <VStack>
                         <Text style={styles.label}>Enter Reason</Text>
-                        <Input variant='outline' style={[styles.inputView, { maxHeight: 100 }]} borderColor='#1875e2' borderRadius={2} py={1.5} multiline />
+                        <Input variant='outline' style={[styles.inputView, { maxHeight: 100 }]} borderColor='#1875e2' borderRadius={2} py={1.5} multiline value={writtenReason} onChangeText={setWrittenReason} />
                     </VStack>
 
                     <HStack mt={4} space={2} mb={2}>
@@ -424,7 +464,7 @@ const CreateLeave = ({ navigation }) => {
                             <Text style={{ color: '#cf0101' }} fontSize={17} textAlign='center' fontFamily={fonts.PopM}>Cancel</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={[styles.btn, { backgroundColor: '#1875e2' }]}>
+                        <TouchableOpacity onPress={submitLeave} style={[styles.btn, { backgroundColor: '#1875e2' }]}>
                             <Text color='white' fontSize={17} textAlign='center' fontFamily={fonts.PopM}>Submit</Text>
                         </TouchableOpacity>
                     </HStack>
