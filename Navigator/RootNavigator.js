@@ -10,7 +10,6 @@ const Stack = createNativeStackNavigator();
 const RootNavigator = () => {
 
     const { user } = useContext(userContext)
-    console.log(user)
 
     return (
         <Stack.Navigator screenOptions={{

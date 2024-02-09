@@ -162,13 +162,11 @@ const CreateLeave = ({ navigation }) => {
             "EmpId": user?.EmpId,
             "FromDate": fromDate,
             "ToDate": toDate ? toDate : fromDate,
-
             "LeaveDuration": leaveDuration,
             "FromDateSection": fromEntire,
             "ToDateSection": toEntire,
             "ELId": particularLeaveType?.ELId,
             "LeaveTypeId": particularLeaveType?.LeaveTypeId
-
         });
 
         console.log("raw is here:", raw)

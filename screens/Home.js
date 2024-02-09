@@ -1,4 +1,4 @@
-import { View, TouchableOpacity, StatusBar, ImageBackground, StyleSheet, Dimensions, Image, ScrollView, Linking } from 'react-native'
+import { View, TouchableOpacity, StatusBar, ImageBackground, StyleSheet, Dimensions, Image, ScrollView, Linking, Platform, Alert } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { Entypo, Ionicons } from 'react-native-vector-icons'
 import { HStack, NativeBaseProvider, Text, VStack } from 'native-base'
@@ -8,6 +8,7 @@ import Toast from 'react-native-root-toast'
 import { url } from '../helpers'
 import LinearGradient from 'react-native-linear-gradient'
 import Loader from '../component/Loader'
+import VersionInfo from 'react-native-version-info';
 
 const Home = ({ navigation }) => {
 
@@ -17,7 +18,7 @@ const Home = ({ navigation }) => {
   const [birthDays, setBirthdays] = useState([])
   const [anniversary, setAnniversary] = useState([])
   const [events, setEvents] = useState('')
-  const { user,defaultUrl } = useContext(userContext)
+  const { user, defaultUrl } = useContext(userContext)
 
   useEffect(() => {
 
@@ -137,11 +138,39 @@ const Home = ({ navigation }) => {
       }
     }
 
+    async function checkCompatible() {
+      const response = await fetch("https://" + defaultUrl + '/api/Login/GetVersion');
+      if (response.ok == true) {
+        const data = await response.json();
+        const appVersion = VersionInfo.appVersion
+
+        console.log('app version here: ', appVersion)
+        console.log('app data version here: ', data[0]?.AndroidVersion)
+
+        if (Platform.OS == 'ios' && appVersion < data[0]?.IOSVersion) {
+          Alert.alert('New Update', 'A new update is available. Update now to use the application', [
+            {
+              text: 'Update',
+              onPress: () => Linking.openURL('https://apps.apple.com/in/app/proteaess/id6446424855')
+            }
+          ])
+        } else if (Platform.OS == 'android' && appVersion < data[0]?.AndroidVersion) {
+          Alert.alert('New Update', 'A new update is available. Update now to use the application', [
+            {
+              text: 'Update',
+              onPress: () => Linking.openURL('https://play.google.com/store/apps/details?id=com.proteaESS')
+            }
+          ])
+        }
+      }
+    }
+
+    checkCompatible();
     fetchNotification();
     fetchMonthlySummary();
     fetchBirthdayAndWorkAnniversary();
     fetchEvents();
-    console.log('user data: ', user)
+    // console.log('user data: ', user)
   }, [])
 
   function openWhatsApp(Mobile, Name) {
@@ -434,7 +463,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     marginBottom: 14,
     minHeight: 60,
-    justifyContent:'center',
+    justifyContent: 'center',
   },
 })
 
