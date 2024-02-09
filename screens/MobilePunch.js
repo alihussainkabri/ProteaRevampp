@@ -108,7 +108,8 @@ const MobilePunch = ({ navigation }) => {
                     pathL: 'images'
                 },
                 cameraType: 'front',
-                includeBase64: true
+                includeBase64: true,
+                quality : 0.2
             }
 
             console.log('hy')
