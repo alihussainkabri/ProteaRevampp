@@ -27,6 +27,8 @@ const ListOfLeave = ({ navigation }) => {
                     <Entypo name="circle-with-plus" size={32} color="white" />
                 </TouchableOpacity>
             </HStack>
+
+            
         </NativeBaseProvider>
     )
 }

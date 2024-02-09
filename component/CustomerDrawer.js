@@ -54,8 +54,6 @@ const CustomDrawer = (props) => {
         }
 
         fetchImage()
-
-        console.log('i am user', user)
     }, [])
 
     async function LogoutAction() {
