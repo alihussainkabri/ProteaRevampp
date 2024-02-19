@@ -34,6 +34,7 @@ const MobilePunch = ({ navigation }) => {
 
         Geolocation.getCurrentPosition(info => {
             console.log('geo info', info)
+            console.log('geo info latitude', info.coords.latitude.toString())
             setLatitude(info.coords.latitude)
             setLongitude(info.coords.longitude)
         })

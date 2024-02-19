@@ -234,7 +234,7 @@ const CreateLeave = ({ navigation }) => {
             "LeaveCancellationAllowed": false
         });
 
-        // console.log('leave consoled', raw)
+        console.log('leave consoled', raw)
 
         const response = await fetch("https://" + defaultUrl + '/api/LeaveRequests/AddLeaveRequest', {
             method: 'POST',
@@ -246,6 +246,7 @@ const CreateLeave = ({ navigation }) => {
 
         if (response.ok == true) {
             const data = await response.json()
+            alert(data?.error_msg)
             Toast.show(data?.error_msg ? data?.error_msg : 'Leave Request Has Been Submitted')
             setLoader(false)
 

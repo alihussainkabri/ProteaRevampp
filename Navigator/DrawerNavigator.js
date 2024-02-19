@@ -22,6 +22,8 @@ import CreateCOffRequest from '../screens/Requests/C_Off/CreateCOffRequest';
 import ListOfCOffRequests from '../screens/Requests/C_Off/ListOfCOffRequests';
 import BookSeat from '../screens/BookSeat';
 import ViewSeats from '../screens/ViewSeats';
+import ParticularLeaveView from '../screens/Requests/Leave/ParticularLeaveView';
+import ParticularODRequestView from '../screens/Requests/On Duty/ParticularODRequestView';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -70,8 +72,10 @@ function RequestStack() {
         >
             <Stack.Screen name="Request" component={Request} />
             <Stack.Screen name="ListOfLeave" component={ListOfLeave} />
+            <Stack.Screen name="ParticularLeaveView" component={ParticularLeaveView} />
             <Stack.Screen name="CreateLeave" component={CreateLeave} />
             <Stack.Screen name="ListofOnDutyRequests" component={ListofOnDutyRequests} />
+            <Stack.Screen name="ParticularODRequestView" component={ParticularODRequestView} />
             <Stack.Screen name="CreateOnDutyRequest" component={CreateOnDutyRequest} />
             <Stack.Screen name="ListOfShiftChangeRequests" component={ListOfShiftChangeRequests} />
             <Stack.Screen name="CreateShiftChangeRequest" component={CreateShiftChangeRequest} />
