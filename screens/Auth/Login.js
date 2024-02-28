@@ -30,7 +30,7 @@ const Login = ({ navigation }) => {
         "imei": "f5252eba-c185-45a9-a4c5-1d094b8daf84"
       });
 
-      console.log("https://" + defaultUrl + '/LoginDetails/Post')
+      console.log('payload: ', raw, "API: ","https://" + defaultUrl + '/api/LoginDetails/Post')
 
       const response = await fetch("https://" + defaultUrl + '/api/LoginDetails/Post', {
         method: 'POST',
@@ -45,6 +45,7 @@ const Login = ({ navigation }) => {
 
         if (data?.EmpId) {
           navigation.navigate('VerifyOTP', { data: JSON.stringify(data) })
+          console.log("data: ",data)
           setLoader(false)
         } else {
           Toast.show(data?.error_msg, {

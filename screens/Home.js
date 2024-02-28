@@ -214,7 +214,7 @@ const Home = ({ navigation }) => {
               <Text style={styles.notificationTitle}>{item?.RequestType}</Text>
               <Text style={styles.notificationValueTxt}>{item?.NotificationCount}</Text>
             </HStack>
-          )) : <Text>no notification</Text>}
+          )) : <Text mt={5} fontFamily={fonts.PopM} color='white' textAlign='center'>No Notification Available</Text>}
         </ScrollView>
       </ImageBackground>
 

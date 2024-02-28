@@ -24,6 +24,9 @@ import BookSeat from '../screens/BookSeat';
 import ViewSeats from '../screens/ViewSeats';
 import ParticularLeaveView from '../screens/Requests/Leave/ParticularLeaveView';
 import ParticularODRequestView from '../screens/Requests/On Duty/ParticularODRequestView';
+import ListOfAttReg from '../screens/Requests/Attendance Regularization/ListOfAttReg';
+import ParticularAttRegRequest from '../screens/Requests/Attendance Regularization/ParticularAttRegRequest';
+import CreateAttRegRequest from '../screens/Requests/Attendance Regularization/CreateAttRegRequest';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -77,6 +80,9 @@ function RequestStack() {
             <Stack.Screen name="ListofOnDutyRequests" component={ListofOnDutyRequests} />
             <Stack.Screen name="ParticularODRequestView" component={ParticularODRequestView} />
             <Stack.Screen name="CreateOnDutyRequest" component={CreateOnDutyRequest} />
+            <Stack.Screen name="ListOfAttReg" component={ListOfAttReg} />
+            <Stack.Screen name="ParticularAttRegRequest" component={ParticularAttRegRequest} />
+            <Stack.Screen name="CreateAttRegRequest" component={CreateAttRegRequest} />
             <Stack.Screen name="ListOfShiftChangeRequests" component={ListOfShiftChangeRequests} />
             <Stack.Screen name="CreateShiftChangeRequest" component={CreateShiftChangeRequest} />
             <Stack.Screen name="ListOfEHCRequests" component={ListOfEHCRequests} />

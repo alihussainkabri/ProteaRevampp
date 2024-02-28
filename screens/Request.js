@@ -44,10 +44,10 @@ const Request = ({ navigation }) => {
                             <Image source={require('../assets/images/on-duty.png')} style={styles.summaryBlockImg} />
                         </TouchableOpacity>
 
-                        <VStack backgroundColor='rgba(179, 205, 224, .7)' style={styles.summaryBlock}>
+                        <TouchableOpacity onPress={() => navigation.navigate('ListOfAttReg')} style={[styles.summaryBlock, { backgroundColor: 'rgba(179, 205, 224, .7)' }]}>
                             <Text style={styles.summaryTitle}>Attendance Regularization</Text>
                             <Image source={require('../assets/images/attendance.png')} style={styles.summaryBlockImg} />
-                        </VStack>
+                        </TouchableOpacity>
 
                         <TouchableOpacity onPress={() => navigation.navigate('ListOfShiftChangeRequests')} style={[styles.summaryBlock, { backgroundColor: 'rgba(249, 244, 244, 1)' }]}>
                             <Text style={styles.summaryTitle}>Shift Change</Text>

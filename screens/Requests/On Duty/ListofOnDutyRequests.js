@@ -21,13 +21,12 @@ const ListofOnDutyRequests = ({ navigation }) => {
 
         var raw = JSON.stringify({
             "EmpId": user?.EmpId,
-            "ShiftDate": todayDate,
-            "UserId": user?.EmpId
+            "TODId": null
         });
 
         console.log("raw is here ok:", raw)
 
-        const response = await fetch("https://" + defaultUrl + '/api/OnDutyRequest/GetODRequest', {
+        const response = await fetch("https://" + defaultUrl + '/api/OnDutyRequest/GetOnDutyRequests', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'
@@ -38,7 +37,7 @@ const ListofOnDutyRequests = ({ navigation }) => {
         if (response.ok == true) {
             const data = await response.json()
 
-            setAllReqs(data?.slice(0, 10))
+            setAllReqs(data?.ODReqList?.slice(0, 10))
             setLoader(false)
 
         } else {
@@ -77,7 +76,7 @@ const ListofOnDutyRequests = ({ navigation }) => {
                     {allReqs?.length > 0 ? allReqs?.map((item, index) => (
                         <TouchableOpacity key={index} onPress={() => {
                             navigation.navigate('ParticularODRequestView', {
-                                TODId: item?.TODId
+                                item: item
                             })
                         }}>
                             <HStack bg='white' shadow={1} mx={3} mt={4} py={3} px={3}>

@@ -247,6 +247,7 @@ const CreateLeave = ({ navigation }) => {
         if (response.ok == true) {
             const data = await response.json()
             alert(data?.error_msg)
+            console.warn(data)
             Toast.show(data?.error_msg ? data?.error_msg : 'Leave Request Has Been Submitted')
             setLoader(false)
 

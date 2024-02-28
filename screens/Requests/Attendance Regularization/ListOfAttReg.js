@@ -7,24 +7,23 @@ import { fonts } from '../../../config/Fonts';
 import { userContext } from '../../../context/UserContext';
 import Toast from 'react-native-root-toast';
 
-const ListOfLeave = ({ navigation }) => {
-
+const ListOfAttReg = ({ navigation }) => {
     const [loader, setLoader] = useState(false)
     const { user, defaultUrl } = useContext(userContext)
-    const [leaves, setLeaves] = useState([])
+    const [allReqs, setAllReqs] = useState([])
 
 
-    async function fetchLeaves() {
+    async function fetchReqs() {
         setLoader(true)
 
         var raw = JSON.stringify({
             "EmpId": user?.EmpId,
-            "LRId": null
+            "TRegId": null
         });
 
         console.log("raw is here:", raw)
 
-        const response = await fetch("https://" + defaultUrl + '/api/LeaveRequests/GetLeaveRequest', {
+        const response = await fetch("https://" + defaultUrl + '/api/RegularizationRequest/GetRegularizationRequest', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'
@@ -35,8 +34,8 @@ const ListOfLeave = ({ navigation }) => {
         if (response.ok == true) {
             const data = await response.json()
 
-            console.log('all leaves', data?.LeaveReqList)
-            setLeaves(data?.LeaveReqList?.slice(0, 4)) //edit here
+            console.log('all reqs', data?.RegularizationReq)
+            setAllReqs(data?.RegularizationReq)
             setLoader(false)
 
         } else {
@@ -48,11 +47,10 @@ const ListOfLeave = ({ navigation }) => {
     }
 
     useEffect(() => {
-        // fetchLeaves(); //edit here
+        fetchReqs();
     }, [])
-
-    return (
-        <NativeBaseProvider>
+  return (
+    <NativeBaseProvider>
             {loader && <Loader />}
             <StatusBar translucent backgroundColor='transparent' />
 
@@ -62,24 +60,25 @@ const ListOfLeave = ({ navigation }) => {
                         <Ionicons name="md-menu-sharp" size={32} color="white" />
                     </TouchableOpacity>
 
-                    <Text fontFamily={fonts.PopSB} fontSize={22} ml={6} color='white'>Leave Requests</Text>
+                    <Text fontFamily={fonts.PopSB} fontSize={22} ml={6} color='white'>Att.Reg Requests</Text>
                 </HStack>
 
-                <TouchableOpacity onPress={() => navigation.navigate('CreateLeave')}>
+                <TouchableOpacity onPress={() => navigation.navigate('CreateAttRegRequest')}>
                     <Entypo name="circle-with-plus" size={32} color="white" />
                 </TouchableOpacity>
             </HStack>
 
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={{ marginBottom: 10 }}>
-                    {leaves?.length > 0 ? leaves?.map((item, index) => (
-                        <TouchableOpacity onPress={() => {
-                            navigation.navigate('ParticularLeaveView', {
+                    {allReqs?.length > 0 ? allReqs?.map((item, index) => (
+                        <TouchableOpacity key={index} onPress={() => {
+                            navigation.navigate('ParticularAttRegRequest', {
                                 item: item
                             })
                         }}>
                             <HStack bg='white' shadow={1} mx={3} mt={4} py={3} px={3}>
                                 <Image source={require('../../../assets/images/pending.png')} style={{ width: 36, height: 36, resizeMode: 'cover' }} />
+
                                 <VStack ml={4} flex={1}>
                                     <HStack alignItems='center' justifyContent='space-between'>
                                         <Text style={styles.T1}>From Date</Text>
@@ -102,25 +101,13 @@ const ListOfLeave = ({ navigation }) => {
                     )) :
                         <VStack flex={1} justifyContent='center' alignItems='center' mb={20}>
                             <AntDesign name="exclamationcircleo" size={72} color="gray" />
-                            <Text fontFamily={fonts.PopR} mx={20} mt={4} textAlign='center' color='gray' fontSize={18}>No Any Leave Request Available.</Text>
+                            <Text fontFamily={fonts.PopR} mx={20} mt={4} textAlign='center' color='gray' fontSize={18}>No Any Request Available.</Text>
                         </VStack>}
-
-                    <HStack>
-                        <VStack>
-                            <HStack>
-                                <Image source={require('../../../assets/images/pending.png')} style={{ width: 50, height: 50, resizeMode: 'cover' }} />
-                            </HStack>
-                        </VStack>
-
-                        <VStack>
-
-                        </VStack>
-                    </HStack>
                 </View>
             </ScrollView>
 
         </NativeBaseProvider>
-    )
+  )
 }
 
 const styles = StyleSheet.create({
@@ -137,4 +124,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default ListOfLeave;
+export default ListOfAttReg;

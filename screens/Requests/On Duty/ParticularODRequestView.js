@@ -14,43 +14,45 @@ const ParticularODRequestView = ({ navigation, route }) => {
     const [Detail, setDetail] = useState([])
     const [showModal, setShowModal] = useState(false);
     const [reason, setReason] = useState('');
+    const { item } = route?.params
 
-    async function fetchReqDetail() {
-        setLoader(true)
+    // async function fetchReqDetail() {
+    //     setLoader(true)
 
-        var raw = JSON.stringify({
-            "EmpId": user?.EmpId,
-            "TODId": route?.params?.TODId
-        });
+    //     var raw = JSON.stringify({
+    //         "EmpId": user?.EmpId,
+    //         "TODId": route?.params?.TODId
+    //     });
 
-        console.log("raw is here:", raw)
+    //     console.log("raw is here:", raw)
 
-        const response = await fetch("https://" + defaultUrl + '/api/OnDutyRequest/ViewPendingOnDutyRequest', {
-            method: 'POST',
-            headers: {
-                "Content-Type": 'application/json'
-            },
-            body: raw
-        })
+    //     const response = await fetch("https://" + defaultUrl + '/api/OnDutyRequest/ViewPendingOnDutyRequest', {
+    //         method: 'POST',
+    //         headers: {
+    //             "Content-Type": 'application/json'
+    //         },
+    //         body: raw
+    //     })
 
-        if (response.ok == true) {
-            const data = await response.json()
+    //     if (response.ok == true) {
+    //         const data = await response.json()
 
-            console.log('REQ ka data', data?.LeaveReqList[0])
-            setDetail(data?.LeaveReqList[0])
-            setLoader(false)
+    //         console.log('REQ ka data', data?.LeaveReqList[0])
+    //         setDetail(data?.LeaveReqList[0])
+    //         setLoader(false)
 
-        } else {
-            Toast.show('Internal server error', {
-                duration: 3000,
-            })
-            setLoader(false)
-        }
-    }
+    //     } else {
+    //         Toast.show('Internal server error', {
+    //             duration: 3000,
+    //         })
+    //         setLoader(false)
+    //     }
+    // }
 
-    useEffect(() => {
-        fetchReqDetail();
-    }, [])
+    // useEffect(() => {
+    //     fetchReqDetail();
+    //     console.log(route?.params?.item)
+    // }, [])
 
     async function cancelLeave() {
         if (reason?.length > 0) {
@@ -58,8 +60,8 @@ const ParticularODRequestView = ({ navigation, route }) => {
 
             var raw = JSON.stringify({
                 "EmpId": user?.EmpId,
-                "requestId": route?.params?.LRId,
-                "RequestType": "LeaveRequest",
+                "requestId": item?.TODId,
+                "RequestType": "OnDutyRequests",
                 "Remark": reason
             });
 
@@ -109,58 +111,58 @@ const ParticularODRequestView = ({ navigation, route }) => {
                         <Ionicons name="md-menu-sharp" size={32} color="white" />
                     </TouchableOpacity>
 
-                    <Text fontFamily={fonts.PopSB} fontSize={22} ml={6} color='white'>Leave Detail</Text>
+                    <Text fontFamily={fonts.PopSB} fontSize={22} ml={6} color='white'>OD Request Detail</Text>
                 </HStack>
             </HStack>
 
             <ScrollView showsVerticalScrollIndicator={false} style={{ paddingTop: 10, marginTop: 10, paddingBottom: 200 }}>
                 <VStack px={4} mb={5}>
-                    <HStack style={styles.infoCard}>
+                    {/* <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
                             <Text style={styles.title}>Leave Type</Text>
                         </HStack>
                         <Text style={styles.value}>{Detail?.LeaveType}</Text>
-                    </HStack>
+                    </HStack> */}
 
                     <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
                             <Text style={styles.title}>Duration</Text>
                         </HStack>
-                        <Text style={styles.value}>{Detail?.LeaveDuration}</Text>
+                        <Text style={styles.value}>{item?.ReqType}</Text>
                     </HStack>
 
                     <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
-                            <Text style={styles.title}>From Date</Text>
+                            <Text style={styles.title}>Shift Date</Text>
                         </HStack>
-                        <Text style={styles.value}>{Detail?.LeaveFrom}</Text>
+                        <Text style={styles.value}>{item?.ShiftDate}</Text>
                     </HStack>
 
                     <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
-                            <Text style={styles.title}>To Date</Text>
+                            <Text style={styles.title}>Start Time</Text>
                         </HStack>
-                        <Text style={styles.value}>{Detail?.LeaveTo}</Text>
+                        <Text style={styles.value}>{item?.FromTime}</Text>
                     </HStack>
 
                     <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
-                            <Text style={styles.title}>Request Date</Text>
+                            <Text style={styles.title}>End Time</Text>
                         </HStack>
-                        <Text style={styles.value}>{Detail?.RequestDate}</Text>
+                        <Text style={styles.value}>{item?.ToTime}</Text>
                     </HStack>
 
                     <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
-                            <Text style={styles.title}>Total Days</Text>
+                            <Text style={styles.title}>Place</Text>
                         </HStack>
-                        <Text style={styles.value}>{Detail?.NoOfDaysr}</Text>
+                        <Text style={styles.value}>{item?.Place}</Text>
                     </HStack>
 
                     <HStack style={styles.infoCard}>
@@ -168,22 +170,22 @@ const ParticularODRequestView = ({ navigation, route }) => {
                             <Entypo name="v-card" size={20} color="black" />
                             <Text style={styles.title}>Reason</Text>
                         </HStack>
-                        <Text style={styles.value}>{Detail?.Reason}</Text>
+                        <Text style={styles.value}>{item?.ReasonTemplate}</Text>
                     </HStack>
 
                     <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
-                            <Text style={styles.title}>Status</Text>
+                            <Text style={styles.title}>Purpose</Text>
                         </HStack>
-                        <Text style={styles.value}>{Detail?.RequestStatus}</Text>
+                        <Text style={styles.value}>{item?.Remark}</Text>
                     </HStack>
 
-                    <TouchableOpacity
+                    {item?.ApprovalStatus == "Pending" && <TouchableOpacity
                         onPress={() => setShowModal(true)}
                         style={{ backgroundColor: 'red', width: '100%', paddingVertical: 10, marginVertical: 20 }}>
                         <Text style={{ color: 'white', textAlign: 'center' }}>Request For Cancellation</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity>}
                 </VStack>
 
                 <Modal isOpen={showModal} onClose={() => setShowModal(false)}>

@@ -148,7 +148,7 @@ const CreateOnDutyRequest = ({ navigation }) => {
       ]
     });
 
-    console.log('Request consoled here', raw)
+    console.warn('ODRequest consoled here', raw)
 
     const response = await fetch("https://" + defaultUrl + '/api/OnDutyRequest/AddOnDutyRequest', {
       method: 'POST',
@@ -161,7 +161,7 @@ const CreateOnDutyRequest = ({ navigation }) => {
     if (response.ok == true) {
       const data = await response.json()
       alert(data?.error_msg)
-      Toast.show(data?.error_msg ? data?.error_msg : 'Leave Request Has Been Submitted')
+      Toast.show(data?.error_msg ? data?.error_msg : 'Request Has Been Submitted')
       setLoader(false)
 
     } else {
@@ -191,17 +191,17 @@ const CreateOnDutyRequest = ({ navigation }) => {
           <Radio.Group name="RequestType" defaultValue={requestType} onChange={e => setRequestType(e)} accessibilityLabel="pick duration">
             <HStack justifyContent='space-between' alignItems='center' flexWrap='wrap'>
               <Stack w='50%' my={.5}>
-                <Radio value="1st Half" colorScheme="blue" size="sm" my={1}>
+                <Radio value="F" colorScheme="blue" size="sm" my={1}>
                   <Text fontFamily={fonts.UrbanM}>1st Half</Text>
                 </Radio>
               </Stack>
               <Stack w='50%' my={.5}>
-                <Radio value="2nd Half" colorScheme="blue" size="sm" my={1}>
+                <Radio value="S" colorScheme="blue" size="sm" my={1}>
                   <Text fontFamily={fonts.UrbanM}>2nd Half</Text>
                 </Radio>
               </Stack>
               <Stack w='50%' my={.5}>
-                <Radio value="Full Day" colorScheme="blue" size="sm" my={1}>
+                <Radio value="D" colorScheme="blue" size="sm" my={1}>
                   <Text fontFamily={fonts.UrbanM}>Full Day</Text>
                 </Radio>
               </Stack>
