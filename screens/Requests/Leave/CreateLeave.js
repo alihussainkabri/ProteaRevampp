@@ -169,7 +169,7 @@ const CreateLeave = ({ navigation }) => {
             "LeaveTypeId": particularLeaveType?.LeaveTypeId
         });
 
-        console.log("raw is here:", raw)
+        // console.log("raw is here:", raw)
 
         const response = await fetch("https://" + defaultUrl + '/api/LeaveRequests/CalculateLeaves', {
             method: 'POST',
@@ -234,7 +234,7 @@ const CreateLeave = ({ navigation }) => {
             "LeaveCancellationAllowed": false
         });
 
-        console.log('leave consoled', raw)
+        // console.log('leave consoled', raw)
 
         const response = await fetch("https://" + defaultUrl + '/api/LeaveRequests/AddLeaveRequest', {
             method: 'POST',
@@ -246,10 +246,14 @@ const CreateLeave = ({ navigation }) => {
 
         if (response.ok == true) {
             const data = await response.json()
-            alert(data?.error_msg)
+            // alert(data?.error_msg)
             console.warn(data)
             Toast.show(data?.error_msg ? data?.error_msg : 'Leave Request Has Been Submitted')
             setLoader(false)
+            
+            if(!data?.error_msg){
+                navigation.goBack()
+              }
 
         } else {
             Toast.show('Internal server error', {

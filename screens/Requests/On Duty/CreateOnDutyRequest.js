@@ -148,7 +148,7 @@ const CreateOnDutyRequest = ({ navigation }) => {
       ]
     });
 
-    console.warn('ODRequest consoled here', raw)
+    // console.warn('ODRequest consoled here', raw)
 
     const response = await fetch("https://" + defaultUrl + '/api/OnDutyRequest/AddOnDutyRequest', {
       method: 'POST',
@@ -160,9 +160,12 @@ const CreateOnDutyRequest = ({ navigation }) => {
 
     if (response.ok == true) {
       const data = await response.json()
-      alert(data?.error_msg)
+      // alert(data?.error_msg)
       Toast.show(data?.error_msg ? data?.error_msg : 'Request Has Been Submitted')
       setLoader(false)
+      if(!data?.error_msg){
+        navigation.goBack()
+      }
 
     } else {
       Toast.show('Internal server error', {

@@ -80,8 +80,9 @@ const ParticularODRequestView = ({ navigation, route }) => {
 
                 if (data?.Message == 'Success') {
 
-                    Toast.show('Leave Cancelled Successfully')
+                    Toast.show('Request Cancelled Successfully')
                     setLoader(false)
+                    navigation.goBack()
                 } else {
                     console.log('test cancel', data)
                     Toast.show(data?.Message)

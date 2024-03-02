@@ -44,6 +44,7 @@ const ParticularLeaveView = ({ navigation, route }) => {
 
                     Toast.show('Leave Cancelled Successfully')
                     setLoader(false)
+                    navigation.goBack()
                 } else {
                     console.log('test cancel', data)
                     Toast.show(data?.Message)

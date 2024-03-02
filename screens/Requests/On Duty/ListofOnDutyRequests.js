@@ -37,7 +37,8 @@ const ListofOnDutyRequests = ({ navigation }) => {
         if (response.ok == true) {
             const data = await response.json()
 
-            setAllReqs(data?.ODReqList?.slice(0, 10))
+            console.log('OD REQ',data?.ODReqList?.slice(0, 10))
+            setAllReqs(data?.ODReqList)
             setLoader(false)
 
         } else {
@@ -49,8 +50,11 @@ const ListofOnDutyRequests = ({ navigation }) => {
     }
 
     useEffect(() => {
-        fetchReqs();
-    }, [])
+        const unsubscribe = navigation.addListener('focus', () => {
+            fetchReqs();
+        });
+        return unsubscribe;
+    }, [navigation]);
 
     return (
         <NativeBaseProvider>
@@ -72,39 +76,49 @@ const ListofOnDutyRequests = ({ navigation }) => {
             </HStack>
 
             <ScrollView showsVerticalScrollIndicator={false}>
-                <View style={{ marginBottom: 10 }}>
+                <View style={{ marginTop: 10 }}>
                     {allReqs?.length > 0 ? allReqs?.map((item, index) => (
                         <TouchableOpacity key={index} onPress={() => {
                             navigation.navigate('ParticularODRequestView', {
                                 item: item
                             })
-                        }}>
-                            <HStack bg='white' shadow={1} mx={3} mt={4} py={3} px={3}>
-                                <Image source={require('../../../assets/images/pending.png')} style={{ width: 36, height: 36, resizeMode: 'cover' }} />
-
-                                <VStack ml={4} flex={1}>
-                                    <HStack alignItems='center' justifyContent='space-between'>
-                                        <Text style={styles.T1}>From Date</Text>
-                                        <Text style={styles.T1}>To Date</Text>
-                                    </HStack>
-
-                                    <HStack bg='warmGray.400' alignItems='center' justifyContent='space-between'>
-                                        <View style={styles.dots}></View>
-                                        <View style={{ borderStyle: 'dashed', borderBottomWidth: 1, borderBottomColor: 'red' }}></View>
-                                        <View style={styles.dots}></View>
-                                    </HStack>
-
+                        }} activeOpacity={.9}>
+                            <HStack flex={1} mx={4} shadow={2} style={{ borderRadius: 8 }} mb={2.5}>
+                                <VStack backgroundColor='#f9f9f9' flexGrow={2} px={3} py={3} style={{ borderTopLeftRadius: 8, borderBottomLeftRadius: 8 }}>
                                     <HStack alignItems='center'>
-                                        <Text style={styles.T1}>07-02-2024</Text>
-                                        <Text style={styles.T1}>07-02-2024</Text>
+                                        {item?.ApprovalStatus == 'Pending' && <Image source={require('../../../assets/images/pending.png')} style={{ width: 38, height: 38, resizeMode: 'cover' }} />}
+                                        {item?.ApprovalStatus == 'Cancelled' && <Image source={require('../../../assets/images/cancelled.png')} style={{ width: 38, height: 38, resizeMode: 'cover' }} />}
+                                        {item?.ApprovalStatus == 'Approved' && <Image source={require('../../../assets/images/Approve.png')} style={{ width: 38, height: 38, resizeMode: 'cover' }} />}
+                                        {item?.ApprovalStatus == 'Rejected' && <Image source={require('../../../assets/images/reject.png')} style={{ width: 38, height: 38, resizeMode: 'cover' }} />}
+                                        <Text numberOfLines={1} ellipsizeMode='tail' width='200px' color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={16} ml={3}>{item?.ReasonTemplate}</Text>
                                     </HStack>
+
+                                    <HStack alignItems='center' mt={4}>
+                                        <VStack>
+                                            <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{new Date(item?.LeaveFrom).toLocaleDateString('en-GB')}</Text>
+                                            <Text color='#bbbbbb' fontFamily={fonts.PopM} fontSize={12}>From Time</Text>
+                                        </VStack>
+
+                                        <View style={{ backgroundColor: '#c6c6c6', height: 2, width: 40, marginHorizontal: 20 }}></View>
+
+                                        <VStack>
+                                            <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{new Date(item?.LeaveTo).toLocaleDateString('en-GB')}</Text>
+                                            <Text color='#bbbbbb' fontFamily={fonts.PopM} fontSize={12}>To Time</Text>
+                                        </VStack>
+
+                                    </HStack>
+                                </VStack>
+
+                                <VStack backgroundColor='#f0f0f0' px={2} pb={3} flexGrow={1} justifyContent='flex-end' style={{ borderTopRightRadius: 8, borderBottomRightRadius: 8 }}>
+                                    <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{new Date(item?.ShiftDate).toLocaleDateString('en-GB')}</Text>
+                                    <Text color='#bbbbbb' fontFamily={fonts.PopM} fontSize={12}>Shift Date</Text>
                                 </VStack>
                             </HStack>
                         </TouchableOpacity>
                     )) :
-                        <VStack flex={1} justifyContent='center' alignItems='center' mb={20}>
+                        <VStack flex={1} justifyContent='center' alignItems='center' mb={20} marginTop={250}>
                             <AntDesign name="exclamationcircleo" size={72} color="gray" />
-                            <Text fontFamily={fonts.PopR} mx={20} mt={4} textAlign='center' color='gray' fontSize={18}>No Any Leave Request Available.</Text>
+                            <Text fontFamily={fonts.PopR} mx={20} mt={4} textAlign='center' color='gray' fontSize={18}>No Any On Duty Request Available.</Text>
                         </VStack>}
                 </View>
             </ScrollView>
