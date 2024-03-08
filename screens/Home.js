@@ -87,7 +87,7 @@ const Home = ({ navigation }) => {
         "EmpId": user?.EmpId
       });
 
-      const response = await fetch("https://" + defaultUrl + '/api/Dashboard/GetBirthdayList', {
+      const response = await fetch("https://" + defaultUrl + '/api/Dashboard/GetAnniversaryAndBirthdays', {
         method: 'POST',
         headers: {
           "Content-Type": 'application/json'
@@ -97,8 +97,8 @@ const Home = ({ navigation }) => {
 
       if (response.ok == true) {
         const data = await response.json()
-        setBirthdays(data?.filter(item => item?.Title == 'Birthday'))
-        setAnniversary(data?.filter(item => item?.Title == 'Anniversary'))
+        setBirthdays(data?.filter(item => item?.EventType == 'Birthday'))
+        setAnniversary(data?.filter(item => item?.EventType == 'Anniversary'))
         setLoader(false)
 
       } else {
@@ -230,7 +230,7 @@ const Home = ({ navigation }) => {
                   {item?.EmpImage ? <Image source={{ uri: `data:image/png;base64,${item?.EmpImage}` }} style={{ width: 70, height: 70, borderRadius: 100, }} /> :
                     <Image source={require('../assets/images/Bithday-icon.png')} style={{ width: 70, height: 70, borderRadius: 100, }} />}
 
-                  <Text style={styles.BdayName}>{item?.Name}</Text>
+                  <Text style={styles.BdayName}>{item.Description.match(/(\w+\s+\w+)'s/)[1]}</Text>
 
                   <TouchableOpacity onPress={() => openWhatsApp(item?.Mobile, item?.Name)} style={{ width: '100%' }}>
                     <LinearGradient colors={['#0F74B3', 'rgba(15, 116, 179, .5)']} style={styles.linearGradient}>
@@ -303,7 +303,7 @@ const Home = ({ navigation }) => {
             {anniversary?.length > 0 ? anniversary?.map((item, index) => (
               <HStack key={index} alignItems='flex-start' mb={anniversary?.length == index + 1 ? 0 : 2} ml={3}>
                 <Image source={require('../assets/images/party.png')} style={[styles.eventIcon, { width: 20 }]} />
-                <Text fontSize={18} fontFamily={fonts.UrbanM} mt={-1.5} ml={3.5} alignSelf='center'>{item?.Name}</Text>
+                <Text fontSize={18} fontFamily={fonts.UrbanM} mt={-1.5} ml={3.5} alignSelf='center'>{item.Description.match(/(\w+\s+\w+)'s/)[1]}</Text>
               </HStack>
             )) :
               <HStack justifyContent='space-between' px={3} alignItems='center'>
@@ -320,7 +320,7 @@ const Home = ({ navigation }) => {
               return (
                 <HStack key={index} alignItems='flex-start' mb={birthDays?.length == index + 1 ? 0 : 2} ml={3}>
                   <Image source={require('../assets/images/cake.png')} style={[styles.eventIcon, { width: 20 }]} />
-                  <Text fontSize={18} fontFamily={fonts.UrbanM} mt={-1.5} ml={3.5} alignSelf='center'>{item?.Name}</Text>
+                  <Text fontSize={18} fontFamily={fonts.UrbanM} mt={-1.5} ml={3.5} alignSelf='center'>{item.Description.match(/(\w+\s+\w+)'s/)[1]}</Text>
                 </HStack>
               )
             }) :

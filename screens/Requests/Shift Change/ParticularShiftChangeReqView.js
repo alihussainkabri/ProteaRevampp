@@ -1,4 +1,4 @@
-import { View, StatusBar, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
+import { View, StatusBar, TouchableOpacity, Image, StyleSheet, ScrollView } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { HStack, Text, NativeBaseProvider, VStack, Modal, FormControl, TextArea, Button } from 'native-base';
 import Loader from '../../../component/Loader';
@@ -7,23 +7,22 @@ import { fonts } from '../../../config/Fonts';
 import { userContext } from '../../../context/UserContext';
 import Toast from 'react-native-root-toast';
 
-const ParticularLeaveView = ({ navigation, route }) => {
+const ParticularShiftChangeReqView = ({ navigation, route }) => {
 
     const [loader, setLoader] = useState(false)
-    const { defaultUrl, user } = useContext(userContext)
+    const { user, defaultUrl } = useContext(userContext)
     const [showModal, setShowModal] = useState(false);
     const [reason, setReason] = useState('');
     const { item } = route?.params
 
-
-    async function cancelLeave() {
+    async function cancelReq() {
         if (reason?.length > 0) {
             setLoader(true)
 
             var raw = JSON.stringify({
                 "EmpId": user?.EmpId,
-                "requestId": item?.LRId,
-                "RequestType": "LeaveRequest",
+                "requestId": item?.TSId,
+                "RequestType": "Shift Change Request",
                 "Remark": reason
             });
 
@@ -42,7 +41,7 @@ const ParticularLeaveView = ({ navigation, route }) => {
 
                 if (data?.Message == 'Success') {
 
-                    Toast.show('Leave Cancelled Successfully')
+                    Toast.show('Request Cancelled Successfully')
                     setLoader(false)
                     navigation.goBack()
                 } else {
@@ -74,26 +73,26 @@ const ParticularLeaveView = ({ navigation, route }) => {
                         <Ionicons name="md-menu-sharp" size={32} color="white" />
                     </TouchableOpacity>
 
-                    <Text fontFamily={fonts.PopSB} fontSize={22} ml={6} color='white'>Leave Detail</Text>
+                    <Text fontFamily={fonts.PopSB} fontSize={22} ml={6} color='white'>OD Request Detail</Text>
                 </HStack>
             </HStack>
 
             <ScrollView showsVerticalScrollIndicator={false} style={{ paddingTop: 10, marginTop: 10, paddingBottom: 200 }}>
                 <VStack px={4} mb={5}>
-                    <HStack style={styles.infoCard}>
-                        <HStack alignItems='center'>
-                            <Entypo name="v-card" size={20} color="black" />
-                            <Text style={styles.title}>Leave Type</Text>
-                        </HStack>
-                        <Text style={styles.value}>{item?.LeaveType}</Text>
-                    </HStack>
-
-                    <HStack style={styles.infoCard}>
+                    {/* <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
                             <Text style={styles.title}>Duration</Text>
                         </HStack>
-                        <Text style={styles.value}>{item?.LeaveDuration}</Text>
+                        <Text style={styles.value}>{item?.ReqType}</Text>
+                    </HStack> */}
+
+                    <HStack style={styles.infoCard}>
+                        <HStack alignItems='center'>
+                            <Entypo name="v-card" size={20} color="black" />
+                            <Text style={styles.title}>Requested Date</Text>
+                        </HStack>
+                        <Text style={styles.value}>{new Date(item?.ShiftChangeRequestDate).toLocaleDateString('en-GB')}</Text>
                     </HStack>
 
                     <HStack style={styles.infoCard}>
@@ -101,7 +100,7 @@ const ParticularLeaveView = ({ navigation, route }) => {
                             <Entypo name="v-card" size={20} color="black" />
                             <Text style={styles.title}>From Date</Text>
                         </HStack>
-                        <Text style={styles.value}>{item?.LeaveFrom}</Text>
+                        <Text style={styles.value}>{new Date(item?.ShiftChangeFromDate).toLocaleDateString('en-GB')}</Text>
                     </HStack>
 
                     <HStack style={styles.infoCard}>
@@ -109,23 +108,15 @@ const ParticularLeaveView = ({ navigation, route }) => {
                             <Entypo name="v-card" size={20} color="black" />
                             <Text style={styles.title}>To Date</Text>
                         </HStack>
-                        <Text style={styles.value}>{item?.LeaveTo}</Text>
+                        <Text style={styles.value}>{new Date(item?.ShiftChangeToDate).toLocaleDateString('en-GB')}</Text>
                     </HStack>
 
                     <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
-                            <Text style={styles.title}>Request Date</Text>
+                            <Text style={styles.title}>Status</Text>
                         </HStack>
-                        <Text style={styles.value}>{item?.RequestDate}</Text>
-                    </HStack>
-
-                    <HStack style={styles.infoCard}>
-                        <HStack alignItems='center'>
-                            <Entypo name="v-card" size={20} color="black" />
-                            <Text style={styles.title}>Total Days</Text>
-                        </HStack>
-                        <Text style={styles.value}>{item?.NoOfDaysr}</Text>
+                        <Text style={styles.value}>{item?.ApprovalStatus}</Text>
                     </HStack>
 
                     <HStack style={styles.infoCard}>
@@ -139,12 +130,12 @@ const ParticularLeaveView = ({ navigation, route }) => {
                     <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
-                            <Text style={styles.title}>Status</Text>
+                            <Text style={styles.title}>Purpose</Text>
                         </HStack>
-                        <Text style={styles.value}>{item?.RequestStatus}</Text>
+                        <Text style={styles.value}>{item?.ReasonTemplate}</Text>
                     </HStack>
 
-                    {item?.RequestStatus == 'Pending' && <TouchableOpacity
+                    {item?.ApprovalStatus == "Pending" && <TouchableOpacity
                         onPress={() => setShowModal(true)}
                         style={{ backgroundColor: 'red', width: '100%', paddingVertical: 10, marginVertical: 20 }}>
                         <Text style={{ color: 'white', textAlign: 'center' }}>Request For Cancellation</Text>
@@ -168,7 +159,7 @@ const ParticularLeaveView = ({ navigation, route }) => {
                                 }}>
                                     Close
                                 </Button>
-                                <Button colorScheme='danger' onPress={cancelLeave}>
+                                <Button colorScheme='danger' onPress={cancelReq}>
                                     Submit
                                 </Button>
                             </Button.Group>
@@ -201,4 +192,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default ParticularLeaveView;
+export default ParticularShiftChangeReqView;

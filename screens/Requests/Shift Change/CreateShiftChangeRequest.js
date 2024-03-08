@@ -40,6 +40,58 @@ const CreateShiftChangeRequest = () => {
         setToDateCalendarShow(false);
     };
 
+    async function submitReq() {
+        setLoader(true)
+
+        var raw = JSON.stringify({
+            "EmpId": user?.EmpId,
+            "ShiftDate": fromDate,
+            "ReqType": requestType,
+            "RefShiftId": shiftType?.ShiftId,
+            "RId": particularReason?.RId,
+            "ReasonId": purpose,
+            "Place": place,
+            "WeekOff": false,
+            "Holiday": false,
+            "Attatchment": null,
+            "ODDetailList": [
+                {
+                    "TODId": 0,
+                    "FromTime": startTime,
+                    "ToTime": EndTime,
+                    "Place": place,
+                    "Purpose": purpose
+                }
+            ]
+        });
+
+        // console.warn('ODRequest consoled here', raw)
+
+        const response = await fetch("https://" + defaultUrl + '/api/OnDutyRequest/AddOnDutyRequest', {
+            method: 'POST',
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body: raw
+        })
+
+        if (response.ok == true) {
+            const data = await response.json()
+            // alert(data?.error_msg)
+            Toast.show(data?.error_msg ? data?.error_msg : 'Request Has Been Submitted')
+            setLoader(false)
+            if (!data?.error_msg) {
+                navigation.goBack()
+            }
+
+        } else {
+            Toast.show('Internal server error', {
+                duration: 3000,
+            })
+            setLoader(false)
+        }
+    }
+
     // useEffect(() => console.log(reason), [reason])
 
     return (
@@ -133,6 +185,16 @@ const CreateShiftChangeRequest = () => {
                         <Text style={styles.label}>Enter Reason</Text>
                         <Input variant='outline' style={styles.inputView} borderColor='#1875e2' borderRadius={2} py={1.5} value={reason} onChangeText={setReason} />
                     </VStack>
+
+                    <HStack mt={4} space={2} mb={2}>
+                        <TouchableOpacity onPress={() => navigation.goBack()} style={[styles.btn, { backgroundColor: '#f5e9e9' }]}>
+                            <Text style={{ color: '#cf0101' }} fontSize={17} textAlign='center' fontFamily={fonts.PopM}>Cancel</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress={submitReq} style={[styles.btn, { backgroundColor: '#1875e2' }]}>
+                            <Text color='white' fontSize={17} textAlign='center' fontFamily={fonts.PopM}>Submit</Text>
+                        </TouchableOpacity>
+                    </HStack>
                 </View>
             </ScrollView>
         </NativeBaseProvider>
@@ -168,6 +230,11 @@ const styles = StyleSheet.create({
         fontFamily: fonts.UrbanM,
         color: '#737373',
         fontSize: 15
+    },
+    btn: {
+        flex: 1,
+        paddingVertical: 8,
+        borderRadius: 4
     },
 })
 

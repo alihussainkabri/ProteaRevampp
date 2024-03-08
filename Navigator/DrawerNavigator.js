@@ -27,6 +27,7 @@ import ParticularODRequestView from '../screens/Requests/On Duty/ParticularODReq
 import ListOfAttReg from '../screens/Requests/Attendance Regularization/ListOfAttReg';
 import ParticularAttRegRequest from '../screens/Requests/Attendance Regularization/ParticularAttRegRequest';
 import CreateAttRegRequest from '../screens/Requests/Attendance Regularization/CreateAttRegRequest';
+import ParticularShiftChangeReqView from '../screens/Requests/Shift Change/ParticularShiftChangeReqView';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -89,6 +90,7 @@ function RequestStack() {
             <Stack.Screen name="CreateEHCRequest" component={CreateEHCRequest} />
             <Stack.Screen name="ListOfCOffRequests" component={ListOfCOffRequests} />
             <Stack.Screen name="CreateCOffRequest" component={CreateCOffRequest} />
+            <Stack.Screen name="ParticularShiftChangeReqView" component={ParticularShiftChangeReqView} />
         </Stack.Navigator>
     )
 }

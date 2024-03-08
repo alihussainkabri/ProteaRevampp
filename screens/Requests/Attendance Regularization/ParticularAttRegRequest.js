@@ -73,7 +73,7 @@ const ParticularAttRegRequest = ({ navigation, route }) => {
             <Ionicons name="md-menu-sharp" size={32} color="white" />
           </TouchableOpacity>
 
-          <Text fontFamily={fonts.PopSB} fontSize={22} ml={6} color='white'>OD Request Detail</Text>
+          <Text fontFamily={fonts.PopSB} fontSize={22} ml={6} color='white'>Att.Req Detail</Text>
         </HStack>
       </HStack>
 
