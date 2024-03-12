@@ -73,6 +73,8 @@ const VerifyOTP = ({ navigation, route }) => {
 
                 if (data?.error_code == 202) {
                     await AsyncStorage.setItem("app_user", route?.params?.data)
+                    await AsyncStorage.setItem("app_user_imputs", route?.params?.user_input)
+                    await AsyncStorage.setItem("app_user_uniqueId", route?.params?.uniqueId)
                     setUser(JSON.parse(route?.params?.data))
                     setLoader(false)
                     console.log('done')

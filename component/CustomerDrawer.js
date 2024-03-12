@@ -58,6 +58,7 @@ const CustomDrawer = (props) => {
 
     async function LogoutAction() {
         await AsyncStorage.removeItem('app_user')
+        await AsyncStorage.removeItem('app_user_imputs')
         setUser(null)
     }
 

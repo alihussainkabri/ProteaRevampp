@@ -10,6 +10,7 @@ import { useHeaderHeight } from '@react-navigation/elements'
 import { userContext } from '../../context/UserContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PERMISSIONS, check, RESULTS, requestMultiple } from 'react-native-permissions';
+import uuid from 'react-native-uuid';
 
 const Login = ({ navigation }) => {
 
@@ -18,7 +19,22 @@ const Login = ({ navigation }) => {
   const [password, setPassword] = useState('')
   const [show, setShow] = useState(false)
   const [loader, setLoader] = useState(false)
+  const [uniqueId, setUniqueId] = useState('')
   const { defaultUrl, setDefaultUrl } = useContext(userContext)
+
+  useEffect(() => {
+    async function fetchUniqueId() {
+
+      const uniqueValue = await AsyncStorage.getItem("app_user_uniqueId")
+      if (uniqueValue) {
+        setUniqueId(uniqueValue)
+      } else {
+        setUniqueId(uuid.v4())
+      }
+    }
+
+    fetchUniqueId()
+  }, [])
 
   async function login() {
     if (username && password) {
@@ -27,10 +43,10 @@ const Login = ({ navigation }) => {
       var raw = JSON.stringify({
         "UserName": username,
         "password": password,
-        "imei": "f5252eba-c185-45a9-a4c5-1d094b8daf84"
+        "imei": uniqueId
       });
 
-      console.log('payload: ', raw, "API: ","https://" + defaultUrl + '/api/LoginDetails/Post')
+      console.log('payload: ', raw, "API: ", "https://" + defaultUrl + '/api/LoginDetails/Post')
 
       const response = await fetch("https://" + defaultUrl + '/api/LoginDetails/Post', {
         method: 'POST',
@@ -44,8 +60,8 @@ const Login = ({ navigation }) => {
         const data = await response.json()
 
         if (data?.EmpId) {
-          navigation.navigate('VerifyOTP', { data: JSON.stringify(data) })
-          console.log("data: ",data)
+          navigation.navigate('VerifyOTP', { data: JSON.stringify(data), user_input: raw, uniqueId })
+          console.log("data: ", data)
           setLoader(false)
         } else {
           Toast.show(data?.error_msg, {
