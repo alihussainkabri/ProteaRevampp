@@ -9,7 +9,7 @@ import { userContext } from '../../../context/UserContext';
 import DateTimePickerModal from "react-native-modal-datetime-picker"
 import Toast from 'react-native-root-toast';
 
-const CreateShiftChangeRequest = ({ navigation }) => {
+const CreateOptionalHolidays = ({ navigation }) => {
 
     const { user, defaultUrl } = useContext(userContext)
     const [loader, setLoader] = useState(false)
@@ -20,37 +20,20 @@ const CreateShiftChangeRequest = ({ navigation }) => {
     const [showReason, setShowReason] = useState(false);
     const [particularReason, setParticularReason] = useState('');
     const [allReasons, setAllReasons] = useState('');
-    const [showShifts, setShowShifts] = useState(false);
-    const [selectedShift, setSelectedShift] = useState('');
-    const [allShifts, setAllShifts] = useState('');
+    const [showYears, setShowYears] = useState(false);
+    const [ particularYear, setParticularYear] = useState('');
+    const [allYears, setAllYears] = useState('');
+    const [holidayCount, setHolidayCount] = useState(0);
     const [reason, setReason] = useState('');
 
-    const handleFromDate = (date) => {
-        // console.warn("A date has been picked: ", date.toString());
-
-        const convertedDate = getConvertDate(date.toString());
-        setFromDate(convertedDate)
-        setFromDateCalendarShow(false);
-    };
-
-    const handleToDate = (date) => {
-        // console.warn("A date has been picked: ", date.toString());
-
-        const convertedDate = getConvertDate(date.toString());
-        setToDate(convertedDate)
-        setToDateCalendarShow(false);
-    };
-
-    async function fetchShifts() {
+    async function fetchYears() {
         setLoader(true)
 
         var raw = JSON.stringify({
             "EmpId": user?.EmpId,
-            "FromDate": fromDate,
-            "ToDate": toDate
         });
 
-        const response = await fetch("https://" + defaultUrl + '/api/ShiftChangeRequest/GetShifts', {
+        const response = await fetch("https://" + defaultUrl + '/api/HolidayRequests/GetCalendarYear', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'
@@ -61,8 +44,8 @@ const CreateShiftChangeRequest = ({ navigation }) => {
         if (response.ok == true) {
             const data = await response.json()
 
-            console.log('all shift data: ', data)
-            setAllShifts(data)
+            console.log('all years data: ', data?.Table)
+            setAllYears(data?.Table)
             setLoader(false)
 
         } else {
@@ -73,16 +56,15 @@ const CreateShiftChangeRequest = ({ navigation }) => {
         }
     }
 
-    async function fetchReasons() {
+    async function fetchHolidayCount() {
         setLoader(true)
 
         var raw = JSON.stringify({
             "EmpId": user?.EmpId,
-            "ModuleName": "Time Attendance",
-            "FormName": "rbtShiftChangeRequest"
+            "year" : particularYear?.Year
         });
 
-        const response = await fetch("https://" + defaultUrl + '/api/Requests/SearchReason', {
+        const response = await fetch("https://" + defaultUrl + '/api/HolidayRequests/GetMappedOptionalHoliday', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'
@@ -93,8 +75,8 @@ const CreateShiftChangeRequest = ({ navigation }) => {
         if (response.ok == true) {
             const data = await response.json()
 
-            console.log('all reason data: ', data)
-            setAllReasons(data)
+            console.log('all holiday data: ', data)
+            setHolidayCount(data)
             setLoader(false)
 
         } else {
@@ -106,12 +88,12 @@ const CreateShiftChangeRequest = ({ navigation }) => {
     }
 
     useEffect(() => {
-        fetchShifts();
-    }, [fromDate, toDate])
-
-    useEffect(() => {
-        fetchReasons();
+        fetchYears();
     }, [])
+
+    useEffect(() => {
+        fetchHolidayCount();
+    }, [particularYear])
 
     async function submitReq() {
         setLoader(true)
@@ -129,7 +111,7 @@ const CreateShiftChangeRequest = ({ navigation }) => {
 
         console.warn('shift Req consoled here', raw)
 
-        const response = await fetch("https://" + defaultUrl + '/api/ShiftChangeRequest/CreateShiftChangeRequest', {
+        const response = await fetch("https://" + defaultUrl + '/api/ShiftChangeRequest/CreateOptionalHolidays', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'
@@ -154,8 +136,6 @@ const CreateShiftChangeRequest = ({ navigation }) => {
         }
     }
 
-    // useEffect(() => console.log(reason), [reason])
-
     return (
         <NativeBaseProvider>
             {loader && <Loader />}
@@ -166,54 +146,26 @@ const CreateShiftChangeRequest = ({ navigation }) => {
                     <Ionicons name="md-menu-sharp" size={32} color="white" />
                 </TouchableOpacity>
 
-                <Text fontFamily={fonts.PopSB} fontSize={22} ml={6} color='white'>Apply Shift Change</Text>
+                <Text fontFamily={fonts.PopSB} fontSize={22} ml={6} color='white'>Apply Opt Holiday</Text>
             </HStack>
 
             <ScrollView style={{ paddingHorizontal: 16, paddingTop: 16 }}>
                 <View style={{ flex: 1, marginBottom: 20 }}>
-                    <VStack flex={1}>
-                        <Text style={[styles.label, { marginTop: 4 }]}>From Date</Text>
-                        <TouchableOpacity onPress={() => setFromDateCalendarShow(true)} style={styles.selectDate}>
-                            <Text style={styles.placeHolder}>{fromDate ? fromDate.toString() : 'Select Date'}</Text>
-                            <AntDesign name="calendar" size={18} color="#737373" />
-                        </TouchableOpacity>
-                        <DateTimePickerModal
-                            isVisible={fromDateCalendarShow}
-                            mode="date"
-                            onConfirm={handleFromDate}
-                            onCancel={() => setFromDateCalendarShow(false)}
-                        />
-                    </VStack>
-
-                    <VStack flex={1}>
-                        <Text style={styles.label}>To Date</Text>
-                        <TouchableOpacity onPress={() => setToDateCalendarShow(true)} style={styles.selectDate}>
-                            <Text style={styles.placeHolder}>{toDate ? toDate.toString() : 'Select Date'}</Text>
-                            <AntDesign name="calendar" size={18} color="#737373" />
-                        </TouchableOpacity>
-                        <DateTimePickerModal
-                            isVisible={ToDateCalendarShow}
-                            mode="date"
-                            onConfirm={handleToDate}
-                            onCancel={() => setToDateCalendarShow(false)}
-                        />
-                    </VStack>
-
                     <VStack>
-                        <Text style={styles.label}>Select Expected Shift</Text>
-                        <TouchableOpacity onPress={() => setShowShifts(true)} style={styles.selectDate}>
-                            <Text style={styles.placeHolder}>{selectedShift ? selectedShift?.ShiftName : 'Select Shift'}</Text>
+                        <Text style={styles.label}>Select Financial Year</Text>
+                        <TouchableOpacity onPress={() => setShowYears(true)} style={styles.selectDate}>
+                            <Text style={styles.placeHolder}>{particularYear ? particularYear?.Year : 'Select Year'}</Text>
                             <Entypo name="chevron-small-down" size={24} color="#737373" />
                         </TouchableOpacity>
 
-                        <Actionsheet isOpen={showShifts} onClose={() => setShowShifts(false)}>
+                        <Actionsheet isOpen={showYears} onClose={() => setShowYears(false)}>
                             <Actionsheet.Content>
-                                {allShifts?.length > 0 ? allShifts?.map((item, index) => (
+                                {allYears?.length > 0 ? allYears?.map((item, index) => (
                                     <Actionsheet.Item onPress={() => {
-                                        setSelectedShift(item)
-                                        setShowShifts(false)
+                                        setParticularYear(item)
+                                        setShowYears(false)
                                     }}>
-                                        <Text fontSize={16} fontFamily={fonts.UrbanSB}>{item?.ShiftName}</Text>
+                                        <Text fontSize={16} fontFamily={fonts.UrbanSB}>{item?.Year}</Text>
                                     </Actionsheet.Item>
 
                                 )) : <Actionsheet.Item>No data found</Actionsheet.Item>}
@@ -222,30 +174,22 @@ const CreateShiftChangeRequest = ({ navigation }) => {
                     </VStack>
 
                     <VStack>
-                        <Text style={styles.label}>Select Reason</Text>
-                        <TouchableOpacity onPress={() => setShowReason(true)} style={styles.selectDate}>
-                            <Text style={styles.placeHolder}>{particularReason ? particularReason?.RDescription : 'Select Reason'}</Text>
-                            <Entypo name="chevron-small-down" size={24} color="#737373" />
-                        </TouchableOpacity>
-
-                        <Actionsheet isOpen={showReason} onClose={() => setShowReason(false)}>
-                            <Actionsheet.Content>
-                                {allReasons?.length > 0 ? allReasons?.map((item, index) => (
-                                    <Actionsheet.Item onPress={() => {
-                                        setParticularReason(item)
-                                        setShowReason(false)
-                                    }}>
-                                        <Text fontSize={16} fontFamily={fonts.UrbanSB}>{item?.RDescription}</Text>
-                                    </Actionsheet.Item>
-
-                                )) : <Actionsheet.Item>No data found</Actionsheet.Item>}
-                            </Actionsheet.Content>
-                        </Actionsheet>
-                    </VStack>
-
-                    <VStack>
-                        <Text style={styles.label}>Enter Reason</Text>
+                        <Text style={styles.label}>Enter Remark</Text>
                         <Input variant='outline' style={styles.inputView} borderColor='#1875e2' borderRadius={2} py={1.5} value={reason} onChangeText={setReason} />
+                    </VStack>
+
+                    <VStack>
+                        <Text style={styles.label}>Max Holiday Applicable</Text>
+                        <TouchableOpacity disabled style={styles.selectDate}>
+                            <Text style={styles.placeHolder}>{holidayCount?.MaxHolidaysAllows ? holidayCount?.MaxHolidaysAllows : 0}</Text>
+                        </TouchableOpacity>
+                    </VStack>
+
+                    <VStack>
+                        <Text style={styles.label}>Total Holiday Availed</Text>
+                        <TouchableOpacity disabled style={styles.selectDate}>
+                            <Text style={styles.placeHolder}>{holidayCount?.HolidayAvail ? holidayCount?.HolidayAvail : 0}</Text>
+                        </TouchableOpacity>
                     </VStack>
 
                     <HStack mt={4} space={2} mb={2}>
@@ -300,4 +244,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default CreateShiftChangeRequest;
+export default CreateOptionalHolidays;

@@ -7,7 +7,7 @@ import { fonts } from '../../../config/Fonts';
 import { userContext } from '../../../context/UserContext';
 import Toast from 'react-native-root-toast';
 
-const ParticularShiftChangeReqView = ({ navigation, route }) => {
+const ParticularCOffReq = ({ navigation, route }) => {
 
     const [loader, setLoader] = useState(false)
     const { user, defaultUrl } = useContext(userContext)
@@ -21,8 +21,8 @@ const ParticularShiftChangeReqView = ({ navigation, route }) => {
 
             var raw = JSON.stringify({
                 "EmpId": user?.EmpId,
-                "requestId": item?.TSId,
-                "RequestType": "ShiftChangeRequest",
+                "requestId": item?.CRId,
+                "RequestType": "COffRequest",
                 "Remark": reason
             });
 
@@ -73,7 +73,7 @@ const ParticularShiftChangeReqView = ({ navigation, route }) => {
                         <Ionicons name="md-menu-sharp" size={32} color="white" />
                     </TouchableOpacity>
 
-                    <Text fontFamily={fonts.PopSB} fontSize={22} ml={6} color='white'>OD Request Detail</Text>
+                    <Text fontFamily={fonts.PopSB} fontSize={22} ml={6} color='white'>C-Off Request Detail</Text>
                 </HStack>
             </HStack>
 
@@ -92,7 +92,7 @@ const ParticularShiftChangeReqView = ({ navigation, route }) => {
                             <Entypo name="v-card" size={20} color="black" />
                             <Text style={styles.title}>Requested Date</Text>
                         </HStack>
-                        <Text style={styles.value}>{new Date(item?.ShiftChangeRequestDate).toLocaleDateString('en-GB')}</Text>
+                        <Text style={styles.value}>{new Date(item?.CoffRequestDate).toLocaleDateString('en-GB')}</Text>
                     </HStack>
 
                     <HStack style={styles.infoCard}>
@@ -100,7 +100,7 @@ const ParticularShiftChangeReqView = ({ navigation, route }) => {
                             <Entypo name="v-card" size={20} color="black" />
                             <Text style={styles.title}>From Date</Text>
                         </HStack>
-                        <Text style={styles.value}>{new Date(item?.ShiftChangeFromDate).toLocaleDateString('en-GB')}</Text>
+                        <Text style={styles.value}>{new Date(item?.FromDate).toLocaleDateString('en-GB')}</Text>
                     </HStack>
 
                     <HStack style={styles.infoCard}>
@@ -108,7 +108,7 @@ const ParticularShiftChangeReqView = ({ navigation, route }) => {
                             <Entypo name="v-card" size={20} color="black" />
                             <Text style={styles.title}>To Date</Text>
                         </HStack>
-                        <Text style={styles.value}>{new Date(item?.ShiftChangeToDate).toLocaleDateString('en-GB')}</Text>
+                        <Text style={styles.value}>{new Date(item?.ToDate).toLocaleDateString('en-GB')}</Text>
                     </HStack>
 
                     <HStack style={styles.infoCard}>
@@ -122,15 +122,15 @@ const ParticularShiftChangeReqView = ({ navigation, route }) => {
                     <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
-                            <Text style={styles.title}>Reason</Text>
+                            <Text style={styles.title}>No.Of Days</Text>
                         </HStack>
-                        <Text style={styles.value}>{item?.Reason}</Text>
+                        <Text style={styles.value}>{item?.NoofDays}</Text>
                     </HStack>
 
                     <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
-                            <Text style={styles.title}>Purpose</Text>
+                            <Text style={styles.title}>Reason</Text>
                         </HStack>
                         <Text style={styles.value}>{item?.ReasonTemplate}</Text>
                     </HStack>
@@ -192,4 +192,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default ParticularShiftChangeReqView;
+export default ParticularCOffReq;

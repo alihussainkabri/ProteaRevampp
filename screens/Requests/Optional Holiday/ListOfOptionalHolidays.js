@@ -8,46 +8,46 @@ import { userContext } from '../../../context/UserContext';
 import Toast from 'react-native-root-toast';
 import { getTodayDate } from '../../../helpers'
 
-const ListOfEHCRequests = ({ navigation }) => {
+const ListOfOptionalHolidays = ({ navigation }) => {
 
     const [loader, setLoader] = useState(false)
     const { user, defaultUrl } = useContext(userContext)
     const [allReqs, setAllReqs] = useState([])
 
-    // async function fetchReqs() {
-    //     setLoader(true)
+    async function fetchReqs() {
+        setLoader(true)
 
-    //     const todayDate = getTodayDate()
+        const todayDate = getTodayDate()
 
-    //     var raw = JSON.stringify({
-    //         "EmpId": user?.EmpId,
-    //         "TSId": null
-    //     });
+        var raw = JSON.stringify({
+            "EmpId": user?.EmpId,
+            "HId": null
+        });
 
-    //     console.log("raw is here ok:", raw)
+        console.log("raw is here ok:", raw)
 
-    //     const response = await fetch("https://" + defaultUrl + '/api/ShiftChangeRequest/GetShiftChangeRequests', {
-    //         method: 'POST',
-    //         headers: {
-    //             "Content-Type": 'application/json'
-    //         },
-    //         body: raw
-    //     })
+        const response = await fetch("https://" + defaultUrl + '/api/HolidayRequests/GetOptionalHolidayRequest', {
+            method: 'POST',
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body: raw
+        })
 
-    //     if (response.ok == true) {
-    //         const data = await response.json()
+        if (response.ok == true) {
+            const data = await response.json()
 
-    //         console.log('Shift change REQ', data?.ShiftReqList?.slice(0, 3))
-    //         setAllReqs(data?.ShiftReqList)
-    //         setLoader(false)
+            console.log('holidays REQ',data?.HolidayReq)
+            setAllReqs(data?.HolidayReq) 
+            setLoader(false)
 
-    //     } else {
-    //         Toast.show('Internal server error', {
-    //             duration: 3000,
-    //         })
-    //         setLoader(false)
-    //     }
-    // }
+        } else {
+            Toast.show('Internal server error', {
+                duration: 3000,
+            })
+            setLoader(false)
+        }
+    }
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
@@ -67,10 +67,10 @@ const ListOfEHCRequests = ({ navigation }) => {
                         <Ionicons name="md-menu-sharp" size={32} color="white" />
                     </TouchableOpacity>
 
-                    <Text fontFamily={fonts.PopSB} fontSize={22} ml={6} color='white'>EHC/OT Request</Text>
+                    <Text fontFamily={fonts.PopSB} fontSize={22} ml={6} color='white'>Opt Holidays Requests</Text>
                 </HStack>
 
-                <TouchableOpacity onPress={() => navigation.navigate('CreateEHCRequest')}>
+                <TouchableOpacity onPress={() => navigation.navigate('CreateOptionalHolidays')}>
                     <Entypo name="circle-with-plus" size={32} color="white" />
                 </TouchableOpacity>
             </HStack>
@@ -118,7 +118,7 @@ const ListOfEHCRequests = ({ navigation }) => {
                     )) :
                         <VStack flex={1} justifyContent='center' alignItems='center' mb={20} marginTop={250}>
                             <AntDesign name="exclamationcircleo" size={72} color="gray" />
-                            <Text fontFamily={fonts.PopR} mx={20} mt={4} textAlign='center' color='gray' fontSize={18}>No Any Shift Change Request Available.</Text>
+                            <Text fontFamily={fonts.PopR} mx={20} mt={4} textAlign='center' color='gray' fontSize={18}>No Any Holiday Request Available.</Text>
                         </VStack>}
                 </View>
             </ScrollView>
@@ -126,4 +126,20 @@ const ListOfEHCRequests = ({ navigation }) => {
     )
 }
 
-export default ListOfEHCRequests;
+const styles = StyleSheet.create({
+    T1: {
+        fontFamily: fonts.PopM,
+        fontSize: 14.5,
+        color: '#333',
+    },
+    dots: {
+        backgroundColor: '#0F74B3',
+        height: 10,
+        width: 10,
+        borderRadius: 100,
+    }
+})
+
+export default ListOfOptionalHolidays;
+
+

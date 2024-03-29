@@ -26,6 +26,8 @@ const Login = ({ navigation }) => {
     async function fetchUniqueId() {
 
       const uniqueValue = await AsyncStorage.getItem("app_user_uniqueId")
+
+      console.log('uniquvalue is here',uniqueValue)
       if (uniqueValue) {
         setUniqueId(uniqueValue)
       } else {
@@ -46,7 +48,8 @@ const Login = ({ navigation }) => {
         "imei": uniqueId
       });
 
-      console.log('payload: ', raw, "API: ", "https://" + defaultUrl + '/api/LoginDetails/Post')
+      // console.log('payload: ', raw, "API: ", "https://" + defaultUrl + '/api/LoginDetails/Post')
+      console.log('payload: ', uniqueId)
 
       const response = await fetch("https://" + defaultUrl + '/api/LoginDetails/Post', {
         method: 'POST',

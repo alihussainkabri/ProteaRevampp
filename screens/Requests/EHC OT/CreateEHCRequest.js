@@ -35,6 +35,42 @@ const CreateEHCRequest = ({ navigation }) => {
         setToDateCalendarShow(false);
     };
 
+    async function fetchReasons() {
+        setLoader(true)
+
+        var raw = JSON.stringify({
+            "EmpId": user?.EmpId,
+            "ModuleName": "Time Attendance",
+            "FormName": "OT Request"
+        });
+
+        const response = await fetch("https://" + defaultUrl + '/api/Requests/SearchReason', {
+            method: 'POST',
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body: raw
+        })
+
+        if (response.ok == true) {
+            const data = await response.json()
+            
+            console.log('reasons', data)
+            setAllReasons(data)
+            setLoader(false)
+
+        } else {
+            Toast.show('Internal server error', {
+                duration: 3000,
+            })
+            setLoader(false)
+        }
+    }
+
+    useEffect(() => {
+        fetchReasons();
+    }, [])
+
     return (
         <NativeBaseProvider>
             {loader && <Loader />}

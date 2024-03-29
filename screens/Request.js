@@ -4,19 +4,24 @@ import { HStack, Text, NativeBaseProvider, VStack } from 'native-base';
 import Loader from '../component/Loader';
 import { Ionicons } from 'react-native-vector-icons'
 import { fonts } from '../config/Fonts';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Request = ({ navigation }) => {
 
     const [loader, setLoader] = useState(false)
 
+    const inset = useSafeAreaInsets()
+
     return (
         <NativeBaseProvider>
             {loader && < Loader />}
-
-            <StatusBar translucent backgroundColor='transparent' />
+            <View style={{ paddingTop: inset.top }}>
+                <StatusBar backgroundColor='#0F74B3' translucent />
+            </View>
+            {/* <StatusBar translucent backgroundColor='transparent' /> */}
 
             <ImageBackground source={require('../assets/images/request-BG.png')} style={styles.titleBG} resizeMode='stretch'>
-                <HStack alignItems='center' justifyContent='space-between' mt={12 + StatusBar.currentHeight}>
+                <HStack alignItems='center' justifyContent='space-between'>
                     <HStack alignItems='center'>
                         <TouchableOpacity onPress={() => navigation.openDrawer()}>
                             <Ionicons name="md-menu-sharp" size={32} color="white" />
@@ -31,7 +36,7 @@ const Request = ({ navigation }) => {
                 </HStack>
             </ImageBackground>
 
-            <ScrollView style={{ marginTop: -100 }}>
+            <ScrollView style={{ marginTop: -140 }}>
                 <VStack px={Dimensions.get('window').width / 100 * 3}>
                     <HStack flexWrap='wrap' justifyContent='space-between'>
                         <TouchableOpacity onPress={() => navigation.navigate('ListOfLeave')} style={[styles.summaryBlock, { backgroundColor: 'rgba(238, 227, 231, .9)' }]}>
@@ -69,10 +74,10 @@ const Request = ({ navigation }) => {
                             <Image source={require('../assets/images/Late_Coming.png')} style={styles.summaryBlockImg} />
                         </VStack>
 
-                        <VStack backgroundColor='rgba(217, 217, 217, .7)' style={styles.summaryBlock}>
+                        <TouchableOpacity onPress={() => navigation.navigate('ListOfOptionalHolidays')} style={[styles.summaryBlock, { backgroundColor: 'rgba(217, 217, 217, .7)' }]}>
                             <Text style={styles.summaryTitle}>Optional Holiday</Text>
                             <Image source={require('../assets/images/OPT-holiday.png')} style={styles.summaryBlockImg} />
-                        </VStack>
+                        </TouchableOpacity>
                     </HStack>
                 </VStack>
             </ScrollView>

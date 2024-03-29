@@ -6475,6 +6475,13 @@ react-is@^17.0.1:
   resolved "https://registry.npmjs.org/react-is/-/react-is-17.0.2.tgz"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
+react-native-autocomplete-input@^5.4.0:
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/react-native-autocomplete-input/-/react-native-autocomplete-input-5.4.0.tgz#2838dc56d4e084dd988bb836f69305ef1a5dcf1f"
+  integrity sha512-Fw4jv4a7ySF08JGJfVILkL52LTwGRSbn5BF5EmOIu3CqRAwhkE5JtaEWT2kgCKBr9YE+lZZYNYpOQrRALxOszA==
+  dependencies:
+    deprecated-react-native-prop-types "^2.3.0"
+
 react-native-calendars@^1.1303.0:
   version "1.1303.0"
   resolved "https://registry.yarnpkg.com/react-native-calendars/-/react-native-calendars-1.1303.0.tgz#72f82135947c75c194ab893549e53de69ed27667"

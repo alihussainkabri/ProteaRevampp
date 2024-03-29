@@ -28,6 +28,9 @@ import ListOfAttReg from '../screens/Requests/Attendance Regularization/ListOfAt
 import ParticularAttRegRequest from '../screens/Requests/Attendance Regularization/ParticularAttRegRequest';
 import CreateAttRegRequest from '../screens/Requests/Attendance Regularization/CreateAttRegRequest';
 import ParticularShiftChangeReqView from '../screens/Requests/Shift Change/ParticularShiftChangeReqView';
+import ParticularCOffReq from '../screens/Requests/C_Off/ParticularCOffReq';
+import ListOfOptionalHolidays from '../screens/Requests/Optional Holiday/ListOfOptionalHolidays';
+import CreateOptionalHolidays from '../screens/Requests/Optional Holiday/CreateOptionalHolidays';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -89,8 +92,11 @@ function RequestStack() {
             <Stack.Screen name="ListOfEHCRequests" component={ListOfEHCRequests} />
             <Stack.Screen name="CreateEHCRequest" component={CreateEHCRequest} />
             <Stack.Screen name="ListOfCOffRequests" component={ListOfCOffRequests} />
+            <Stack.Screen name="ParticularCOffReq" component={ParticularCOffReq} />
             <Stack.Screen name="CreateCOffRequest" component={CreateCOffRequest} />
             <Stack.Screen name="ParticularShiftChangeReqView" component={ParticularShiftChangeReqView} />
+            <Stack.Screen name="ListOfOptionalHolidays" component={ListOfOptionalHolidays} />
+            <Stack.Screen name="CreateOptionalHolidays" component={CreateOptionalHolidays} />
         </Stack.Navigator>
     )
 }
