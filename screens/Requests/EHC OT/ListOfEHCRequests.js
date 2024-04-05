@@ -14,40 +14,39 @@ const ListOfEHCRequests = ({ navigation }) => {
     const { user, defaultUrl } = useContext(userContext)
     const [allReqs, setAllReqs] = useState([])
 
-    // async function fetchReqs() {
-    //     setLoader(true)
+    async function fetchReqs() {
+        setLoader(true)
 
-    //     const todayDate = getTodayDate()
+        const todayDate = getTodayDate()
 
-    //     var raw = JSON.stringify({
-    //         "EmpId": user?.EmpId,
-    //         "TSId": null
-    //     });
+        var raw = JSON.stringify({
+            "EmpId": user?.EmpId,
+            "TOTId": null
+        });
 
-    //     console.log("raw is here ok:", raw)
+        console.log("raw is here ok:", raw)
 
-    //     const response = await fetch("https://" + defaultUrl + '/api/ShiftChangeRequest/GetShiftChangeRequests', {
-    //         method: 'POST',
-    //         headers: {
-    //             "Content-Type": 'application/json'
-    //         },
-    //         body: raw
-    //     })
+        const response = await fetch("https://" + defaultUrl + '/api/OTRequest/GetOTRequest', {
+            method: 'POST',
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body: raw
+        })
 
-    //     if (response.ok == true) {
-    //         const data = await response.json()
+        if (response.ok == true) {
+            const data = await response.json()
 
-    //         console.log('Shift change REQ', data?.ShiftReqList?.slice(0, 3))
-    //         setAllReqs(data?.ShiftReqList)
-    //         setLoader(false)
+            setAllReqs(data?.OTRequestList)
+            setLoader(false)
 
-    //     } else {
-    //         Toast.show('Internal server error', {
-    //             duration: 3000,
-    //         })
-    //         setLoader(false)
-    //     }
-    // }
+        } else {
+            Toast.show('Internal server error', {
+                duration: 3000,
+            })
+            setLoader(false)
+        }
+    }
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
@@ -118,7 +117,7 @@ const ListOfEHCRequests = ({ navigation }) => {
                     )) :
                         <VStack flex={1} justifyContent='center' alignItems='center' mb={20} marginTop={250}>
                             <AntDesign name="exclamationcircleo" size={72} color="gray" />
-                            <Text fontFamily={fonts.PopR} mx={20} mt={4} textAlign='center' color='gray' fontSize={18}>No Any Shift Change Request Available.</Text>
+                            <Text fontFamily={fonts.PopR} mx={20} mt={4} textAlign='center' color='gray' fontSize={18}>No Any ECH / OT Request Available.</Text>
                         </VStack>}
                 </View>
             </ScrollView>

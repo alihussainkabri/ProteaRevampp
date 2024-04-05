@@ -22,39 +22,39 @@ const Home = ({ navigation }) => {
   const [events, setEvents] = useState('')
   const { user, defaultUrl, setUser } = useContext(userContext)
 
-  useEffect(() => {
-    async function ReLogin() {
-      const inputs = await AsyncStorage.getItem("app_user_imputs")
-      console.log('inputs home', inputs)
-      if (inputs) {
-        const response = await fetch("https://" + defaultUrl + '/api/LoginDetails/Post', {
-          method: 'POST',
-          headers: {
-            "Content-Type": 'application/json'
-          },
-          body: inputs
-        })
+  // useEffect(() => {
+  //   async function ReLogin() {
+  //     const inputs = await AsyncStorage.getItem("app_user_imputs")
+  //     console.log('inputs home', inputs)
+  //     if (inputs) {
+  //       const response = await fetch("https://" + defaultUrl + '/api/LoginDetails/Post', {
+  //         method: 'POST',
+  //         headers: {
+  //           "Content-Type": 'application/json'
+  //         },
+  //         body: inputs
+  //       })
 
-        if (response.ok == true) {
-          const data = await response.json()
-          console.log('relogin home', data)
-          if (data?.EmpId) {
+  //       if (response.ok == true) {
+  //         const data = await response.json()
+  //         console.log('relogin home', data)
+  //         if (data?.EmpId) {
 
-          } else {
-            await AsyncStorage.removeItem('app_user')
-            await AsyncStorage.removeItem('app_user_imputs')
-            setUser(null)
-          }
+  //         } else {
+  //           await AsyncStorage.removeItem('app_user')
+  //           await AsyncStorage.removeItem('app_user_imputs')
+  //           setUser(null)
+  //         }
 
-        }
-      }
-    }
+  //       }
+  //     }
+  //   }
 
-    if (user && defaultUrl) {
-      ReLogin()
-      console.log('check relogin home')
-    }
-  }, [])
+  //   if (user && defaultUrl) {
+  //     ReLogin()
+  //     console.log('check relogin home')
+  //   }
+  // }, [])
 
   useEffect(() => {
 

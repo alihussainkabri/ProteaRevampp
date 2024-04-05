@@ -38,7 +38,7 @@ const ListOfCOffRequests = ({ navigation }) => {
             const data = await response.json()
 
             console.log('Shift change REQ', data?.CoffList?.slice(0, 3))
-            setAllReqs(data?.CoffList?.slice(0, 3))
+            setAllReqs(data?.CoffList?.slice(0, 3)) // need to edit
             setLoader(false)
 
         } else {

@@ -8,6 +8,7 @@ import { url, getConvertDate } from '../../../helpers';
 import { userContext } from '../../../context/UserContext';
 import DateTimePickerModal from "react-native-modal-datetime-picker"
 import Toast from 'react-native-root-toast';
+import AutocompleteInput from 'react-native-autocomplete-input';
 
 const CreateCOffRequest = ({ navigation }) => {
 
@@ -31,6 +32,8 @@ const CreateCOffRequest = ({ navigation }) => {
     const [showResponsible, setShowResponsible] = useState(false);
     const [allResponsibles, setAllResponsibles] = useState('');
     const [particularResponsible, setParticularResponsible] = useState('');
+    const [balance, setBalance] = useState('');
+    const [responsbleData, setResponsbleData] = useState([])
 
     useEffect(() => {
         async function fetchReasons() {
@@ -99,19 +102,16 @@ const CreateCOffRequest = ({ navigation }) => {
         fetchResponsible();
     }, [])
 
-    async function fetchLeaveType() {
+    async function fetchBalance() {
         setLoader(true)
 
         var raw = JSON.stringify({
             "EmpId": user?.EmpId,
             "FromDate": fromDate,
             "ToDate": toDate ? toDate : fromDate
-
         });
 
-        console.log("empid: ", user.EmpId, 'fromdate : ', fromDate, 'toDate : ', toDate)
-
-        const response = await fetch("https://" + defaultUrl + '/api/LeaveRequests/GetApplicableLeaveTypeBasedOnDates', {
+        const response = await fetch("https://" + defaultUrl + '/api/COffRequest/GetCoffBalances', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'
@@ -121,9 +121,9 @@ const CreateCOffRequest = ({ navigation }) => {
 
         if (response.ok == true) {
             const data = await response.json()
-            // console.warn('leave types :', data)
+            console.log('balance :', data)
 
-            setAllLeaveType(data)
+            setBalance(data)
             setLoader(false)
 
         } else {
@@ -135,7 +135,7 @@ const CreateCOffRequest = ({ navigation }) => {
     }
 
     useEffect(() => {
-        fetchLeaveType();
+        fetchBalance();
     }, [fromDate, toDate])
 
     const handleFromDate = (date) => {
@@ -189,7 +189,7 @@ const CreateCOffRequest = ({ navigation }) => {
 
     useEffect(() => {
         fetchLeaveDays()
-    }, [fromDate, toDate])
+    }, [fromDate, toDate, fromEntire, toEntire])
 
 
     async function submitLeave() {
@@ -257,6 +257,45 @@ const CreateCOffRequest = ({ navigation }) => {
             })
             setLoader(false)
         }
+    }
+
+    async function onChangeText(text) {
+        setParticularResponsible(text)
+        console.log(text)
+
+        var raw = JSON.stringify({
+            "EmpId": user?.EmpId,
+            "Empsearch": text
+        });
+
+        const response = await fetch("https://" + defaultUrl + '/api/Requests/WorkResponsibilitySharedWith', {
+            method: 'POST',
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body: raw
+        })
+
+        if (response.ok == true) {
+            const data = await response.json()
+            // Toast.show(data?.error_msg && data?.error_msg )
+            console.log(data?.length > 0 ? data : 'blank')
+            if (data?.length > 0) {
+                setResponsbleData(data)
+            } else {
+                setResponsbleData([])
+            }
+
+            if (text == '') {
+                setResponsbleData([])
+            }
+
+        } else {
+            Toast.show('Internal server error', {
+                duration: 3000,
+            })
+        }
+
     }
 
     return (
@@ -388,7 +427,26 @@ const CreateCOffRequest = ({ navigation }) => {
 
                     <VStack>
                         <Text style={styles.label}>Work Responsibility Shared With</Text>
-                        <Input variant='outline' style={[styles.inputView, { maxHeight: 100 }]} borderColor='#1875e2' borderRadius={2} py={1.5} multiline value={particularResponsible} onChangeText={setParticularResponsible} />
+                        {/* <Input variant='outline' style={[styles.inputView, { maxHeight: 100 }]} borderColor='#1875e2' borderRadius={2} py={1.5} multiline value={particularResponsible} onChangeText={onChangeText} /> */}
+                        <AutocompleteInput
+                            data={responsbleData}
+                            value={particularResponsible}
+                            onChangeText={onChangeText}
+                            flatListProps={{
+                                keyExtractor: (_, idx) => idx,
+                                renderItem: ({ item }) => (
+                                    <TouchableOpacity onPress={() => {
+                                        setParticularResponsible(item?.EmployeeName)
+                                        setResponsbleData([])
+                                    }} style={{ backgroundColor: 'lightgray', paddingLeft: 16 }}>
+                                        <Text style={{ fontFamily: fonts.PopM, textTransform: 'capitalize', paddingVertical: 6, }}>{item?.EmployeeName}</Text>
+                                    </TouchableOpacity>
+                                ),
+                            }}
+                            inputContainerStyle={{ borderWidth: 0, }}
+                            listContainerStyle={{ marginTop: 8, marginHorizontal: -16, borderRadius: 4 }}
+                            style={{ color: '#737373', borderWidth: 1, height: 40, borderRadius: 2, borderColor: '#1875e2', paddingLeft: 12 }}
+                        />
                     </VStack>
 
                     {/* <VStack>
