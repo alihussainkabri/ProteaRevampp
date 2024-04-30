@@ -31,6 +31,8 @@ import ParticularShiftChangeReqView from '../screens/Requests/Shift Change/Parti
 import ParticularCOffReq from '../screens/Requests/C_Off/ParticularCOffReq';
 import ListOfOptionalHolidays from '../screens/Requests/Optional Holiday/ListOfOptionalHolidays';
 import CreateOptionalHolidays from '../screens/Requests/Optional Holiday/CreateOptionalHolidays';
+import ListOfRequests from '../screens/AdminRequestApprove/ListOfRequests';
+import ApproveOrCancel from '../screens/AdminRequestApprove/ApproveOrCancel';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -47,6 +49,8 @@ function HomeStack() {
             }}
         >
             <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="ListOfRequests" component={ListOfRequests} />
+            <Stack.Screen name="ApproveOrCancel" component={ApproveOrCancel} />
         </Stack.Navigator>
     )
 }

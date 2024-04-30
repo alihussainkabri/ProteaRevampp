@@ -58,34 +58,6 @@ const Home = ({ navigation }) => {
 
   useEffect(() => {
 
-    async function fetchNotification() {
-      setLoader(true)
-
-      var raw = JSON.stringify({
-        "EmpId": user?.EmpId,
-      });
-
-      const response = await fetch("https://" + defaultUrl + '/api/Requests/PendingNotifications', {
-        method: 'POST',
-        headers: {
-          "Content-Type": 'application/json'
-        },
-        body: raw
-      })
-
-      if (response.ok == true) {
-        const data = await response.json()
-        setNotification(data)
-        setLoader(false)
-
-      } else {
-        Toast.show('Internal server error', {
-          duration: 3000,
-        })
-        setLoader(false)
-      }
-    }
-
     async function fetchMonthlySummary() {
       setLoader(true)
 
@@ -204,12 +176,46 @@ const Home = ({ navigation }) => {
     }
 
     checkCompatible();
-    fetchNotification();
     fetchMonthlySummary();
     fetchBirthdayAndWorkAnniversary();
     fetchEvents();
-    // console.log('user data: ', user)
+    console.log('user data: ', user)
   }, [])
+
+  async function fetchNotification() {
+    setLoader(true)
+
+    var raw = JSON.stringify({
+      "EmpId": user?.EmpId,
+    });
+
+    const response = await fetch("https://" + defaultUrl + '/api/Requests/PendingNotifications', {
+      method: 'POST',
+      headers: {
+        "Content-Type": 'application/json'
+      },
+      body: raw
+    })
+
+    if (response.ok == true) {
+      const data = await response.json()
+      setNotification(data)
+      setLoader(false)
+
+    } else {
+      Toast.show('Internal server error', {
+        duration: 3000,
+      })
+      setLoader(false)
+    }
+  }
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchNotification();
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   function openWhatsApp(Mobile, Name) {
     const message = `Wish you a very Happy Birthday ${Name} 🥳🥳🎂🎂`;
@@ -258,10 +264,14 @@ const Home = ({ navigation }) => {
 
         <ScrollView showsVerticalScrollIndicator={false}>
           {notification?.length > 0 ? notification.map((item, index) => (
-            <HStack key={index} alignItems='center' justifyContent='space-between' mt={4} mb={notification?.length == index + 1 ? 4 : 0}>
-              <Text style={styles.notificationTitle}>{item?.RequestType}</Text>
-              <Text style={styles.notificationValueTxt}>{item?.NotificationCount}</Text>
-            </HStack>
+            <TouchableOpacity onPress={() => navigation.navigate('ListOfRequests', {
+              Detailitem: item
+            })}>
+              <HStack key={index} alignItems='center' justifyContent='space-between' mt={4} mb={notification?.length == index + 1 ? 4 : 0}>
+                <Text style={styles.notificationTitle}>{item?.RequestType}</Text>
+                <Text style={styles.notificationValueTxt}>{item?.NotificationCount}</Text>
+              </HStack>
+            </TouchableOpacity>
           )) : <Text mt={5} fontFamily={fonts.PopM} color='white' textAlign='center'>No Notification Available</Text>}
         </ScrollView>
       </ImageBackground>

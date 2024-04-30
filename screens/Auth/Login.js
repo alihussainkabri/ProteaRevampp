@@ -67,23 +67,26 @@ const Login = ({ navigation }) => {
           console.log("data: ", data)
           setLoader(false)
         } else {
-          Toast.show(data?.error_msg, {
-            duration: 3000,
-          })
+          // Toast.show(data?.error_msg, {
+          //   duration: 3000,
+          // })
+          alert(data?.error_msg)
           setLoader(false)
         }
 
       } else {
-        Toast.show('Internal server error', {
-          duration: 3000,
-        })
+        // Toast.show('Internal server error', {
+        //   duration: 3000,
+        // })
+        alert('Internal server error')
         setLoader(false)
       }
 
     } else {
-      Toast.show('Please fill all data', {
-        duration: 3000,
-      })
+      // Toast.show('Please fill all data', {
+      //   duration: 3000,
+      // })
+      alert('Please fill all data')
     }
   }
 
