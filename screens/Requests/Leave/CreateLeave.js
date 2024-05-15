@@ -169,7 +169,7 @@ const CreateLeave = ({ navigation }) => {
             "LeaveTypeId": particularLeaveType?.LeaveTypeId
         });
 
-        // console.log("raw is here:", raw)
+        console.log("raw is here:", raw)
 
         const response = await fetch("https://" + defaultUrl + '/api/LeaveRequests/CalculateLeaves', {
             method: 'POST',

@@ -145,7 +145,7 @@ const ParticularShiftChangeReqView = ({ navigation, route }) => {
                 <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
                     <Modal.Content maxWidth="400px">
                         <Modal.CloseButton />
-                        <Modal.Header>Cancel Leave</Modal.Header>
+                        <Modal.Header>Cancel Shift Change</Modal.Header>
                         <Modal.Body>
                             <FormControl>
                                 <FormControl.Label>Enter Remark</FormControl.Label>

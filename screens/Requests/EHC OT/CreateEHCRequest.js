@@ -204,7 +204,7 @@ const CreateEHCRequest = ({ navigation }) => {
 
         // console.log('leave consoled', raw)
 
-        const response = await fetch("https://" + defaultUrl + '/api/COffRequest/SaveCoffRequest', {
+        const response = await fetch("https://" + defaultUrl + '/api/OTRequest/CreateOTRequest', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'

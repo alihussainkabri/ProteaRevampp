@@ -10,6 +10,8 @@ import Toast from 'react-native-root-toast';
 import Geolocation from '@react-native-community/geolocation'
 import Loader from '../component/Loader';
 import { useHeaderHeight } from '@react-navigation/elements'
+// import geolib from 'geolib';
+import * as geolib from 'geolib';
 
 const MobilePunch = ({ navigation }) => {
 
@@ -19,6 +21,9 @@ const MobilePunch = ({ navigation }) => {
     const [loader, setLoader] = useState(false)
     const [latitude, setLatitude] = useState('')
     const [longitude, setLongitude] = useState('')
+    const [myGeoLocation, setMyGeoLocation] = useState([])
+    const [userLocation, setUserLocation] = useState([]);
+    const [isInsideBoundary, setIsInsideBoundary] = useState(false);
 
     useEffect(() => {
         // PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then(result => {
@@ -37,6 +42,10 @@ const MobilePunch = ({ navigation }) => {
             console.log('geo info latitude', info.coords.latitude.toString())
             setLatitude(info.coords.latitude)
             setLongitude(info.coords.longitude)
+            setUserLocation({
+                latitude: info.coords.latitude,
+                longitude: info.coords.longitude,
+            })
         })
     }, [])
 
@@ -78,7 +87,48 @@ const MobilePunch = ({ navigation }) => {
             }
         }
 
+        async function fetchGeoLocation() {
+            setLoader(true)
+
+            const response = await fetch("https://" + defaultUrl + '/api/PunchInout/GetGEOLocationDetails?EmpId=' + `${user?.EmpId}`)
+            if (response.ok == true) {
+                const data = await response.json()
+
+                console.log('goeLoc: ', data)
+                if (data?.length > 0) {
+
+                    setMyGeoLocation([
+                        {
+                            latitude: data[0]?.Latitude,
+                            longitude: data[0]?.Longitude
+                        },
+                        {
+                            latitude: data[0]?.NorthEastLatitude,
+                            longitude: data[0]?.NorthEastLongitude
+                        },
+                        {
+                            latitude: data[0]?.SouthWestlatitude,
+                            longitude: data[0]?.SouthWestLongitude
+                        }
+                    ])
+                    setLoader(false)
+                } else {
+                    Toast.show(data?.error_msg, {
+                        duration: 3000,
+                    })
+                    setLoader(false)
+                }
+
+            } else {
+                Toast.show('Internal server error', {
+                    duration: 3000,
+                })
+                setLoader(false)
+            }
+        }
+
         fetchImage()
+        fetchGeoLocation()
     }, [])
 
     function getCurrentDateTime() {
@@ -110,7 +160,7 @@ const MobilePunch = ({ navigation }) => {
                 },
                 cameraType: 'front',
                 includeBase64: true,
-                quality : 0.2
+                quality: 0.2
             }
 
             console.log('hy')
@@ -160,6 +210,9 @@ const MobilePunch = ({ navigation }) => {
                             Toast.show(operation == 1 ? 'Punch in successfull' : 'Punch out successfull', {
                                 duration: 3000,
                             })
+
+                            alert(operation == 1 ? 'Punch in successfull' : 'Punch out successfull')
+
                             setRemark('')
                             setLoader(false)
                         } else {
@@ -215,6 +268,7 @@ const MobilePunch = ({ navigation }) => {
                                 <AntDesign name="user" size={60} color="white" />
                             }
                         </View>
+
                         <Text fontFamily={fonts.PopB} textAlign='center' fontSize={26} color='white' mb={7}>{user?.Name}</Text>
                     </ImageBackground>
 
@@ -233,11 +287,49 @@ const MobilePunch = ({ navigation }) => {
                             </Stack>
 
                             <HStack mt={12} justifyContent='space-between'>
-                                <TouchableOpacity onPress={() => capturePunchImage(1)}>
+                                <TouchableOpacity onPress={() => {
+                                    if (userLocation?.latitude) {
+                                        if (myGeoLocation.length > 0) {
+
+                                            const isInside = geolib.isPointInPolygon(
+                                                userLocation,
+                                                myGeoLocation
+                                            );
+                                            if (!isInside) {
+                                                alert('You are not in your work area!')
+                                            } else {
+                                                capturePunchImage(1)
+                                            }
+                                        } else {
+                                            capturePunchImage(1)
+                                        }
+                                    } else {
+                                        alert('Please Enable Location And Restart Mobile Application To Perform This Action!')
+                                    }
+                                }}>
                                     <Image source={require('../assets/images/punch-in.png')} style={styles.puchBTN} />
                                 </TouchableOpacity>
 
-                                <TouchableOpacity onPress={() => capturePunchImage(2)}>
+                                <TouchableOpacity onPress={() => {
+                                    if (userLocation?.latitude) {
+                                        if (myGeoLocation.length > 0) {
+
+                                            const isInside = geolib.isPointInPolygon(
+                                                userLocation,
+                                                myGeoLocation
+                                            );
+                                            if (!isInside) {
+                                                alert('You are not in your work area!')
+                                            } else {
+                                                capturePunchImage(2)
+                                            }
+                                        } else {
+                                            capturePunchImage(2)
+                                        }
+                                    } else {
+                                        alert('Please Enable Location And Restart Mobile Application To Perform This Action!')
+                                    }
+                                }}>
                                     <Image source={require('../assets/images/punch-out.png')} style={styles.puchBTN} />
                                 </TouchableOpacity>
                             </HStack>
@@ -245,7 +337,7 @@ const MobilePunch = ({ navigation }) => {
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
-        </NativeBaseProvider>
+        </NativeBaseProvider >
     )
 }
 

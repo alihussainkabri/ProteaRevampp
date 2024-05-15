@@ -102,7 +102,7 @@ const Login = ({ navigation }) => {
         ],
         {
           title: 'Device Permissions Required',
-          message: "Let's Influence needs access to the following permisions",
+          message: "ProteaESS needs access to the following permisions",
           buttonNeutral: 'Ask Me Later',
           buttonNegative: 'Cancel',
           buttonPositive: 'OK',

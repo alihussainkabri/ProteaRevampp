@@ -39,7 +39,7 @@ const ApproveOrCancel = ({ navigation, route }) => {
             "WFType": item?.WFType
         });
 
-        // console.log("raw is here:", raw)
+        console.log("raw is here:", raw)
 
         const response = await fetch("https://" + defaultUrl + '/api/Requests/RequestAcceptance', {
             method: 'POST',

@@ -161,6 +161,9 @@ const CreateCOffRequest = ({ navigation }) => {
             "EmpId": user?.EmpId,
             "FromDate": fromDate,
             "ToDate": toDate ? toDate : fromDate,
+            "LeaveDuration": leaveDuration,
+            "FromDateSection": fromEntire,
+            "ToDateSection": toEntire
         });
 
         console.log("date calc is here:", raw)
@@ -175,7 +178,7 @@ const CreateCOffRequest = ({ navigation }) => {
 
         if (response.ok == true) {
             const data = await response.json()
-
+            console.log('new one: ',data)
             setNoOfDays(data)
             setLoader(false)
 
@@ -243,7 +246,7 @@ const CreateCOffRequest = ({ navigation }) => {
         if (response.ok == true) {
             const data = await response.json()
             // alert(data?.error_msg)
-            console.warn(data)
+            console.warn('C-OFF req:', data)
             Toast.show(data?.error_msg ? data?.error_msg : 'Leave Request Has Been Submitted')
             setLoader(false)
 
@@ -313,7 +316,7 @@ const CreateCOffRequest = ({ navigation }) => {
 
             <ScrollView style={{ paddingHorizontal: 16, paddingTop: 16 }}>
                 <View style={{ flex: 1, marginBottom: 20 }}>
-                    <Text style={[styles.label, { marginTop: 4 }]}>Leave Duration</Text>
+                    <Text style={[styles.label, { marginTop: 4 }]}>C-Off Duration</Text>
                     <Radio.Group name="cOffDuration" defaultValue={leaveDuration} onChange={e => setLeaveDuration(e)} accessibilityLabel="pick duration">
                         <HStack justifyContent='space-between' alignItems='center' flexWrap='wrap'>
                             <Stack w='50%' my={.5}>
