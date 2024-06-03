@@ -33,6 +33,7 @@ import ListOfOptionalHolidays from '../screens/Requests/Optional Holiday/ListOfO
 import CreateOptionalHolidays from '../screens/Requests/Optional Holiday/CreateOptionalHolidays';
 import ListOfRequests from '../screens/AdminRequestApprove/ListOfRequests';
 import ApproveOrCancel from '../screens/AdminRequestApprove/ApproveOrCancel';
+import SalarySlip from '../screens/SalarySlip/SalarySlip';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -121,6 +122,21 @@ function BookSeatStack() {
     )
 }
 
+function SalarySlipStack() {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerShown: false,
+                contentStyle: {
+                    backgroundColor: 'white'
+                }
+            }}
+        >
+            <Stack.Screen name="SalarySlip" component={SalarySlip} />
+        </Stack.Navigator>
+    )
+}
+
 
 export default function DrawerNavigator() {
     return (
@@ -196,6 +212,17 @@ export default function DrawerNavigator() {
                     ),
                     drawerItemStyle: { paddingHorizontal: 16, },
                     title: 'Book Seat',
+                    sceneContainerStyle: { backgroundColor: 'white' }
+                }}
+            />
+
+            <Drawer.Screen name="SalarySlip" component={SalarySlipStack}
+                options={{
+                    drawerIcon: ({ color }) => (
+                        <Image style={{ tintColor: color, width: 20, height: undefined, aspectRatio: 1 }} source={require('../assets/icons/salary.png')} />
+                    ),
+                    drawerItemStyle: { paddingHorizontal: 16, },
+                    title: 'Salary Slip',
                     sceneContainerStyle: { backgroundColor: 'white' }
                 }}
             />

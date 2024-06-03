@@ -70,7 +70,7 @@ const Login = ({ navigation }) => {
           // Toast.show(data?.error_msg, {
           //   duration: 3000,
           // })
-          alert(data?.error_msg)
+          alert(data?.error_msg ? data?.error_msg : 'Error In Login')
           setLoader(false)
         }
 
