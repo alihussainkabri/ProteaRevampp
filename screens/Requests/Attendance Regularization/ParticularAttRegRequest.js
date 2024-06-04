@@ -145,7 +145,7 @@ const ParticularAttRegRequest = ({ navigation, route }) => {
         <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
           <Modal.Content maxWidth="400px">
             <Modal.CloseButton />
-            <Modal.Header>Cancel Leave</Modal.Header>
+            <Modal.Header>Cancel Att. Reg. Request</Modal.Header>
             <Modal.Body>
               <FormControl>
                 <FormControl.Label>Enter Remark</FormControl.Label>
@@ -183,12 +183,15 @@ const styles = StyleSheet.create({
     fontFamily: fonts.PopM,
     fontSize: 15,
     marginLeft: 12,
+    marginRight: 12,
     textTransform: 'capitalize',
     letterSpacing: .1,
   },
   value: {
     fontFamily: fonts.UrbanR,
     fontSize: 15,
+    flex: 1,
+    textAlign: 'right'
   }
 })
 

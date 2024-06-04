@@ -70,7 +70,7 @@ const Login = ({ navigation }) => {
           // Toast.show(data?.error_msg, {
           //   duration: 3000,
           // })
-          alert(data?.error_msg)
+          alert(data?.error_msg ? data?.error_msg : 'Error In Login')
           setLoader(false)
         }
 
@@ -102,7 +102,7 @@ const Login = ({ navigation }) => {
         ],
         {
           title: 'Device Permissions Required',
-          message: "Let's Influence needs access to the following permisions",
+          message: "ProteaESS needs access to the following permisions",
           buttonNeutral: 'Ask Me Later',
           buttonNegative: 'Cancel',
           buttonPositive: 'OK',

@@ -123,11 +123,11 @@ const CreateShiftChangeRequest = ({ navigation }) => {
             "ReqType": "ShiftChangeRequest",
             "RId": particularReason?.RId,
             "Reason": reason,
-            "NewScheduleId": 1,
-            "NewScheduleType": "S"
+            "NewScheduleId": selectedShift?.ShiftId,
+            "NewScheduleType": selectedShift?.ShiftType
         });
 
-        console.warn('shift Req consoled here', raw)
+        console.log('shift Req consoled here', raw)
 
         const response = await fetch("https://" + defaultUrl + '/api/ShiftChangeRequest/CreateShiftChangeRequest', {
             method: 'POST',
@@ -140,7 +140,10 @@ const CreateShiftChangeRequest = ({ navigation }) => {
         if (response.ok == true) {
             const data = await response.json()
             // alert(data?.error_msg)
-            Toast.show(data?.error_msg ? data?.error_msg : 'Request Has Been Submitted')
+            console.log('data here new: ',data)
+            Toast.show(data?.error_msg ? data?.error_msg : 'Request Has Been Submitted',{
+                duration: 3000
+            })
             setLoader(false)
             if (!data?.error_msg) {
                 navigation.goBack()
@@ -209,7 +212,7 @@ const CreateShiftChangeRequest = ({ navigation }) => {
                         <Actionsheet isOpen={showShifts} onClose={() => setShowShifts(false)}>
                             <Actionsheet.Content>
                                 {allShifts?.length > 0 ? allShifts?.map((item, index) => (
-                                    <Actionsheet.Item onPress={() => {
+                                    <Actionsheet.Item key={index} onPress={() => {
                                         setSelectedShift(item)
                                         setShowShifts(false)
                                     }}>

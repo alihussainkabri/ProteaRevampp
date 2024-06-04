@@ -17,7 +17,11 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
+<<<<<<< HEAD
 	<string>2.1.1</string>
+=======
+	<string>2.0.2</string>
+>>>>>>> a7ca4a54b3aa15be1fe4903d76eb79c6559296aa
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>

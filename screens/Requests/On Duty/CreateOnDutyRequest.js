@@ -148,7 +148,7 @@ const CreateOnDutyRequest = ({ navigation }) => {
       ]
     });
 
-    // console.warn('ODRequest consoled here', raw)
+    console.log('ODRequest consoled here', raw)
 
     const response = await fetch("https://" + defaultUrl + '/api/OnDutyRequest/AddOnDutyRequest', {
       method: 'POST',
@@ -190,7 +190,7 @@ const CreateOnDutyRequest = ({ navigation }) => {
 
       <ScrollView style={{ paddingHorizontal: 16, paddingTop: 16 }}>
         <View style={{ flex: 1, marginBottom: 20 }}>
-          <Text style={[styles.label, { marginTop: 4 }]}>Leave Duration</Text>
+          <Text style={[styles.label, { marginTop: 4 }]}>Select Request Type</Text>
           <Radio.Group name="RequestType" defaultValue={requestType} onChange={e => setRequestType(e)} accessibilityLabel="pick duration">
             <HStack justifyContent='space-between' alignItems='center' flexWrap='wrap'>
               <Stack w='50%' my={.5}>
