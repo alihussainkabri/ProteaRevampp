@@ -247,7 +247,7 @@ const CreateCOffRequest = ({ navigation }) => {
             const data = await response.json()
             // alert(data?.error_msg)
             console.warn('C-OFF req:', data)
-            Toast.show(data?.error_msg ? data?.error_msg : 'Leave Request Has Been Submitted')
+            Toast.show(data?.error_msg ? data?.error_msg : 'C-Off Request Has Been Submitted')
             setLoader(false)
 
             if (!data?.error_msg) {
@@ -320,22 +320,22 @@ const CreateCOffRequest = ({ navigation }) => {
                     <Radio.Group name="cOffDuration" defaultValue={leaveDuration} onChange={e => setLeaveDuration(e)} accessibilityLabel="pick duration">
                         <HStack justifyContent='space-between' alignItems='center' flexWrap='wrap'>
                             <Stack w='50%' my={.5}>
-                                <Radio value="1st Half" colorScheme="blue" size="sm" my={1}>
+                                <Radio value="First Half" colorScheme="blue" size="sm" my={1}>
                                     <Text fontFamily={fonts.UrbanM}>1st Half</Text>
                                 </Radio>
                             </Stack>
                             <Stack w='50%' my={.5}>
-                                <Radio value="2nd Half" colorScheme="blue" size="sm" my={1}>
+                                <Radio value="Second Half" colorScheme="blue" size="sm" my={1}>
                                     <Text fontFamily={fonts.UrbanM}>2nd Half</Text>
                                 </Radio>
                             </Stack>
                             <Stack w='50%' my={.5}>
-                                <Radio value="Full Day" colorScheme="blue" size="sm" my={1}>
+                                <Radio value="FullDay" colorScheme="blue" size="sm" my={1}>
                                     <Text fontFamily={fonts.UrbanM}>Full Day</Text>
                                 </Radio>
                             </Stack>
                             <Stack w='50%' my={.5}>
-                                <Radio value="Multi Day" colorScheme="blue" size="sm" my={1}>
+                                <Radio value="MultiDay" colorScheme="blue" size="sm" my={1}>
                                     <Text fontFamily={fonts.UrbanM}>Multi Day</Text>
                                 </Radio>
                             </Stack>
@@ -359,7 +359,7 @@ const CreateCOffRequest = ({ navigation }) => {
                     {leaveDuration == 'Multi Day' && <>
                         <HStack backgroundColor='ghostwhite' mt={1.5} rounded={2}>
                             <TouchableOpacity onPress={() => setFromEntire('Full Day')} style={[styles.leaveFromToView, { backgroundColor: fromEntire == 'Full Day' ? '#dee8f4' : 'transparent' }]}>
-                                <Text style={[styles.leaveFromToText, { color: fromEntire == 'Full Day' ? '#1875e2' : 'gray' }]}>Entire Day</Text>
+                                <Text style={[styles.leaveFromToText, { color: fromEntire == 'FullDay' ? '#1875e2' : 'gray' }]}>Entire Day</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => setFromEntire('Second Half')} style={[styles.leaveFromToView, { backgroundColor: fromEntire == 'Second Half' ? '#dee8f4' : 'transparent' }]}>
                                 <Text style={[styles.leaveFromToText, { color: fromEntire == 'Second Half' ? '#1875e2' : 'gray' }]}>Second Half</Text>
@@ -384,7 +384,7 @@ const CreateCOffRequest = ({ navigation }) => {
                                 <Text style={[styles.leaveFromToText, { color: toEntire == 'First Half' ? '#1875e2' : 'gray' }]}>First Half</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => setToEntire('Full Day')} style={[styles.leaveFromToView, { backgroundColor: toEntire == 'Full Day' ? '#dee8f4' : 'transparent' }]}>
-                                <Text style={[styles.leaveFromToText, { color: toEntire == 'Full Day' ? '#1875e2' : 'gray' }]}>Entire Day</Text>
+                                <Text style={[styles.leaveFromToText, { color: toEntire == 'FullDay' ? '#1875e2' : 'gray' }]}>Entire Day</Text>
                             </TouchableOpacity>
                         </HStack>
                     </>}

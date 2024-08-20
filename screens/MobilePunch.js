@@ -1,4 +1,4 @@
-import { Dimensions, Image, ImageBackground, KeyboardAvoidingView, PermissionsAndroid, Platform, ScrollView, StatusBar, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
+import { Alert, Dimensions, Image, ImageBackground, KeyboardAvoidingView, PermissionsAndroid, Platform, ScrollView, StatusBar, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { HStack, Input, NativeBaseProvider, Stack, Text, TextArea, VStack } from 'native-base';
 import { Ionicons, AntDesign } from 'react-native-vector-icons'
@@ -113,16 +113,16 @@ const MobilePunch = ({ navigation }) => {
                     ])
                     setLoader(false)
                 } else {
-                    Toast.show(data?.error_msg, {
-                        duration: 3000,
-                    })
+                    // Toast.show(data?.error_msg, {
+                    //     duration: 3000,
+                    // })
                     setLoader(false)
                 }
 
             } else {
-                Toast.show('Internal server error', {
-                    duration: 3000,
-                })
+                // Toast.show('Internal server error', {
+                //     duration: 3000,
+                // })
                 setLoader(false)
             }
         }
@@ -160,7 +160,7 @@ const MobilePunch = ({ navigation }) => {
                 },
                 cameraType: 'front',
                 includeBase64: true,
-                quality: 0.2
+                quality: 0.1
             }
 
             console.log('hy')
@@ -193,6 +193,8 @@ const MobilePunch = ({ navigation }) => {
                         "EmpImage": response.assets[0].base64
                     });
 
+                    console.log('raw: ', raw)
+
                     const response1 = await fetch("https://" + defaultUrl + '/api/PunchInout/PunchIn', {
                         method: 'POST',
                         headers: {
@@ -204,14 +206,21 @@ const MobilePunch = ({ navigation }) => {
                     if (response1.ok == true) {
                         const data = await response1.json()
 
-                        console.log(data)
+                        console.log('punch data: ',JSON.stringify(data))
 
                         if (data?.Message == 'Success') {
                             Toast.show(operation == 1 ? 'Punch in successfull' : 'Punch out successfull', {
                                 duration: 3000,
                             })
 
-                            alert(operation == 1 ? 'Punch in successfull' : 'Punch out successfull')
+                            Alert.alert('Success', operation == 1 ? 'Punch in successfull' : 'Punch out successfull', [
+                                {
+                                    text: 'Ok',
+                                    onPress: () => null
+                                },
+                            ])
+
+                            // alert(operation == 1 ? 'Punch in successfull' : 'Punch out successfull')
 
                             setRemark('')
                             setLoader(false)
@@ -219,6 +228,13 @@ const MobilePunch = ({ navigation }) => {
                             Toast.show(data?.error_msg, {
                                 duration: 3000,
                             })
+
+                            Alert.alert('Error', data?.error_msg, [
+                                {
+                                    text: 'Ok',
+                                    onPress: () => null
+                                },
+                            ])
                             setLoader(false)
                         }
 
@@ -226,6 +242,12 @@ const MobilePunch = ({ navigation }) => {
                         Toast.show('Internal server error', {
                             duration: 3000,
                         })
+                        Alert.alert('Error', 'Internal Server Error', [
+                            {
+                                text: 'Ok',
+                                onPress: () => null
+                            },
+                        ])
                         setLoader(false)
                     }
 
@@ -289,20 +311,20 @@ const MobilePunch = ({ navigation }) => {
                             <HStack mt={12} justifyContent='space-between'>
                                 <TouchableOpacity onPress={() => {
                                     if (userLocation?.latitude) {
-                                        if (myGeoLocation.length > 0) {
+                                        // if (myGeoLocation.length > 0) {
 
-                                            const isInside = geolib.isPointInPolygon(
-                                                userLocation,
-                                                myGeoLocation
-                                            );
-                                            if (!isInside) {
-                                                alert('You are not in your work area!')
-                                            } else {
-                                                capturePunchImage(1)
-                                            }
-                                        } else {
-                                            capturePunchImage(1)
-                                        }
+                                        //     const isInside = geolib.isPointInPolygon(
+                                        //         userLocation,
+                                        //         myGeoLocation
+                                        //     );
+                                        //     if (!isInside) {
+                                        //         alert('You are not in your work area!')
+                                        //     } else {
+                                        //         capturePunchImage(1)
+                                        //     }
+                                        // } else {
+                                        capturePunchImage(1)
+                                        // }
                                     } else {
                                         alert('Please Enable Location And Restart Mobile Application To Perform This Action!')
                                     }
@@ -312,20 +334,20 @@ const MobilePunch = ({ navigation }) => {
 
                                 <TouchableOpacity onPress={() => {
                                     if (userLocation?.latitude) {
-                                        if (myGeoLocation.length > 0) {
+                                        // if (myGeoLocation.length > 0) {
 
-                                            const isInside = geolib.isPointInPolygon(
-                                                userLocation,
-                                                myGeoLocation
-                                            );
-                                            if (!isInside) {
-                                                alert('You are not in your work area!')
-                                            } else {
-                                                capturePunchImage(2)
-                                            }
-                                        } else {
-                                            capturePunchImage(2)
-                                        }
+                                        //     const isInside = geolib.isPointInPolygon(
+                                        //         userLocation,
+                                        //         myGeoLocation
+                                        //     );
+                                        //     if (!isInside) {
+                                        //         alert('You are not in your work area!')
+                                        //     } else {
+                                        //         capturePunchImage(2)
+                                        //     }
+                                        // } else {
+                                        capturePunchImage(2)
+                                        // }
                                     } else {
                                         alert('Please Enable Location And Restart Mobile Application To Perform This Action!')
                                     }

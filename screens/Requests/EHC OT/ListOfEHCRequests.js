@@ -36,7 +36,7 @@ const ListOfEHCRequests = ({ navigation }) => {
 
         if (response.ok == true) {
             const data = await response.json()
-
+            console.log("data here: ",data)
             setAllReqs(data?.OTRequestList)
             setLoader(false)
 

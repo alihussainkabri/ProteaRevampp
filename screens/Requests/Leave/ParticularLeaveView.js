@@ -15,6 +15,8 @@ const ParticularLeaveView = ({ navigation, route }) => {
     const [reason, setReason] = useState('');
     const { item } = route?.params
 
+    useEffect(() => console.log('full item: ', item), [])
+
 
     async function cancelLeave() {
         if (reason?.length > 0) {

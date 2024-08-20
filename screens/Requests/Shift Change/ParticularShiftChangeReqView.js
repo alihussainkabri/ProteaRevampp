@@ -73,7 +73,7 @@ const ParticularShiftChangeReqView = ({ navigation, route }) => {
                         <Ionicons name="md-menu-sharp" size={32} color="white" />
                     </TouchableOpacity>
 
-                    <Text fontFamily={fonts.PopSB} fontSize={22} ml={6} color='white'>OD Request Detail</Text>
+                    <Text fontFamily={fonts.PopSB} fontSize={22} ml={6} color='white'>Shift Change Detail</Text>
                 </HStack>
             </HStack>
 

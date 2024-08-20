@@ -1,6 +1,6 @@
 import { View, StatusBar, TouchableOpacity, ScrollView, StyleSheet } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import { HStack, Text, NativeBaseProvider, VStack, Stack, Radio, Input, Actionsheet } from 'native-base';
+import { HStack, Text, NativeBaseProvider, VStack, Stack, Radio, Input, Actionsheet, Checkbox } from 'native-base';
 import Loader from '../../../component/Loader';
 import { Ionicons, Entypo, AntDesign } from 'react-native-vector-icons'
 import { fonts } from '../../../config/Fonts';
@@ -21,10 +21,11 @@ const CreateOptionalHolidays = ({ navigation }) => {
     const [particularReason, setParticularReason] = useState('');
     const [allReasons, setAllReasons] = useState('');
     const [showYears, setShowYears] = useState(false);
-    const [ particularYear, setParticularYear] = useState('');
+    const [particularYear, setParticularYear] = useState('');
     const [allYears, setAllYears] = useState('');
     const [holidayCount, setHolidayCount] = useState(0);
     const [reason, setReason] = useState('');
+    const [groupValues, setGroupValues] = useState([]);
 
     async function fetchYears() {
         setLoader(true)
@@ -61,8 +62,10 @@ const CreateOptionalHolidays = ({ navigation }) => {
 
         var raw = JSON.stringify({
             "EmpId": user?.EmpId,
-            "year" : particularYear?.Year
+            "year": particularYear?.Year
         });
+
+        console.log('here is raw: ', raw)
 
         const response = await fetch("https://" + defaultUrl + '/api/HolidayRequests/GetMappedOptionalHoliday', {
             method: 'POST',
@@ -88,6 +91,7 @@ const CreateOptionalHolidays = ({ navigation }) => {
     }
 
     useEffect(() => {
+        console.log('here: ', defaultUrl)
         fetchYears();
     }, [])
 
@@ -111,7 +115,7 @@ const CreateOptionalHolidays = ({ navigation }) => {
 
         console.warn('shift Req consoled here', raw)
 
-        const response = await fetch("https://" + defaultUrl + '/api/ShiftChangeRequest/CreateOptionalHolidays', {
+        const response = await fetch("https://" + defaultUrl + '/api/HolidayRequests/AddOptionalHolidayRequest', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'
@@ -190,6 +194,19 @@ const CreateOptionalHolidays = ({ navigation }) => {
                         <TouchableOpacity disabled style={styles.selectDate}>
                             <Text style={styles.placeHolder}>{holidayCount?.HolidayAvail ? holidayCount?.HolidayAvail : 0}</Text>
                         </TouchableOpacity>
+                    </VStack>
+
+                    <VStack>
+                        <Text style={styles.label}>Select Holidays</Text>
+                        <Checkbox.Group onChange={setGroupValues} value={groupValues} accessibilityLabel="choose numbers">
+                            <Checkbox value="one" my={2}>
+                                <View>
+                                    <Text fontFamily={fonts.PopB}>hi</Text>
+                                    <Text>hello</Text>
+                                </View>
+                            </Checkbox>
+                            <Checkbox value="two">Software Development</Checkbox>
+                        </Checkbox.Group>
                     </VStack>
 
                     <HStack mt={4} space={2} mb={2}>
