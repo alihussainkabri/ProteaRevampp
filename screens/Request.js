@@ -69,10 +69,10 @@ const Request = ({ navigation }) => {
                             <Image source={require('../assets/images/C-off.png')} style={styles.summaryBlockImg} />
                         </TouchableOpacity>
 
-                        <VStack backgroundColor='rgba(250, 235, 215, .8)' style={styles.summaryBlock}>
+                        <TouchableOpacity onPress={() => navigation.navigate('ListLCEG')} backgroundColor='rgba(250, 235, 215, .8)' style={styles.summaryBlock}>
                             <Text style={styles.summaryTitle}>Late Coming / Early Going</Text>
                             <Image source={require('../assets/images/Late_Coming.png')} style={styles.summaryBlockImg} />
-                        </VStack>
+                        </TouchableOpacity>
 
                         <TouchableOpacity onPress={() => navigation.navigate('ListOfOptionalHolidays')} style={[styles.summaryBlock, { backgroundColor: 'rgba(217, 217, 217, .7)' }]}>
                             <Text style={styles.summaryTitle}>Optional Holiday</Text>

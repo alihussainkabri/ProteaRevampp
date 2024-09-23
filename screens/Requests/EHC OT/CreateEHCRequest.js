@@ -7,6 +7,7 @@ import { fonts } from '../../../config/Fonts';
 import { url, getConvertDate } from '../../../helpers';
 import { userContext } from '../../../context/UserContext';
 import DateTimePickerModal from "react-native-modal-datetime-picker"
+import Toast from 'react-native-root-toast';
 
 const CreateEHCRequest = ({ navigation }) => {
 
@@ -115,7 +116,7 @@ const CreateEHCRequest = ({ navigation }) => {
 
 
     async function submitLeave() {
-        setLoader(true)
+        // setLoader(true)
 
         var raw = JSON.stringify({
             "EmpId": user?.EmpId,
@@ -125,6 +126,8 @@ const CreateEHCRequest = ({ navigation }) => {
             "Reason": reason,
             "OTRequestsInfo": selectedAvailableEHCOT
         });
+
+        console.log(raw)
 
         const response = await fetch("https://" + defaultUrl + '/api/OTRequest/CreateOTRequest', {
             method: 'POST',
@@ -136,7 +139,7 @@ const CreateEHCRequest = ({ navigation }) => {
 
         if (response.ok == true) {
             const data = await response.json()
-            Toast.show(data?.error_msg ? data?.error_msg : 'Leave Request Has Been Submitted')
+            Toast.show(data?.error_msg ? data?.error_msg : 'EHC/OT Request Has Been Submitted')
             setLoader(false)
 
             if (!data?.error_msg) {

@@ -26,6 +26,10 @@ const CreateOptionalHolidays = ({ navigation }) => {
     const [holidayCount, setHolidayCount] = useState(0);
     const [reason, setReason] = useState('');
     const [groupValues, setGroupValues] = useState([]);
+    const [applicableHolidayList, setApplicableHolidayList] = useState([])
+    const [selectedHolidays, setSelectedHolidays] = useState([])
+    const [maxHolidays, setMaxHolidays] = useState(0)
+    const [availableHolidays, setAvailableHolidays] = useState(0)
 
     async function fetchYears() {
         setLoader(true)
@@ -65,8 +69,6 @@ const CreateOptionalHolidays = ({ navigation }) => {
             "year": particularYear?.Year
         });
 
-        console.log('here is raw: ', raw)
-
         const response = await fetch("https://" + defaultUrl + '/api/HolidayRequests/GetMappedOptionalHoliday', {
             method: 'POST',
             headers: {
@@ -79,7 +81,9 @@ const CreateOptionalHolidays = ({ navigation }) => {
             const data = await response.json()
 
             console.log('all holiday data: ', data)
-            setHolidayCount(data)
+            setApplicableHolidayList(data?.ApplicableHolidayList)
+            setMaxHolidays(data?.MaxHolidaysAllows)
+            setAvailableHolidays(data?.HolidayAvail)
             setLoader(false)
 
         } else {
@@ -103,14 +107,11 @@ const CreateOptionalHolidays = ({ navigation }) => {
         setLoader(true)
 
         var raw = JSON.stringify({
+
             "EmpId": user?.EmpId,
-            "ShiftChangeFromDate": fromDate,
-            "ShiftChangeToDate": toDate,
-            "ReqType": "ShiftChangeRequest",
-            "RId": particularReason?.RId,
-            "Reason": reason,
-            "NewScheduleId": 1,
-            "NewScheduleType": "S"
+            "YearId": particularYear?.Year,
+            "RequestRemark": reason,
+            "ApplicableHolidayList": selectedHolidays
         });
 
         console.warn('shift Req consoled here', raw)
@@ -138,6 +139,17 @@ const CreateOptionalHolidays = ({ navigation }) => {
             })
             setLoader(false)
         }
+    }
+
+    function markHoliday(value, data) {
+        let updated_data = []
+        if (value == true) {
+            updated_data.push(data)
+        } else {
+            updated_data = selectedHolidays.filter(item => item != data)
+        }
+
+        setSelectedHolidays(updated_data)
     }
 
     return (
@@ -185,28 +197,30 @@ const CreateOptionalHolidays = ({ navigation }) => {
                     <VStack>
                         <Text style={styles.label}>Max Holiday Applicable</Text>
                         <TouchableOpacity disabled style={styles.selectDate}>
-                            <Text style={styles.placeHolder}>{holidayCount?.MaxHolidaysAllows ? holidayCount?.MaxHolidaysAllows : 0}</Text>
+                            <Text style={styles.placeHolder}>{maxHolidays ? maxHolidays : 0}</Text>
                         </TouchableOpacity>
                     </VStack>
 
                     <VStack>
                         <Text style={styles.label}>Total Holiday Availed</Text>
                         <TouchableOpacity disabled style={styles.selectDate}>
-                            <Text style={styles.placeHolder}>{holidayCount?.HolidayAvail ? holidayCount?.HolidayAvail : 0}</Text>
+                            <Text style={styles.placeHolder}>{availableHolidays ? availableHolidays : 0}</Text>
                         </TouchableOpacity>
                     </VStack>
 
                     <VStack>
                         <Text style={styles.label}>Select Holidays</Text>
-                        <Checkbox.Group onChange={setGroupValues} value={groupValues} accessibilityLabel="choose numbers">
-                            <Checkbox value="one" my={2}>
+                        {applicableHolidayList?.length > 0 && applicableHolidayList?.map((item, index) => (
+
+                            <Checkbox key={index} isDisabled={item?.IsEnable ? false : true} onChange={(value) => markHoliday(value, item)} my={2}>
                                 <View>
-                                    <Text fontFamily={fonts.PopB}>hi</Text>
-                                    <Text>hello</Text>
+                                    <Text fontFamily={fonts.PopB}>{item?.HolidayName}</Text>
+                                    <Text>{item?.HolidayDate}</Text>
                                 </View>
                             </Checkbox>
-                            <Checkbox value="two">Software Development</Checkbox>
-                        </Checkbox.Group>
+
+                        ))}
+
                     </VStack>
 
                     <HStack mt={4} space={2} mb={2}>
@@ -214,7 +228,14 @@ const CreateOptionalHolidays = ({ navigation }) => {
                             <Text style={{ color: '#cf0101' }} fontSize={17} textAlign='center' fontFamily={fonts.PopM}>Cancel</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={submitReq} style={[styles.btn, { backgroundColor: '#1875e2' }]}>
+                        <TouchableOpacity onPress={() => {
+                            console.log(selectedHolidays)
+                            if (selectedHolidays.length > 0 && reason){
+                                submitReq()
+                            }else{
+                                Toast.show('Please select atleast one holiday and enter reason as well')
+                            }
+                        }} style={[styles.btn, { backgroundColor: '#1875e2' }]}>
                             <Text color='white' fontSize={17} textAlign='center' fontFamily={fonts.PopM}>Submit</Text>
                         </TouchableOpacity>
                     </HStack>
