@@ -17,8 +17,8 @@ const CreateLeave = ({ navigation }) => {
     const [leaveDuration, setLeaveDuration] = useState('First Half')
     const [fromDate, setFromDate] = useState('');
     const [toDate, setToDate] = useState('');
-    const [fromEntire, setFromEntire] = useState('');
-    const [toEntire, setToEntire] = useState('');
+    const [fromEntire, setFromEntire] = useState('Full Day');
+    const [toEntire, setToEntire] = useState('Full Day');
     const [fromDateCalendarShow, setFromDateCalendarShow] = useState(false);
     const [ToDateCalendarShow, setToDateCalendarShow] = useState(false);
     const [noOfDays, setNoOfDays] = useState('');
@@ -169,7 +169,7 @@ const CreateLeave = ({ navigation }) => {
             "LeaveTypeId": particularLeaveType?.LeaveTypeId
         });
 
-        console.log("raw is here:", raw)
+        console.log("leave days cal. raw data:", raw)
 
         const response = await fetch("https://" + defaultUrl + '/api/LeaveRequests/CalculateLeaves', {
             method: 'POST',
@@ -181,7 +181,7 @@ const CreateLeave = ({ navigation }) => {
 
         if (response.ok == true) {
             const data = await response.json()
-
+            console.log('total no of days: ', data)
             setNoOfDays(data)
             setLoader(false)
 
@@ -209,7 +209,7 @@ const CreateLeave = ({ navigation }) => {
             "LeaveTo": toDate ? toDate : fromDate,
             "FromDateSection": fromEntire,
             "ToDateSection": toEntire,
-            "NoOfDaysr": noOfDays?.noOfDays,
+            "NoOfDaysr": noOfDays?.NoOfDays,
             "LocumId": user?.EmpId,
             "ELId": particularLeaveType?.ELId,
             "LeaveTypeId": particularLeaveType?.LeaveTypeId,
@@ -250,10 +250,10 @@ const CreateLeave = ({ navigation }) => {
             console.warn(data)
             Toast.show(data?.error_msg ? data?.error_msg : 'Leave Request Has Been Submitted')
             setLoader(false)
-            
-            if(!data?.error_msg){
+
+            if (!data?.error_msg) {
                 navigation.goBack()
-              }
+            }
 
         } else {
             Toast.show('Internal server error', {
@@ -427,7 +427,7 @@ const CreateLeave = ({ navigation }) => {
                     <VStack>
                         <Text style={styles.label}>Number Of Days</Text>
                         <TouchableOpacity disabled style={styles.selectDate}>
-                            <Text style={styles.placeHolder}>{noOfDays?.NoOfDays ? noOfDays?.NoOfDays : 1}</Text>
+                            <Text style={styles.placeHolder}>{noOfDays?.NoOfDays ? noOfDays?.NoOfDays : ''}</Text>
                         </TouchableOpacity>
                     </VStack>
 

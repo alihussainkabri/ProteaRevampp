@@ -61,7 +61,7 @@ const ParticularODRequestView = ({ navigation, route }) => {
             var raw = JSON.stringify({
                 "EmpId": user?.EmpId,
                 "requestId": item?.TODId,
-                "RequestType": "OnDutyRequests",
+                "RequestType": "ODRequest",
                 "Remark": reason
             });
 

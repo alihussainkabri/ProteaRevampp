@@ -8,7 +8,7 @@ function getConvertDate(unOrganisedDate) {
     const formattedDate = `${year}-${month}-${day}`;
 
     return formattedDate;
-}
+} 
 
 function getConvertTime(unOrganisedTime) {
     const time = new Date(unOrganisedTime);

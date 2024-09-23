@@ -1,6 +1,6 @@
 import { View, StatusBar, TouchableOpacity, ScrollView, StyleSheet } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import { HStack, Text, NativeBaseProvider, VStack, Stack, Radio, Input, Actionsheet } from 'native-base';
+import { HStack, Text, NativeBaseProvider, VStack, Stack, Radio, Input, Actionsheet, Modal, FormControl } from 'native-base';
 import Loader from '../../../component/Loader';
 import { Ionicons, Entypo, AntDesign } from 'react-native-vector-icons'
 import { fonts } from '../../../config/Fonts';
@@ -16,9 +16,10 @@ const CreateCOffRequest = ({ navigation }) => {
     const [loader, setLoader] = useState(false)
     const [leaveDuration, setLeaveDuration] = useState('First Half')
     const [fromDate, setFromDate] = useState('');
+    const [currentDate, setCurrentDate] = useState('');
     const [toDate, setToDate] = useState('');
-    const [fromEntire, setFromEntire] = useState('');
-    const [toEntire, setToEntire] = useState('');
+    const [fromEntire, setFromEntire] = useState('FullDay');
+    const [toEntire, setToEntire] = useState('FullDay');
     const [fromDateCalendarShow, setFromDateCalendarShow] = useState(false);
     const [ToDateCalendarShow, setToDateCalendarShow] = useState(false);
     const [noOfDays, setNoOfDays] = useState('');
@@ -34,6 +35,7 @@ const CreateCOffRequest = ({ navigation }) => {
     const [particularResponsible, setParticularResponsible] = useState('');
     const [balance, setBalance] = useState('');
     const [responsbleData, setResponsbleData] = useState([])
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         async function fetchReasons() {
@@ -55,8 +57,7 @@ const CreateCOffRequest = ({ navigation }) => {
 
             if (response.ok == true) {
                 const data = await response.json()
-                // console.log('reasons', data)
-
+                console.log('reason: ', data)
                 setAllReasons(data)
                 setLoader(false)
 
@@ -98,6 +99,25 @@ const CreateCOffRequest = ({ navigation }) => {
             }
         }
 
+        function getCurrentDateTime() {
+            const currentDate = new Date();
+
+            // Get date components
+            const year = currentDate.getFullYear();
+            const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed
+            const day = String(currentDate.getDate()).padStart(2, '0');
+
+            // Get time components
+            const hours = String(currentDate.getHours()).padStart(2, '0');
+            const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+            const seconds = String(currentDate.getSeconds()).padStart(2, '0');
+
+            // Create the formatted date-time string
+            const formattedDateTime = `${year}-${month}-${day}`;
+            setCurrentDate(formattedDateTime)
+        }
+
+        getCurrentDateTime();
         fetchReasons();
         fetchResponsible();
     }, [])
@@ -139,16 +159,12 @@ const CreateCOffRequest = ({ navigation }) => {
     }, [fromDate, toDate])
 
     const handleFromDate = (date) => {
-        // console.warn("A date has been picked: ", date.toString());
-
         const convertedDate = getConvertDate(date.toString());
         setFromDate(convertedDate)
         setFromDateCalendarShow(false);
     };
 
     const handleToDate = (date) => {
-        // console.warn("A date has been picked: ", date.toString());
-
         const convertedDate = getConvertDate(date.toString());
         setToDate(convertedDate)
         setToDateCalendarShow(false);
@@ -159,14 +175,14 @@ const CreateCOffRequest = ({ navigation }) => {
 
         var raw = JSON.stringify({
             "EmpId": user?.EmpId,
-            "FromDate": fromDate,
-            "ToDate": toDate ? toDate : fromDate,
+            "FromDate": fromDate ? fromDate : currentDate,
+            "ToDate": toDate ? toDate : fromDate ? fromDate : currentDate,
             "LeaveDuration": leaveDuration,
             "FromDateSection": fromEntire,
             "ToDateSection": toEntire
         });
 
-        console.log("date calc is here:", raw)
+        console.log("date calc RAW is here:", raw)
 
         const response = await fetch("https://" + defaultUrl + '/api/COffRequest/GetCalculateDays', {
             method: 'POST',
@@ -178,7 +194,7 @@ const CreateCOffRequest = ({ navigation }) => {
 
         if (response.ok == true) {
             const data = await response.json()
-            console.log('new one: ',data)
+            console.log('calculated days: ', data)
             setNoOfDays(data)
             setLoader(false)
 
@@ -191,8 +207,14 @@ const CreateCOffRequest = ({ navigation }) => {
     }
 
     useEffect(() => {
+        setToDate('')
+        setFromEntire('FullDay')
+        setToEntire('FullDay')
+    }, [leaveDuration])
+
+    useEffect(() => {
         fetchLeaveDays()
-    }, [fromDate, toDate, fromEntire, toEntire])
+    }, [leaveDuration, fromDate, toDate, fromEntire, toEntire])
 
 
     async function submitLeave() {
@@ -203,34 +225,19 @@ const CreateCOffRequest = ({ navigation }) => {
             "LeaveDuration": leaveDuration,
             "FromDate": fromDate,
             "FromDateSection": fromEntire,
-            "ContactNo": "7897897894",
-            "UserOSId": 1017,
-            "ToDate": null,
-            "ToDateSection": "FirstHalf",
-            "NoofDays": 0.5,
-            "LocumId": 76,
-            "RId": "6",
-            "RequestNarration": "Test",
+            "ContactNo": contactNumber,
+            "UserOSId": user?.EmpId,
+            "ToDate": toDate ? toDate : fromDate,
+            "ToDateSection": toEntire,
+            "NoofDays": noOfDays,
+            "LocumId": "",
+            "RId": particularReason?.RId,
+            "RequestNarration": writtenReason,
             "DB": false,
             "UserCId": 0,
             "Offset": "+05:30",
-            "UserId": 1017,
-            "CoffRequestInfos":
-                [
-                    {
-                        "TABId": 152021,
-                        "Availed": 0.00,
-                        "COffBalance": 0,
-                        "DateofGeneration": "2019-06-09"
-                    },
-                    {
-                        "TABId": 176901,
-                        "Availed": 0.00,
-                        "COffBalance": 0,
-                        "DateofGeneration": "2019-01-30"
-                    }
-                ]
-
+            "UserId": user?.EmpId,
+            "CoffRequestInfos": balance
         });
 
         // console.log('leave consoled', raw)
@@ -298,7 +305,6 @@ const CreateCOffRequest = ({ navigation }) => {
                 duration: 3000,
             })
         }
-
     }
 
     return (
@@ -356,9 +362,9 @@ const CreateCOffRequest = ({ navigation }) => {
                         />
                     </VStack>
 
-                    {leaveDuration == 'Multi Day' && <>
+                    {leaveDuration == 'MultiDay' && <>
                         <HStack backgroundColor='ghostwhite' mt={1.5} rounded={2}>
-                            <TouchableOpacity onPress={() => setFromEntire('Full Day')} style={[styles.leaveFromToView, { backgroundColor: fromEntire == 'Full Day' ? '#dee8f4' : 'transparent' }]}>
+                            <TouchableOpacity onPress={() => setFromEntire('FullDay')} style={[styles.leaveFromToView, { backgroundColor: fromEntire == 'FullDay' ? '#dee8f4' : 'transparent' }]}>
                                 <Text style={[styles.leaveFromToText, { color: fromEntire == 'FullDay' ? '#1875e2' : 'gray' }]}>Entire Day</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => setFromEntire('Second Half')} style={[styles.leaveFromToView, { backgroundColor: fromEntire == 'Second Half' ? '#dee8f4' : 'transparent' }]}>
@@ -383,16 +389,47 @@ const CreateCOffRequest = ({ navigation }) => {
                             <TouchableOpacity onPress={() => setToEntire('First Half')} style={[styles.leaveFromToView, { backgroundColor: toEntire == 'First Half' ? '#dee8f4' : 'transparent' }]}>
                                 <Text style={[styles.leaveFromToText, { color: toEntire == 'First Half' ? '#1875e2' : 'gray' }]}>First Half</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => setToEntire('Full Day')} style={[styles.leaveFromToView, { backgroundColor: toEntire == 'Full Day' ? '#dee8f4' : 'transparent' }]}>
+                            <TouchableOpacity onPress={() => setToEntire('FullDay')} style={[styles.leaveFromToView, { backgroundColor: toEntire == 'FullDay' ? '#dee8f4' : 'transparent' }]}>
                                 <Text style={[styles.leaveFromToText, { color: toEntire == 'FullDay' ? '#1875e2' : 'gray' }]}>Entire Day</Text>
                             </TouchableOpacity>
                         </HStack>
                     </>}
 
+                    {balance?.length > 0 && <>
+                        <TouchableOpacity onPress={() => setShowModal(true)} style={[styles.btn, { backgroundColor: '#1875e2', marginTop: 20 }]}>
+                            <Text color='white' fontSize={17} textAlign='center' fontFamily={fonts.PopM}>Check Balance</Text>
+                        </TouchableOpacity>
+
+                        <Modal isOpen={showModal} onClose={() => setShowModal(false)} size='lg'>
+                            <Modal.Content maxWidth="400px">
+                                <Modal.CloseButton />
+                                <Modal.Header>Balance Requests</Modal.Header>
+                                <Modal.Body>
+                                    <FormControl>
+                                        <VStack borderColor='gray.200' borderWidth={1}>
+                                            <HStack backgroundColor='#e9eef5'>
+                                                <Text style={styles.tableTitle}>Generation Date</Text>
+                                                <Text style={styles.tableTitle}>Coff Balance</Text>
+                                                <Text style={styles.tableTitle}>Available</Text>
+                                            </HStack>
+                                            {balance?.length > 0 ? balance?.map((item, index) => (
+                                                <HStack key={index} borderBottomWidth={balance?.length == index + 1 ? 0 : 1} borderBottomColor='gray.200' py={1}>
+                                                    <Text style={styles.tableValue}>{item?.DateofGeneration?.split('T')[0]}</Text>
+                                                    <Text style={styles.tableValue}>{item?.COffBalance}</Text>
+                                                    <Text style={styles.tableValue}>{item?.Availed}</Text>
+                                                </HStack>
+                                            )) : <Text fontFamily={fonts.UrbanSB} textAlign='center' color='#737373' my={2}>No Balnce Available!</Text>}
+                                        </VStack>
+                                    </FormControl>
+                                </Modal.Body>
+                            </Modal.Content>
+                        </Modal>
+                    </>}
+
                     <VStack>
                         <Text style={styles.label}>Number Of Days</Text>
                         <TouchableOpacity disabled style={styles.selectDate}>
-                            <Text style={styles.placeHolder}>{noOfDays ? noOfDays : 1}</Text>
+                            <Text style={styles.placeHolder}>{noOfDays ? noOfDays : 0}</Text>
                         </TouchableOpacity>
                     </VStack>
 
@@ -532,6 +569,20 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingVertical: 8,
         borderRadius: 4
+    },
+    tableTitle: {
+        fontFamily: fonts.PopM,
+        flex: 1,
+        textAlign: 'center',
+        color: '#737373',
+        paddingVertical: 4
+    },
+    tableValue: {
+        fontFamily: fonts.UrbanM,
+        flex: 1,
+        textAlign: 'center',
+        color: '#737373',
+        paddingVertical: 2
     },
 })
 

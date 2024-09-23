@@ -62,6 +62,8 @@ const ParticularAttRegRequest = ({ navigation, route }) => {
     }
   }
 
+  useEffect(() => console.log('itemDetail:', item), [])
+
   return (
     <NativeBaseProvider>
       {loader && <Loader />}
@@ -79,29 +81,13 @@ const ParticularAttRegRequest = ({ navigation, route }) => {
 
       <ScrollView showsVerticalScrollIndicator={false} style={{ paddingTop: 10, marginTop: 10, paddingBottom: 200 }}>
         <VStack px={4} mb={5}>
-          {/* <HStack style={styles.infoCard}>
-            <HStack alignItems='center'>
-              <Entypo name="v-card" size={20} color="black" />
-              <Text style={styles.title}>Duration</Text>
-            </HStack>
-            <Text style={styles.value}>{item?.ReqType}</Text>
-          </HStack>
-
           <HStack style={styles.infoCard}>
             <HStack alignItems='center'>
               <Entypo name="v-card" size={20} color="black" />
-              <Text style={styles.title}>Shift Date</Text>
+              <Text style={styles.title}>Approval Status</Text>
             </HStack>
-            <Text style={styles.value}>{item?.ShiftDate}</Text>
+            <Text style={styles.value}>{item?.ApprovalStatus}</Text>
           </HStack>
-
-          <HStack style={styles.infoCard}>
-            <HStack alignItems='center'>
-              <Entypo name="v-card" size={20} color="black" />
-              <Text style={styles.title}>Start Time</Text>
-            </HStack>
-            <Text style={styles.value}>{item?.FromTime}</Text>
-          </HStack> */}
 
           <HStack style={styles.infoCard}>
             <HStack alignItems='center'>

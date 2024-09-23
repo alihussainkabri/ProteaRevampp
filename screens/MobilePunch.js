@@ -26,27 +26,27 @@ const MobilePunch = ({ navigation }) => {
     const [isInsideBoundary, setIsInsideBoundary] = useState(false);
 
     useEffect(() => {
-        // PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then(result => {
-        //     console.log(result)
-        //     if (result == PermissionsAndroid.RESULTS.GRANTED) {
-        //         Geolocation.getCurrentPosition(info => {
-        //             console.log('geo info', info)
-        //             setLatitude(info.coords.latitude)
-        //             setLongitude(info.coords.longitude)
-        //         })
-        //     }
-        // })
+    // PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then(result => {
+    //     console.log(result)
+    //     if (result == PermissionsAndroid.RESULTS.GRANTED) {
+    //         Geolocation.getCurrentPosition(info => {
+    //             console.log('geo info', info)
+    //             setLatitude(info.coords.latitude)
+    //             setLongitude(info.coords.longitude)
+    //         })
+    //     }
+    // })
 
-        Geolocation.getCurrentPosition(info => {
-            console.log('geo info', info)
-            console.log('geo info latitude', info.coords.latitude.toString())
-            setLatitude(info.coords.latitude)
-            setLongitude(info.coords.longitude)
-            setUserLocation({
-                latitude: info.coords.latitude,
-                longitude: info.coords.longitude,
-            })
+    Geolocation.getCurrentPosition(info => {
+        console.log('geo info', info)
+        console.log('geo info latitude', info.coords.latitude.toString())
+        setLatitude(info.coords.latitude)
+        setLongitude(info.coords.longitude)
+        setUserLocation({
+            latitude: info.coords.latitude,
+            longitude: info.coords.longitude,
         })
+    })
     }, [])
 
     useEffect(() => {
@@ -172,6 +172,19 @@ const MobilePunch = ({ navigation }) => {
 
                     setLoader(true)
 
+                    // get current latitute & longitute
+                    Geolocation.getCurrentPosition(info => {
+                        console.log('geo info', info)
+                        console.log('geo info latitude', info.coords.latitude.toString())
+                        setLatitude(info.coords.latitude)
+                        setLongitude(info.coords.longitude)
+                        setUserLocation({
+                            latitude: info.coords.latitude,
+                            longitude: info.coords.longitude,
+                        })
+                    })
+
+                    // calculate current date & time 
                     const currentDateTime = getCurrentDateTime();
 
                     var raw = JSON.stringify({
@@ -206,7 +219,7 @@ const MobilePunch = ({ navigation }) => {
                     if (response1.ok == true) {
                         const data = await response1.json()
 
-                        console.log('punch data: ',JSON.stringify(data))
+                        console.log('punch data: ', JSON.stringify(data))
 
                         if (data?.Message == 'Success') {
                             Toast.show(operation == 1 ? 'Punch in successfull' : 'Punch out successfull', {
