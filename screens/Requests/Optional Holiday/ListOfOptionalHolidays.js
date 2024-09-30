@@ -20,8 +20,7 @@ const ListOfOptionalHolidays = ({ navigation }) => {
         const todayDate = getTodayDate()
 
         var raw = JSON.stringify({
-            "EmpId": user?.EmpId,
-            "HId": null
+            "EmpId": user?.EmpId
         });
 
         console.log("raw is here ok:", raw)

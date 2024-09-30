@@ -20,24 +20,25 @@ const ListOfEHCRequests = ({ navigation }) => {
         const todayDate = getTodayDate()
 
         var raw = JSON.stringify({
-            "EmpId": user?.EmpId,
-            "TOTId": null
+            "EmpId": 50
         });
 
         console.log("raw is here ok:", raw)
+        console.log("https://" + defaultUrl + '/api/OTRequest/GetPendingOTRequest')
 
-        const response = await fetch("https://" + defaultUrl + '/api/OTRequest/GetOTRequest', {
+        const response = await fetch("https://" + defaultUrl + '/api/OTRequest/GetPendingOTRequest', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'
             },
             body: raw
         })
+        
 
         if (response.ok == true) {
             const data = await response.json()
             console.log("data here: ",data)
-            setAllReqs(data?.OTRequestList)
+            setAllReqs(data)
             setLoader(false)
 
         } else {
@@ -78,7 +79,7 @@ const ListOfEHCRequests = ({ navigation }) => {
                 <View style={{ marginTop: 10 }}>
                     {allReqs?.length > 0 ? allReqs?.map((item, index) => (
                         <TouchableOpacity key={index} onPress={() => {
-                            navigation.navigate('ParticularShiftChangeReqView', {
+                            navigation.navigate('ParticularEHCOTRequest', {
                                 item: item
                             })
                         }} activeOpacity={.9}>
@@ -89,19 +90,23 @@ const ListOfEHCRequests = ({ navigation }) => {
                                         {item?.ApprovalStatus == 'Cancelled' && <Image source={require('../../../assets/images/cancelled.png')} style={{ width: 38, height: 38, resizeMode: 'cover' }} />}
                                         {item?.ApprovalStatus == 'Approved' && <Image source={require('../../../assets/images/Approve.png')} style={{ width: 38, height: 38, resizeMode: 'cover' }} />}
                                         {item?.ApprovalStatus == 'Rejected' && <Image source={require('../../../assets/images/reject.png')} style={{ width: 38, height: 38, resizeMode: 'cover' }} />}
-                                        <Text numberOfLines={1} ellipsizeMode='tail' width='200px' color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={16} ml={3}>{item?.ReasonTemplate}</Text>
+                                        
+                                        <VStack>
+                                        <Text numberOfLines={1} ellipsizeMode='tail' width='200px' color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={16} ml={3}>{item?.EmpName}</Text>    
+                                        <Text numberOfLines={1} ellipsizeMode='tail' width='200px' color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={13} ml={3}>{item?.Reason}</Text>
+                                        </VStack>
                                     </HStack>
 
                                     <HStack alignItems='center' mt={4}>
                                         <VStack>
-                                            <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{new Date(item?.ShiftChangeFromDate).toLocaleDateString('en-GB')}</Text>
+                                            <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{new Date(item?.RequestFromDate).toLocaleDateString('en-GB')}</Text>
                                             <Text color='#bbbbbb' fontFamily={fonts.PopM} fontSize={12}>From Date</Text>
                                         </VStack>
 
                                         <View style={{ backgroundColor: '#c6c6c6', height: 2, width: 40, marginHorizontal: 20 }}></View>
 
                                         <VStack>
-                                            <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{new Date(item?.ShiftChangeToDate).toLocaleDateString('en-GB')}</Text>
+                                            <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{new Date(item?.RequestToDate).toLocaleDateString('en-GB')}</Text>
                                             <Text color='#bbbbbb' fontFamily={fonts.PopM} fontSize={12}>To Date</Text>
                                         </VStack>
 
@@ -109,7 +114,7 @@ const ListOfEHCRequests = ({ navigation }) => {
                                 </VStack>
 
                                 <VStack backgroundColor='#f0f0f0' px={2} pb={3} flexGrow={1} justifyContent='flex-end' style={{ borderTopRightRadius: 8, borderBottomRightRadius: 8 }}>
-                                    <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{new Date(item?.ShiftChangeRequestDate).toLocaleDateString('en-GB')}</Text>
+                                    <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{new Date(item?.RequestDate).toLocaleDateString('en-GB')}</Text>
                                     <Text color='#bbbbbb' fontFamily={fonts.PopM} fontSize={12}>Request Date</Text>
                                 </VStack>
                             </HStack>

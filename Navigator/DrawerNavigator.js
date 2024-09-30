@@ -35,6 +35,7 @@ import ListOfRequests from '../screens/AdminRequestApprove/ListOfRequests';
 import ApproveOrCancel from '../screens/AdminRequestApprove/ApproveOrCancel';
 import SalarySlip from '../screens/SalarySlip/SalarySlip';
 import ListLCEG from '../screens/Requests/LC EG/ListLCEG';
+import ParticularEHCOTRequest from '../screens/Requests/EHC OT/ParticularEHCOTRequest';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -96,6 +97,7 @@ function RequestStack() {
             <Stack.Screen name="ListOfShiftChangeRequests" component={ListOfShiftChangeRequests} />
             <Stack.Screen name="CreateShiftChangeRequest" component={CreateShiftChangeRequest} />
             <Stack.Screen name="ListOfEHCRequests" component={ListOfEHCRequests} />
+            <Stack.Screen name="ParticularEHCOTRequest" component={ParticularEHCOTRequest} />
             <Stack.Screen name="CreateEHCRequest" component={CreateEHCRequest} />
             <Stack.Screen name="ListOfCOffRequests" component={ListOfCOffRequests} />
             <Stack.Screen name="ParticularCOffReq" component={ParticularCOffReq} />
