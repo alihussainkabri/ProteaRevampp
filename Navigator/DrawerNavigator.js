@@ -36,6 +36,7 @@ import ApproveOrCancel from '../screens/AdminRequestApprove/ApproveOrCancel';
 import SalarySlip from '../screens/SalarySlip/SalarySlip';
 import ListLCEG from '../screens/Requests/LC EG/ListLCEG';
 import ParticularEHCOTRequest from '../screens/Requests/EHC OT/ParticularEHCOTRequest';
+import ParticularHoliday from '../screens/Requests/Optional Holiday/ParticularHoliday';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -105,6 +106,7 @@ function RequestStack() {
             <Stack.Screen name="ParticularShiftChangeReqView" component={ParticularShiftChangeReqView} />
             <Stack.Screen name="ListOfOptionalHolidays" component={ListOfOptionalHolidays} />
             <Stack.Screen name="CreateOptionalHolidays" component={CreateOptionalHolidays} />
+            <Stack.Screen name="ParticularHoliday" component={ParticularHoliday} />
             <Stack.Screen name="ListLCEG" component={ListLCEG} />
         </Stack.Navigator>
     )
