@@ -1,4 +1,4 @@
-import { View, StatusBar, TouchableOpacity, Image, StyleSheet, ScrollView } from 'react-native'
+import { View, StatusBar, TouchableOpacity, StyleSheet, ScrollView } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { HStack, Text, NativeBaseProvider, VStack, Modal, FormControl, TextArea, Button } from 'native-base';
 import Loader from '../../../component/Loader';
@@ -7,14 +7,15 @@ import { fonts } from '../../../config/Fonts';
 import { userContext } from '../../../context/UserContext';
 import Toast from 'react-native-root-toast';
 
-const ParticularHoliday = ({ navigation, route }) => {
+const ParticularLCEGReqView = ({ navigation, route }) => {
 
     const [loader, setLoader] = useState(false)
-    const { user, defaultUrl } = useContext(userContext)
-    const [Detail, setDetail] = useState([])
+    const { defaultUrl, user } = useContext(userContext)
     const [showModal, setShowModal] = useState(false);
     const [reason, setReason] = useState('');
     const { item } = route?.params
+
+    useEffect(() => console.log('full item: ', item), [])
 
     async function cancelLeave() {
         if (reason?.length > 0) {
@@ -22,8 +23,8 @@ const ParticularHoliday = ({ navigation, route }) => {
 
             var raw = JSON.stringify({
                 "EmpId": user?.EmpId,
-                "requestId": item?.HRId,
-                "RequestType": "OptionalHolidayRequest",
+                "requestId": item?.LEId,
+                "RequestType": "LateEarlyRequest",
                 "Remark": reason
             });
 
@@ -42,7 +43,7 @@ const ParticularHoliday = ({ navigation, route }) => {
 
                 if (data?.Message == 'Success') {
 
-                    Toast.show('Request Cancelled Successfully')
+                    Toast.show('Leave Cancelled Successfully')
                     setLoader(false)
                     navigation.goBack()
                 } else {
@@ -63,8 +64,6 @@ const ParticularHoliday = ({ navigation, route }) => {
         }
     }
 
-    useEffect(() => console.log('single item: ', item), [])
-
     return (
         <NativeBaseProvider>
             {loader && <Loader />}
@@ -76,40 +75,32 @@ const ParticularHoliday = ({ navigation, route }) => {
                         <Ionicons name="md-menu-sharp" size={32} color="white" />
                     </TouchableOpacity>
 
-                    <Text fontFamily={fonts.PopSB} fontSize={22} ml={6} color='white'>Optional Holiday Detail</Text>
+                    <Text fontFamily={fonts.PopSB} fontSize={22} ml={6} color='white'>LCEG Detail</Text>
                 </HStack>
             </HStack>
 
             <ScrollView showsVerticalScrollIndicator={false} style={{ paddingTop: 10, marginTop: 10, paddingBottom: 200 }}>
                 <VStack px={4} mb={5}>
-                    {/* <HStack style={styles.infoCard}>
-                        <HStack alignItems='center'>
-                            <Entypo name="v-card" size={20} color="black" />
-                            <Text style={styles.title}>Leave Type</Text>
-                        </HStack>
-                        <Text style={styles.value}>{Detail?.LeaveType}</Text>
-                    </HStack> */}
-
                     <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
-                            <Text style={styles.title}>Total Holidays</Text>
+                            <Text style={styles.title}>Request Type</Text>
                         </HStack>
-                        <Text style={styles.value}>{item?.TotalHolidays}</Text>
+                        <Text style={styles.value}>{item?.IsSpecialDutyRequest ? 'Special Duty' : 'LCEG'}</Text>
                     </HStack>
 
                     <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
-                            <Text style={styles.title}>Status</Text>
+                            <Text style={styles.title}>From Date</Text>
                         </HStack>
-                        <Text style={styles.value}>{item?.ApprovalStatus}</Text>
+                        <Text style={styles.value}>{new Date(item?.RequestFromDate).toLocaleDateString('en-GB')}</Text>
                     </HStack>
 
                     <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
-                            <Text style={styles.title}>Requested Date</Text>
+                            <Text style={styles.title}>Request Date</Text>
                         </HStack>
                         <Text style={styles.value}>{new Date(item?.RequestDate).toLocaleDateString('en-GB')}</Text>
                     </HStack>
@@ -117,20 +108,12 @@ const ParticularHoliday = ({ navigation, route }) => {
                     <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
-                            <Text style={styles.title}>Remarks</Text>
+                            <Text style={styles.title}>Reason</Text>
                         </HStack>
-                        <Text style={styles.value}>{item?.RequestRemark ?? 'No remarks'}</Text>
+                        <Text style={styles.value}>{item?.Reason}</Text>
                     </HStack>
 
-                    <HStack style={styles.infoCard}>
-                        <HStack alignItems='center'>
-                            <Entypo name="v-card" size={20} color="black" />
-                            <Text style={styles.title}>Employee Name</Text>
-                        </HStack>
-                        <Text style={styles.value}>{item?.EmpName}</Text>
-                    </HStack>
-
-                    {item?.ApprovalStatus == "Pending" && <TouchableOpacity
+                    {item?.ReqStatus == 'Pending' && <TouchableOpacity
                         onPress={() => setShowModal(true)}
                         style={{ backgroundColor: 'red', width: '100%', paddingVertical: 10, marginVertical: 20 }}>
                         <Text style={{ color: 'white', textAlign: 'center' }}>Request For Cancellation</Text>
@@ -140,7 +123,7 @@ const ParticularHoliday = ({ navigation, route }) => {
                 <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
                     <Modal.Content maxWidth="400px">
                         <Modal.CloseButton />
-                        <Modal.Header>Cancel OD Request</Modal.Header>
+                        <Modal.Header>Cancel Leave</Modal.Header>
                         <Modal.Body>
                             <FormControl>
                                 <FormControl.Label>Enter Remark</FormControl.Label>
@@ -187,4 +170,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default ParticularHoliday;
+export default ParticularLCEGReqView;

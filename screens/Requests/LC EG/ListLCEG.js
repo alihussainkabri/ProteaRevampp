@@ -21,12 +21,12 @@ const ListLCEG = ({ navigation }) => {
 
         var raw = JSON.stringify({
             "EmpId": user?.EmpId,
-            "TOTId": null
+            "LEId": null
         });
 
         console.log("raw is here ok:", raw)
 
-        const response = await fetch("https://" + defaultUrl + '/api/OTRequest/GetOTRequest', {
+        const response = await fetch("https://" + defaultUrl + '/api/LCEGRequest/GetLCEGRequest', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'
@@ -36,8 +36,8 @@ const ListLCEG = ({ navigation }) => {
 
         if (response.ok == true) {
             const data = await response.json()
-            console.log("data here: ",data)
-            setAllReqs(data?.OTRequestList)
+            console.log("LCEG data here: ", data?.LCEGReq.slice(0, 1))
+            setAllReqs(data?.LCEGReq)
             setLoader(false)
 
         } else {
@@ -69,7 +69,7 @@ const ListLCEG = ({ navigation }) => {
                     <Text fontFamily={fonts.PopSB} fontSize={22} ml={6} color='white'>LC/EG Request</Text>
                 </HStack>
 
-                <TouchableOpacity onPress={() => navigation.navigate('CreateEHCRequest')}>
+                <TouchableOpacity onPress={() => navigation.navigate('CreateLCEG')}>
                     <Entypo name="circle-with-plus" size={32} color="white" />
                 </TouchableOpacity>
             </HStack>
@@ -78,38 +78,38 @@ const ListLCEG = ({ navigation }) => {
                 <View style={{ marginTop: 10 }}>
                     {allReqs?.length > 0 ? allReqs?.map((item, index) => (
                         <TouchableOpacity key={index} onPress={() => {
-                            navigation.navigate('ParticularShiftChangeReqView', {
+                            navigation.navigate('ParticularLCEGReqView', {
                                 item: item
                             })
                         }} activeOpacity={.9}>
                             <HStack flex={1} mx={4} shadow={2} style={{ borderRadius: 8 }} mb={2.5}>
                                 <VStack backgroundColor='#f9f9f9' flexGrow={2} px={3} py={3} style={{ borderTopLeftRadius: 8, borderBottomLeftRadius: 8 }}>
                                     <HStack alignItems='center'>
-                                        {item?.ApprovalStatus == 'Pending' && <Image source={require('../../../assets/images/pending.png')} style={{ width: 38, height: 38, resizeMode: 'cover' }} />}
-                                        {item?.ApprovalStatus == 'Cancelled' && <Image source={require('../../../assets/images/cancelled.png')} style={{ width: 38, height: 38, resizeMode: 'cover' }} />}
-                                        {item?.ApprovalStatus == 'Approved' && <Image source={require('../../../assets/images/Approve.png')} style={{ width: 38, height: 38, resizeMode: 'cover' }} />}
-                                        {item?.ApprovalStatus == 'Rejected' && <Image source={require('../../../assets/images/reject.png')} style={{ width: 38, height: 38, resizeMode: 'cover' }} />}
-                                        <Text numberOfLines={1} ellipsizeMode='tail' width='200px' color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={16} ml={3}>{item?.ReasonTemplate}</Text>
+                                        {item?.ReqStatus == 'Pending' && <Image source={require('../../../assets/images/pending.png')} style={{ width: 38, height: 38, resizeMode: 'cover' }} />}
+                                        {item?.ReqStatus == 'Cancelled' && <Image source={require('../../../assets/images/cancelled.png')} style={{ width: 38, height: 38, resizeMode: 'cover' }} />}
+                                        {item?.ReqStatus == 'Approved' && <Image source={require('../../../assets/images/Approve.png')} style={{ width: 38, height: 38, resizeMode: 'cover' }} />}
+                                        {item?.ReqStatus == 'Rejected' && <Image source={require('../../../assets/images/reject.png')} style={{ width: 38, height: 38, resizeMode: 'cover' }} />}
+                                        <Text numberOfLines={1} ellipsizeMode='tail' width='200px' color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={16} ml={3}>{item?.ReasonTemplate ?? item?.Reason}</Text>
                                     </HStack>
 
                                     <HStack alignItems='center' mt={4}>
                                         <VStack>
-                                            <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{new Date(item?.ShiftChangeFromDate).toLocaleDateString('en-GB')}</Text>
+                                            <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{item?.IsLCEGRequest ? 'LCEG' : 'Special Duty'}</Text>
                                             <Text color='#bbbbbb' fontFamily={fonts.PopM} fontSize={12}>From Date</Text>
                                         </VStack>
 
                                         <View style={{ backgroundColor: '#c6c6c6', height: 2, width: 40, marginHorizontal: 20 }}></View>
 
                                         <VStack>
-                                            <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{new Date(item?.ShiftChangeToDate).toLocaleDateString('en-GB')}</Text>
-                                            <Text color='#bbbbbb' fontFamily={fonts.PopM} fontSize={12}>To Date</Text>
+                                            <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{new Date(item?.RequestFromDate).toLocaleDateString('en-GB')}</Text>
+                                            <Text color='#bbbbbb' fontFamily={fonts.PopM} fontSize={12}>Date</Text>
                                         </VStack>
 
                                     </HStack>
                                 </VStack>
 
                                 <VStack backgroundColor='#f0f0f0' px={2} pb={3} flexGrow={1} justifyContent='flex-end' style={{ borderTopRightRadius: 8, borderBottomRightRadius: 8 }}>
-                                    <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{new Date(item?.ShiftChangeRequestDate).toLocaleDateString('en-GB')}</Text>
+                                    <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{new Date(item?.RequestDate).toLocaleDateString('en-GB')}</Text>
                                     <Text color='#bbbbbb' fontFamily={fonts.PopM} fontSize={12}>Request Date</Text>
                                 </VStack>
                             </HStack>

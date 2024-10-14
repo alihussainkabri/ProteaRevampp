@@ -36,7 +36,7 @@ const ListOfOptionalHolidays = ({ navigation }) => {
         if (response.ok == true) {
             const data = await response.json()
 
-            console.log('holidays REQ', data?.HolidayReq)
+            console.log('holidays REQ', data?.HolidayReq?.slice(0, 3))
             setAllReqs(data?.HolidayReq)
             setLoader(false)
 
@@ -94,15 +94,17 @@ const ListOfOptionalHolidays = ({ navigation }) => {
 
                                     <HStack alignItems='center' mt={4}>
                                         <VStack>
-                                            <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>Total Holidays</Text>
-                                            <Text color='#bbbbbb' fontFamily={fonts.PopM} fontSize={12}>{item?.TotalHolidays}</Text>
+                                            <Text color='#bbbbbb' fontFamily={fonts.PopM} fontSize={12}>Total Holidays</Text>
+                                            <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{item?.TotalHolidays}</Text>
                                         </VStack>
-                                    </HStack>
 
-                                    <VStack>
-                                        <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>Remarks</Text>
-                                        <Text color='#bbbbbb' fontFamily={fonts.PopM} fontSize={12}>{item?.RequestRemark ?? 'No remarks'}</Text>
-                                    </VStack>
+                                        {/* <View style={{ backgroundColor: '#c6c6c6', height: 2, width: 40, marginHorizontal: 20 }}></View>
+
+                                        <VStack>
+                                            <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>Remarks</Text>
+                                            <Text color='#bbbbbb' fontFamily={fonts.PopM} fontSize={12}>{item?.RequestRemark ?? 'No remarks'}</Text>
+                                        </VStack> */}
+                                    </HStack>
                                 </VStack>
 
                                 <VStack backgroundColor='#f0f0f0' px={2} pb={3} flexGrow={1} justifyContent='flex-end' style={{ borderTopRightRadius: 8, borderBottomRightRadius: 8 }}>

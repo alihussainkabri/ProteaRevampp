@@ -69,7 +69,7 @@ const Request = ({ navigation }) => {
                             <Image source={require('../assets/images/C-off.png')} style={styles.summaryBlockImg} />
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => navigation.navigate('ListLCEG')} backgroundColor='rgba(250, 235, 215, .8)' style={styles.summaryBlock}>
+                        <TouchableOpacity onPress={() => navigation.navigate('ListLCEG')} style={[styles.summaryBlock, { backgroundColor: 'rgba(250, 235, 215, .8)' }]}>
                             <Text style={styles.summaryTitle}>Late Coming / Early Going</Text>
                             <Image source={require('../assets/images/Late_Coming.png')} style={styles.summaryBlockImg} />
                         </TouchableOpacity>

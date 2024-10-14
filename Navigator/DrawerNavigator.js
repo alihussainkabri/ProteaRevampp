@@ -37,6 +37,8 @@ import SalarySlip from '../screens/SalarySlip/SalarySlip';
 import ListLCEG from '../screens/Requests/LC EG/ListLCEG';
 import ParticularEHCOTRequest from '../screens/Requests/EHC OT/ParticularEHCOTRequest';
 import ParticularHoliday from '../screens/Requests/Optional Holiday/ParticularHoliday';
+import CreateLCEG from '../screens/Requests/LC EG/CreateLCEG';
+import ParticularLCEGReqView from '../screens/Requests/LC EG/ParticularLCEGReqView';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -108,6 +110,8 @@ function RequestStack() {
             <Stack.Screen name="CreateOptionalHolidays" component={CreateOptionalHolidays} />
             <Stack.Screen name="ParticularHoliday" component={ParticularHoliday} />
             <Stack.Screen name="ListLCEG" component={ListLCEG} />
+            <Stack.Screen name="CreateLCEG" component={CreateLCEG} />
+            <Stack.Screen name="ParticularLCEGReqView" component={ParticularLCEGReqView} />
         </Stack.Navigator>
     )
 }

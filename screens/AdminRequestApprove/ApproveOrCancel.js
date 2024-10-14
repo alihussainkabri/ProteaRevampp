@@ -109,8 +109,6 @@ const ApproveOrCancel = ({ navigation, route }) => {
                     Toast.show(data?.Message)
                     setLoader(false)
                 }
-
-
             } else {
                 Toast.show('Internal server error', {
                     duration: 3000,
@@ -282,7 +280,7 @@ const ApproveOrCancel = ({ navigation, route }) => {
                             <Entypo name="v-card" size={20} color="black" />
                             <Text style={styles.title}>Purpose</Text>
                         </HStack>
-                        <Text style={styles.value}>{item?.Remark ? item?.Remark : 'NA'}</Text>
+                        <Text style={styles.value}>{item?.Remark ? item?.Remark : item?.RequestRemark ? item?.RequestRemark : 'NA'}</Text>
                     </HStack>
 
                     <HStack space={2}>

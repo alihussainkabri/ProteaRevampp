@@ -49,7 +49,6 @@ const ListOfRequests = ({ navigation, route }) => {
 
         } else if (Detailitem?.RequestType == 'Mobile Punch') {
             reqName = '/api/Requests/PendingApprovalRequest'
-
         }
 
         const response = await fetch("https://" + defaultUrl + reqName, {
@@ -118,7 +117,7 @@ const ListOfRequests = ({ navigation, route }) => {
                                 <VStack backgroundColor='#f9f9f9' flexGrow={2} px={3} py={3} style={{ borderTopLeftRadius: 8, borderBottomLeftRadius: 8 }}>
                                     <HStack alignItems='center'>
                                         <Feather name="user" size={22} color="black" />
-                                        <Text numberOfLines={1} ellipsizeMode='tail' width='200px' color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={16} ml={3}>{item?.EmpName ? item?.EmpName : item?.RequestedBy}</Text>
+                                        <Text numberOfLines={1} ellipsizeMode='tail' width={Dimensions.get('window').width / 100 * 45} color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={16} ml={3}>{item?.EmpName ? item?.EmpName : item?.RequestedBy}</Text>
                                     </HStack>
 
                                     <HStack alignItems='center' mt={4}>
