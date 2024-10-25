@@ -86,7 +86,7 @@ const SalarySlip = ({ navigation }) => {
             RNFS.downloadFile(options)
                 .promise.then(() => FileViewer.open(localFile))
                 .then(() => {
-                    // success
+                    Toast.show('Salry Slip Downloaded.')
                 })
                 .catch((error) => {
                     // error

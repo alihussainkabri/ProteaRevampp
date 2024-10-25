@@ -182,7 +182,14 @@ const CreateLeave = ({ navigation }) => {
         if (response.ok == true) {
             const data = await response.json()
             console.log('total no of days: ', data)
-            setNoOfDays(data)
+
+            if (leaveDuration == 'First Half' || leaveDuration == 'Second Half') {
+                setNoOfDays({ ...data, "NoOfDays": .5 })
+            } else if (leaveDuration == 'Full Day') {
+                setNoOfDays({ ...data, "NoOfDays": 1 })
+            }else{
+                setNoOfDays(data)
+            }
             setLoader(false)
 
         } else {

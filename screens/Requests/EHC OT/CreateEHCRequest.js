@@ -115,42 +115,46 @@ const CreateEHCRequest = ({ navigation }) => {
     }, [fromDate, toDate])
 
 
-    async function submitLeave() {
+    async function submitReq() {
         // setLoader(true)
 
-        var raw = JSON.stringify({
-            "EmpId": user?.EmpId,
-            "RequestFromDate": fromDate,
-            "RequestToDate": toDate,
-            "RId": particularReason?.RId,
-            "Reason": reason,
-            "OTRequestsInfo": selectedAvailableEHCOT
-        });
+        if (fromDate && toDate && selectedAvailableEHCOT?.length > 0) {
+            var raw = JSON.stringify({
+                "EmpId": user?.EmpId,
+                "RequestFromDate": fromDate,
+                "RequestToDate": toDate,
+                "RId": particularReason?.RId,
+                "Reason": reason,
+                "OTRequestsInfo": selectedAvailableEHCOT
+            });
 
-        console.log(raw)
+            console.log(raw)
 
-        const response = await fetch("https://" + defaultUrl + '/api/OTRequest/CreateOTRequest', {
-            method: 'POST',
-            headers: {
-                "Content-Type": 'application/json'
-            },
-            body: raw
-        })
-
-        if (response.ok == true) {
-            const data = await response.json()
-            Toast.show(data?.error_msg ? data?.error_msg : 'EHC/OT Request Has Been Submitted')
-            setLoader(false)
-
-            if (!data?.error_msg) {
-                navigation.goBack()
-            }
-
-        } else {
-            Toast.show('Internal server error', {
-                duration: 3000,
+            const response = await fetch("https://" + defaultUrl + '/api/OTRequest/CreateOTRequest', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": 'application/json'
+                },
+                body: raw
             })
-            setLoader(false)
+
+            if (response.ok == true) {
+                const data = await response.json()
+                Toast.show(data?.error_msg ? data?.error_msg : 'EHC/OT Request Has Been Submitted')
+                setLoader(false)
+
+                if (!data?.error_msg) {
+                    navigation.goBack()
+                }
+
+            } else {
+                Toast.show('Internal server error', {
+                    duration: 3000,
+                })
+                setLoader(false)
+            }
+        }else{
+            Toast.show('Please fill the data')
         }
     }
 
@@ -329,7 +333,7 @@ const CreateEHCRequest = ({ navigation }) => {
                             <Text style={{ color: '#cf0101' }} fontSize={17} textAlign='center' fontFamily={fonts.PopM}>Cancel</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={submitLeave} style={[styles.btn, { backgroundColor: '#1875e2' }]}>
+                        <TouchableOpacity onPress={submitReq} style={[styles.btn, { backgroundColor: '#1875e2' }]}>
                             <Text color='white' fontSize={17} textAlign='center' fontFamily={fonts.PopM}>Submit</Text>
                         </TouchableOpacity>
                     </HStack>

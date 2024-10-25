@@ -21,8 +21,8 @@ const ParticularEHCOTRequest = ({ navigation, route }) => {
 
             var raw = JSON.stringify({
                 "EmpId": user?.EmpId,
-                "requestId": item?.CRId,
-                "RequestType": "COffRequest",
+                "requestId": item?.TOTId,
+                "RequestType": "OTRequest",
                 "Remark": reason
             });
 
@@ -62,6 +62,8 @@ const ParticularEHCOTRequest = ({ navigation, route }) => {
         }
     }
 
+    useEffect(() => console.log('item here:', item))
+
     return (
         <NativeBaseProvider>
             {loader && <Loader />}
@@ -79,14 +81,6 @@ const ParticularEHCOTRequest = ({ navigation, route }) => {
 
             <ScrollView showsVerticalScrollIndicator={false} style={{ paddingTop: 10, marginTop: 10, paddingBottom: 200 }}>
                 <VStack px={4} mb={5}>
-                    {/* <HStack style={styles.infoCard}>
-                        <HStack alignItems='center'>
-                            <Entypo name="v-card" size={20} color="black" />
-                            <Text style={styles.title}>Duration</Text>
-                        </HStack>
-                        <Text style={styles.value}>{item?.ReqType}</Text>
-                    </HStack> */}
-
                     <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />

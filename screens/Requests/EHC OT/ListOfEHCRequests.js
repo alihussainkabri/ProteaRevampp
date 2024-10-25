@@ -20,13 +20,13 @@ const ListOfEHCRequests = ({ navigation }) => {
         const todayDate = getTodayDate()
 
         var raw = JSON.stringify({
-            "EmpId": 50
+            "EmpId": user?.EmpId,
+            "TOTId": null
         });
 
         console.log("raw is here ok:", raw)
-        console.log("https://" + defaultUrl + '/api/OTRequest/GetPendingOTRequest')
 
-        const response = await fetch("https://" + defaultUrl + '/api/OTRequest/GetPendingOTRequest', {
+        const response = await fetch("https://" + defaultUrl + '/api/OTRequest/GetOTRequestInfo', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'
@@ -37,8 +37,8 @@ const ListOfEHCRequests = ({ navigation }) => {
 
         if (response.ok == true) {
             const data = await response.json()
-            console.log("data here: ",data)
-            setAllReqs(data)
+            // console.log("list of OT req here: ",data)
+            setAllReqs(data?.OTRequestList)
             setLoader(false)
 
         } else {

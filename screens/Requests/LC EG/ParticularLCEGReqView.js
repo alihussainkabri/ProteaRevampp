@@ -43,7 +43,7 @@ const ParticularLCEGReqView = ({ navigation, route }) => {
 
                 if (data?.Message == 'Success') {
 
-                    Toast.show('Leave Cancelled Successfully')
+                    Toast.show('LCEG Cancelled Successfully')
                     setLoader(false)
                     navigation.goBack()
                 } else {
@@ -110,7 +110,7 @@ const ParticularLCEGReqView = ({ navigation, route }) => {
                             <Entypo name="v-card" size={20} color="black" />
                             <Text style={styles.title}>Reason</Text>
                         </HStack>
-                        <Text style={styles.value}>{item?.Reason}</Text>
+                        <Text style={styles.value}>{item?.ReasonTemplate}</Text>
                     </HStack>
 
                     {item?.ReqStatus == 'Pending' && <TouchableOpacity

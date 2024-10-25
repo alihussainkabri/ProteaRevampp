@@ -39,6 +39,8 @@ import ParticularEHCOTRequest from '../screens/Requests/EHC OT/ParticularEHCOTRe
 import ParticularHoliday from '../screens/Requests/Optional Holiday/ParticularHoliday';
 import CreateLCEG from '../screens/Requests/LC EG/CreateLCEG';
 import ParticularLCEGReqView from '../screens/Requests/LC EG/ParticularLCEGReqView';
+import Policy from '../screens/Policy';
+import { Entypo } from 'react-native-vector-icons'
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -126,7 +128,7 @@ function BookSeatStack() {
                 }
             }}
         >
-            <Stack.Screen name="Request" component={BookSeat} />
+            <Stack.Screen name="BookSeat" component={BookSeat} />
             <Stack.Screen name="ViewSeats" component={ViewSeats} />
         </Stack.Navigator>
     )
@@ -143,6 +145,21 @@ function SalarySlipStack() {
             }}
         >
             <Stack.Screen name="SalarySlip" component={SalarySlip} />
+        </Stack.Navigator>
+    )
+}
+
+function PolicyStack() {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerShown: false,
+                contentStyle: {
+                    backgroundColor: 'white'
+                }
+            }}
+        >
+            <Stack.Screen name="Policy" component={Policy} />
         </Stack.Navigator>
     )
 }
@@ -233,6 +250,18 @@ export default function DrawerNavigator() {
                     ),
                     drawerItemStyle: { paddingHorizontal: 16, },
                     title: 'Salary Slip',
+                    sceneContainerStyle: { backgroundColor: 'white' }
+                }}
+            />
+
+            <Drawer.Screen name="Policy" component={PolicyStack}
+                options={{
+                    drawerIcon: ({ color }) => (
+                        // <Image style={{ tintColor: color, width: 20, height: undefined, aspectRatio: 1 }} source={require('../assets/icons/salary.png')} />
+                        <Entypo name="lock" size={24} color={color} />
+                    ),
+                    drawerItemStyle: { paddingHorizontal: 16, },
+                    title: 'Policy',
                     sceneContainerStyle: { backgroundColor: 'white' }
                 }}
             />

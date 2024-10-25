@@ -59,7 +59,7 @@ const ApproveOrCancel = ({ navigation, route }) => {
                 navigation.goBack()
             } else {
                 console.log('test cancel', data)
-                Toast.show(data?.Message)
+                Toast.show(data?.error_msg)
                 setLoader(false)
             }
 
@@ -106,7 +106,7 @@ const ApproveOrCancel = ({ navigation, route }) => {
                     navigation.goBack()
                 } else {
                     console.log('test cancel', data)
-                    Toast.show(data?.Message)
+                    Toast.show(data?.error_msg)
                     setLoader(false)
                 }
             } else {
@@ -242,7 +242,7 @@ const ApproveOrCancel = ({ navigation, route }) => {
                         </HStack>
                         <Text style={styles.value}>{new Date(item?.RegularisationDate).toLocaleDateString('en-GB')}</Text>
                     </HStack>}
-                    
+
                     {item?.TotalHolidays && <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
@@ -275,13 +275,13 @@ const ApproveOrCancel = ({ navigation, route }) => {
                         <Text style={styles.value}>{item?.ReasonTemplate}</Text>
                     </HStack>}
 
-                    <HStack style={styles.infoCard}>
+                    {(item?.Remark || item?.RequestRemark) && <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
                             <Text style={styles.title}>Purpose</Text>
                         </HStack>
                         <Text style={styles.value}>{item?.Remark ? item?.Remark : item?.RequestRemark ? item?.RequestRemark : 'NA'}</Text>
-                    </HStack>
+                    </HStack>}
 
                     <HStack space={2}>
                         <TouchableOpacity
