@@ -256,7 +256,7 @@ const ApproveOrCancel = ({ navigation, route }) => {
                             <Entypo name="v-card" size={20} color="black" />
                             <Text style={styles.title}>Requested On</Text>
                         </HStack>
-                        <Text style={styles.value}>{new Date(item?.RequestDate).toLocaleDateString('en-GB')}</Text>
+                        <Text style={styles.value}>{item?.RequestDate?.length > 11 ? new Date(item?.RequestDate).toLocaleDateString('en-GB') : item?.RequestDate}</Text>
                     </HStack>}
 
                     {item?.Reason && <HStack style={styles.infoCard}>

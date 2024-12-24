@@ -1,20 +1,39 @@
 import { View, StatusBar, TouchableOpacity, Image, ScrollView, StyleSheet, Dimensions } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import Loader from '../component/Loader';
-import { Actionsheet, HStack, NativeBaseProvider, Text, VStack } from 'native-base';
-import { Ionicons, AntDesign, FontAwesome, Entypo, MaterialIcons } from 'react-native-vector-icons'
+import { Actionsheet, Button, HStack, Modal, NativeBaseProvider, Text, VStack } from 'native-base';
+import { Ionicons, AntDesign, FontAwesome, Entypo, EvilIcons } from 'react-native-vector-icons'
 import { fonts } from '../config/Fonts';
 import { getConvertDate } from '../helpers';
 import { userContext } from '../context/UserContext';
 import Toast from 'react-native-root-toast';
+import DateTimePickerModal from "react-native-modal-datetime-picker"
 
 const ViewSeats = ({ navigation, route }) => {
+
+    const getCurrentFormattedDate = () => {
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        console.log(`${year}-${month}-${day}`)
+        return `${year}-${month}-${day}`;
+    };
 
     const [loader, setLoader] = useState(false)
     const [seatList, setSeatList] = useState([])
     const { user, defaultUrl } = useContext(userContext)
     const { particularBranch, Building, BuildingArea, date } = route?.params
-    const [seatData,setSeatData] = useState([])
+    const [seatData, setSeatData] = useState([])
+    const [fromDateCalendarShow, setFromDateCalendarShow] = useState(false)
+    const [toDateCalendarShow, setToDateCalendarShow] = useState(false)
+    const [fromDate, setFromDate] = useState(getCurrentFormattedDate())
+    const [toDate, setToDate] = useState(getCurrentFormattedDate())
+    const [showSeatBook, setShowSeatBook] = useState({
+        show: false,
+        detail: null
+    })
+
 
     async function fetchSeats() {
         setLoader(true)
@@ -41,6 +60,8 @@ const ViewSeats = ({ navigation, route }) => {
             body: raw
         })
 
+        // console.log("https://" + defaultUrl + '/api/TimeAttendance/GetSeatSelection', raw)
+
         if (response.ok == true) {
             const data = await response.json()
             setSeatData(data)
@@ -65,7 +86,7 @@ const ViewSeats = ({ navigation, route }) => {
                 }
             })
 
-            console.log('matched seats: ', matchedSeats)
+            // console.log('matched seats: ', matchedSeats)
             setSeatList(matchedSeats)
             setLoader(false)
 
@@ -82,14 +103,17 @@ const ViewSeats = ({ navigation, route }) => {
     }, [])
 
     function getColor(seat) {
-        if (seat.IsActive == 0) {
-            return "green" // disable
+        if (seat?.Seat_Id == 1) {
+            console.log('seat 1: ', seat)
         }
-        else if (seat.IsActive == 2){
+        if (seat.IsActive == 0) {
+            return "#c5c5c5" // disable
+        } else if (seat.IsActive == 2) {
             var iscontingency = true;
-            for (let i=0;i<seatData?.SeatSelectionList2?.length;i++) {
+
+            for (let i = 0; i < seatData?.SeatSelectionList2?.length; i++) {
                 let emp = seatData?.SeatSelectionList2[i]
-                if (seat.seatid == emp.SeatId) {
+                if (seat?.Seat_Id == emp.SeatId) {
                     if (emp.RequestStatus == 'P') {
                         return "red" //pending
                     }
@@ -111,23 +135,24 @@ const ViewSeats = ({ navigation, route }) => {
             if (iscontingency == true) {
                 return "purple" //"contingency"
             }
+        } else {
+            let isbooked = false;
 
-
-        }
-        else {
-            var isbooked = false;
-            for (let i=0;i<seatData?.SeatSelectionList2?.length;i++) {
+            for (let i = 0; i < seatData?.SeatSelectionList2?.length; i++) {
                 let emp = seatData?.SeatSelectionList2[i]
-                if (seat.seatid == emp.SeatId) {
+
+                if (seat.Seat_Id == emp.SeatId) {
+                    // console.log('new data',seat,emp)
                     if (emp.RequestStatus == 'P') {
                         return "red" //"pending"
-                    }
-                    else {
+                    } else {
                         if (emp.RequestStatus == 'A') {
                             if (emp.IsSubbmitQrCode == 2) {
+                                // console.log("2", seat?.Seat_Id)
                                 return "yellow" //"Occupied"
                             }
                             else {
+                                // console.log("3", seat?.Seat_Id)
                                 return "orange" //"Booked"
                             }
                         }
@@ -135,14 +160,24 @@ const ViewSeats = ({ navigation, route }) => {
                     isbooked = true;
                 }
 
-                if (isbooked = false) {
-                    return "brown" //"available"
+                if (isbooked == false) {
+                    return "#5cb1f6" //"available"
                 }
-
-
             }
         }
     }
+
+    const handleFromDate = (date) => {
+        const convertedDate = getConvertDate(date.toString());
+        setFromDate(convertedDate)
+        setFromDateCalendarShow(false);
+    };
+
+    const handleToDate = (date) => {
+        const convertedDate = getConvertDate(date.toString());
+        setToDate(convertedDate)
+        setToDateCalendarShow(false);
+    };
 
     return (
         <NativeBaseProvider>
@@ -202,13 +237,63 @@ const ViewSeats = ({ navigation, route }) => {
                         return <HStack pl={Dimensions.get('window').width / 100 * 2} mt={3} flexWrap='wrap' backgroundColor='#f6f6f6' py={1.5}>
                             <Text style={{ width: Dimensions.get('window').width, fontFamily: fonts.PopSB, fontSize: 16, marginBottom: 8 }}>{item?.building} --&gt; {item?.floor} --&gt; {item?.room}</Text>
                             {item?.seat_results?.length > 0 && item?.seat_results?.map((seat, index) => (
-                                <Text key={index} 
-                                style={[styles.particularseat, { backgroundColor: getColor(seat)}]}>
-                                    {seat?.Seat_Id}</Text>
+                                <TouchableOpacity onPress={() => setShowSeatBook({ show: true, detail: seat })}>
+                                    <Text key={index} style={[styles.particularseat, { backgroundColor: getColor(seat) }]}>{seat?.Seat_Id}</Text>
+                                </TouchableOpacity>
                             ))}
                         </HStack>
                     })}
                 </HStack>
+
+                <Modal isOpen={showSeatBook.show} onClose={() => setShowSeatBook({ show: false, detail: null })}>
+                    <Modal.Content maxWidth="400px">
+                        <Modal.CloseButton />
+                        <Modal.Body style={{ marginTop: 26 }}>
+                            <Text fontFamily={fonts.PopSB} color='green.800' fontSize={18}>Seat Number: {showSeatBook?.detail?.Seat_Id}</Text>
+
+                            <HStack justifyContent='space-between' space={3} mt={3}>
+                                <VStack flex={1}>
+                                    <Text fontFamily={fonts.PopR} fontSize={14}>From Date</Text>
+                                    <TouchableOpacity onPress={() => setFromDateCalendarShow(true)} style={styles.selectDate}>
+                                        <Text style={styles.placeHolder}>{fromDate ? fromDate : 'select date'}</Text>
+                                        <EvilIcons name="calendar" size={18} color="#737373" />
+                                    </TouchableOpacity>
+                                </VStack>
+
+                                <VStack flex={1}>
+                                    <Text fontFamily={fonts.PopR} fontSize={14}>To Date</Text>
+                                    <TouchableOpacity onPress={() => setToDateCalendarShow(true)} style={styles.selectDate}>
+                                        <Text style={styles.placeHolder}>{toDate ? toDate : 'select date'}</Text>
+                                        <EvilIcons name="calendar" size={18} color="#737373" />
+                                    </TouchableOpacity>
+                                </VStack>
+                            </HStack>
+
+                            <DateTimePickerModal
+                                isVisible={fromDateCalendarShow}
+                                mode="date"
+                                minimumDate={new Date()}
+                                onConfirm={handleFromDate}
+                                onCancel={() => setFromDateCalendarShow(false)}
+                            />
+
+                            <DateTimePickerModal
+                                isVisible={toDateCalendarShow}
+                                mode="date"
+                                minimumDate={new Date()}
+                                onConfirm={handleToDate}
+                                onCancel={() => setToDateCalendarShow(false)}
+                            />
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button.Group space={2}>
+                                <Button colorScheme='green'>
+                                    Book Seat
+                                </Button>
+                            </Button.Group>
+                        </Modal.Footer>
+                    </Modal.Content>
+                </Modal>
             </ScrollView>
         </NativeBaseProvider>
     )
@@ -235,7 +320,22 @@ const styles = StyleSheet.create({
         color: 'white',
         marginRight: (Dimensions.get('window').width / 100) * .70,
         marginBottom: 6
-    }
+    },
+    selectDate: {
+        borderWidth: 1,
+        borderColor: 'gray',
+        paddingHorizontal: 6,
+        paddingVertical: 3,
+        borderRadius: 3,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    placeHolder: {
+        fontFamily: fonts.UrbanM,
+        color: '#737373',
+        fontSize: 14
+    },
 })
 
 export default ViewSeats

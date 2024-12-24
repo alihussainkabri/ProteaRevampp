@@ -129,11 +129,13 @@ const BookSeat = ({ navigation }) => {
 
         let api_BuildingID = ''
 
-        if (BuildingID?.length > 0) {
+        if (BuildingID) {
             api_BuildingID = BuildingID
         } else {
             api_BuildingID = Building?.BuildingID
         }
+
+        console.log('api building check: ',api_BuildingID)
 
         const response = await fetch("https://" + defaultUrl + `/api/CommonData/ListOfBuildingArea?EmpId=${user?.EmpId}&BuildingID=${api_BuildingID}`, {
             method: 'POST',
