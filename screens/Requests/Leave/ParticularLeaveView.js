@@ -103,7 +103,7 @@ const ParticularLeaveView = ({ navigation, route }) => {
                             <Entypo name="v-card" size={20} color="black" />
                             <Text style={styles.title}>From Date</Text>
                         </HStack>
-                        <Text style={styles.value}>{item?.LeaveFrom}</Text>
+                        <Text style={styles.value}>{item?.LeaveFrom?.split('T')[0]}</Text>
                     </HStack>
 
                     <HStack style={styles.infoCard}>
@@ -111,7 +111,7 @@ const ParticularLeaveView = ({ navigation, route }) => {
                             <Entypo name="v-card" size={20} color="black" />
                             <Text style={styles.title}>To Date</Text>
                         </HStack>
-                        <Text style={styles.value}>{item?.LeaveTo}</Text>
+                        <Text style={styles.value}>{item?.LeaveTo?.split('T')[0]}</Text>
                     </HStack>
 
                     <HStack style={styles.infoCard}>

@@ -179,6 +179,49 @@ const ViewSeats = ({ navigation, route }) => {
         setToDateCalendarShow(false);
     };
 
+    async function bookSeatFunc() {
+        let selected_seat = { ...showSeatBook?.detail, EmpId : user?.EmpId,SeatId: showSeatBook?.detail?.Seat_Id }
+
+        delete selected_seat?.coordsx
+        delete selected_seat?.coordsxfloor
+        delete selected_seat?.coordsy
+        delete selected_seat?.coordsyfloor
+        delete selected_seat?.valueofdot
+        delete selected_seat?.valueofdotfloor
+        delete selected_seat?.Seat_Id
+
+        console.log(JSON.stringify(seatData))
+
+
+        let payload = {
+            "CompanyId": user?.EmployeeDetails?.CompanyId,
+            "SBUId": 0,
+            "CCId": particularBranch?.CCID,
+            "FromDate": fromDate,
+            "ToDate": toDate,
+            "BuildingId": selected_seat?.BuildingId,
+            "BuildingAreaId": selected_seat?.BuildingAreaId,
+            "SeatSelectionGridData": [
+                {
+                    "WTId": 2,
+                    "EmpId": "",
+                    "SeatId": 16,
+                    "CompanyId": 0,
+                    "SBUId": 0,
+                    "CCId": 0,
+                    "BuildingId": 0,
+                    "BuildingAreaId": 0,
+                    "RoomId": 0,
+                    "DepartmentId": 0,
+                    "DivisionId": 0,
+                    "IsActive": 0
+                }
+            ]
+        }
+
+
+    }
+
     return (
         <NativeBaseProvider>
             {loader && <Loader />}
@@ -287,7 +330,7 @@ const ViewSeats = ({ navigation, route }) => {
                         </Modal.Body>
                         <Modal.Footer>
                             <Button.Group space={2}>
-                                <Button colorScheme='green'>
+                                <Button onPress={bookSeatFunc} colorScheme='green'>
                                     Book Seat
                                 </Button>
                             </Button.Group>

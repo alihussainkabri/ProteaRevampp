@@ -31,7 +31,7 @@ const VerifyOTP = ({ navigation, route }) => {
                 },
                 body: raw
             })
-
+            setLoader(false)
             if (response.ok == true) {
                 const data = await response.json()
 

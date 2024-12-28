@@ -113,14 +113,6 @@ const ParticularAttRegRequest = ({ navigation, route }) => {
             <Text style={styles.value}>{item?.Reason}</Text>
           </HStack>
 
-          <HStack style={styles.infoCard}>
-            <HStack alignItems='center'>
-              <Entypo name="v-card" size={20} color="black" />
-              <Text style={styles.title}>Purpose</Text>
-            </HStack>
-            <Text style={styles.value}>{item?.Remark ? item?.Remark : 'NA'}</Text>
-          </HStack>
-
           {item?.ApprovalStatus == "Pending" && <TouchableOpacity
             onPress={() => setShowModal(true)}
             style={{ backgroundColor: 'red', width: '100%', paddingVertical: 10, marginVertical: 20 }}>

@@ -103,6 +103,21 @@ const CreateOptionalHolidays = ({ navigation }) => {
         fetchHolidayCount();
     }, [particularYear])
 
+    function isHolidayInFuture(holidayObj) {
+        const today = new Date();
+        const holidayDateParts = holidayObj.HolidayDate.split('-');
+        const holidayDate = new Date(
+            parseInt(holidayDateParts[2], 10),  // Year
+            parseInt(holidayDateParts[1], 10) - 1,  // Month (0-based index)
+            parseInt(holidayDateParts[0], 10)  // Day
+        );
+
+        // Compare holiday date with today's date
+        console.log("difference", holidayDate >= today)
+
+        return holidayDate >= today;
+    }
+
     async function submitReq() {
         setLoader(true)
 
@@ -142,6 +157,7 @@ const CreateOptionalHolidays = ({ navigation }) => {
     }
 
     function markHoliday(value, data) {
+
         let updated_data = []
         if (value == true) {
             updated_data.push(data)
@@ -210,16 +226,18 @@ const CreateOptionalHolidays = ({ navigation }) => {
 
                     <VStack>
                         <Text style={styles.label}>Select Holidays</Text>
-                        {applicableHolidayList?.length > 0 && applicableHolidayList?.map((item, index) => (
+                        {applicableHolidayList?.length > 0 && applicableHolidayList?.map((item, index) => {
+                            return (
 
-                            <Checkbox key={index} isDisabled={item?.IsEnable ? false : true} onChange={(value) => markHoliday(value, item)} my={2}>
-                                <View>
-                                    <Text fontFamily={fonts.PopB}>{item?.HolidayName}</Text>
-                                    <Text>{item?.HolidayDate}</Text>
-                                </View>
-                            </Checkbox>
+                                <Checkbox key={index} isDisabled={isHolidayInFuture(item) ? item?.IsEnable ? false : true : true} onChange={(value) => markHoliday(value, item)} my={2}>
+                                    <View>
+                                        <Text fontFamily={fonts.PopB}>{item?.HolidayName}</Text>
+                                        <Text>{item?.HolidayDate}</Text>
+                                    </View>
+                                </Checkbox>
 
-                        ))}
+                            )
+                        })}
 
                     </VStack>
 
@@ -230,9 +248,9 @@ const CreateOptionalHolidays = ({ navigation }) => {
 
                         <TouchableOpacity onPress={() => {
                             console.log(selectedHolidays)
-                            if (selectedHolidays.length > 0 && reason){
+                            if (selectedHolidays.length > 0 && reason) {
                                 submitReq()
-                            }else{
+                            } else {
                                 Toast.show('Please select atleast one holiday and enter reason as well')
                             }
                         }} style={[styles.btn, { backgroundColor: '#1875e2' }]}>
