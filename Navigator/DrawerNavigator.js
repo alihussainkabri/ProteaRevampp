@@ -41,6 +41,7 @@ import CreateLCEG from '../screens/Requests/LC EG/CreateLCEG';
 import ParticularLCEGReqView from '../screens/Requests/LC EG/ParticularLCEGReqView';
 import Policy from '../screens/Policy';
 import { Entypo } from 'react-native-vector-icons'
+import QRScanner from '../screens/QRScanner';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -59,6 +60,10 @@ function HomeStack() {
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="ListOfRequests" component={ListOfRequests} />
             <Stack.Screen name="ApproveOrCancel" component={ApproveOrCancel} />
+            <Stack.Screen options={{
+                headerShown : true,
+                headerTitle : "Scan QR Code"
+            }} name="QRScanner" component={QRScanner} />
         </Stack.Navigator>
     )
 }

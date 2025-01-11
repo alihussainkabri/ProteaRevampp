@@ -24,10 +24,7 @@ const Login = ({ navigation }) => {
 
   useEffect(() => {
     async function fetchUniqueId() {
-
       const uniqueValue = await AsyncStorage.getItem("app_user_uniqueId")
-
-      console.log('uniquvalue is here',uniqueValue)
       if (uniqueValue) {
         setUniqueId(uniqueValue)
       } else {

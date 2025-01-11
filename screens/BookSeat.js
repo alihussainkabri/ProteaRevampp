@@ -66,9 +66,9 @@ const BookSeat = ({ navigation }) => {
             }
 
         } else {
-            Toast.show('Internal server error', {
-                duration: 3000,
-            })
+            // Toast.show('Internal server error', {
+            //     duration: 3000,
+            // })
             setLoader(false)
         }
     }
@@ -111,9 +111,9 @@ const BookSeat = ({ navigation }) => {
             }
 
         } else {
-            Toast.show('Internal server error', {
-                duration: 3000,
-            })
+            // Toast.show('Internal server error', {
+            //     duration: 3000,
+            // })
             setLoader(false)
         }
     }
@@ -159,9 +159,9 @@ const BookSeat = ({ navigation }) => {
             }
 
         } else {
-            Toast.show('Internal server error', {
-                duration: 3000,
-            })
+            // Toast.show('Internal server error', {
+            //     duration: 3000,
+            // })
             setLoader(false)
         }
     }

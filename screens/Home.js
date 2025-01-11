@@ -250,7 +250,7 @@ const Home = ({ navigation }) => {
             <Text fontFamily={fonts.PopSB} fontSize={28} ml={7} color='white'>Dashboard</Text>
           </HStack>
 
-          <TouchableOpacity onPress={() => alert('Feature will coming soon')}>
+          <TouchableOpacity onPress={() => navigation.navigate("QRScanner")}>
             <Image source={require('../assets/icons/QR.png')} style={{ width: 26, height: 26 }} />
           </TouchableOpacity>
         </HStack>

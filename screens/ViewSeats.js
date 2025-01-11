@@ -1,4 +1,4 @@
-import { View, StatusBar, TouchableOpacity, Image, ScrollView, StyleSheet, Dimensions } from 'react-native'
+import { View, StatusBar, TouchableOpacity, Image, ScrollView, StyleSheet, Dimensions, Alert } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import Loader from '../component/Loader';
 import { Actionsheet, Button, HStack, Modal, NativeBaseProvider, Text, VStack } from 'native-base';
@@ -181,6 +181,7 @@ const ViewSeats = ({ navigation, route }) => {
     };
 
     async function bookSeatFunc() {
+        setLoader(true)
         let selected_seat = { ...showSeatBook?.detail,SBUId : 0 ,EmpId : user?.EmpId,SeatId: showSeatBook?.detail?.Seat_Id,"WTId": 2, }
 
         delete selected_seat?.coordsx
@@ -217,9 +218,20 @@ const ViewSeats = ({ navigation, route }) => {
 
         if (response.ok == true){
             const data = await response.json()
-            console.log(data)
+            
+            setLoader(false)
             if (data?.Result == 0){
-                Toast.show(data?.Message)
+                Alert.alert("Error",data?.Message,[
+                    {
+                        text : 'Ok',
+                        onPress : () => {
+                            setShowSeatBook({
+                                show : false,
+                                detail : null
+                            })
+                        }
+                    }
+                ])
             }
         }
 
@@ -291,7 +303,7 @@ const ViewSeats = ({ navigation, route }) => {
                     })}
                 </HStack>
 
-                <Modal isOpen={showSeatBook.show} onClose={() => setShowSeatBook({ show: false, detail: null })}>
+                <Modal style={{zIndex : 1}} isOpen={showSeatBook.show} onClose={() => setShowSeatBook({ show: false, detail: null })}>
                     <Modal.Content maxWidth="400px">
                         <Modal.CloseButton />
                         <Modal.Body style={{ marginTop: 26 }}>

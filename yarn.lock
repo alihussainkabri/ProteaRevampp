@@ -2142,6 +2142,13 @@
     "@react-aria/ssr" "^3.0.1"
     "@react-aria/utils" "^3.3.0"
 
+"@react-native-async-storage/async-storage@^1.13.4":
+  version "1.24.0"
+  resolved "https://registry.yarnpkg.com/@react-native-async-storage/async-storage/-/async-storage-1.24.0.tgz#888efbc62a26f7d9464b32f4d3027b7f2771999b"
+  integrity sha512-W4/vbwUOYOjco0x3toB8QCr7EjIP6nE9G7o8PMguvvjYT5Awg09lyV4enACRx4s++PPulBiBSjL0KTFx2u0Z/g==
+  dependencies:
+    merge-options "^3.0.4"
+
 "@react-native-async-storage/async-storage@^1.21.0":
   version "1.21.0"
   resolved "https://registry.npmjs.org/@react-native-async-storage/async-storage/-/async-storage-1.21.0.tgz"
@@ -6376,7 +6383,7 @@ prompts@^2.3.2, prompts@^2.4.0:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@*, prop-types@15.8.1, prop-types@^15.5.10, prop-types@^15.7.2:
+prop-types@*, prop-types@15.8.1, prop-types@^15.5.10, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.8.1"
   resolved "https://registry.npmjs.org/prop-types/-/prop-types-15.8.1.tgz"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -6507,6 +6514,13 @@ react-native-calendars@^1.1303.0:
   optionalDependencies:
     moment "^2.29.4"
 
+react-native-camera@^4.2.1:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-camera/-/react-native-camera-4.2.1.tgz#caf74081f055e89d7e9b0cd5108965d808c60e90"
+  integrity sha512-+Vkql24PFYQfsPRznJCvPwJQfyzCnjlcww/iZ4Ej80bgivKjL9eU0IMQIXp4yi6XCrKi4voWXxIDPMupQZKeIQ==
+  dependencies:
+    prop-types "^15.6.2"
+
 react-native-check-version@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/react-native-check-version/-/react-native-check-version-1.1.1.tgz#f469fe8d85d7575325fd13a57ce5c678447f7b86"
@@ -6570,10 +6584,19 @@ react-native-otp-textinput@^1.1.3:
   dependencies:
     react "^18.2.0"
 
-react-native-permissions@^4.0.4:
+react-native-permissions@^2.0.2, react-native-permissions@^4.0.4:
   version "4.0.4"
   resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-4.0.4.tgz#5156d61230193c5eedd96a6e54f2a1e65d582baf"
   integrity sha512-7xU71u1Xe239F7DCvO3rfuqthzOa52v5Nvd0OQ5OpEkL9S9UGhWMLRw0b7OC9zti846puTGJDnjy8FvXiAzgxQ==
+
+react-native-qrcode-scanner@^1.5.5:
+  version "1.5.5"
+  resolved "https://registry.yarnpkg.com/react-native-qrcode-scanner/-/react-native-qrcode-scanner-1.5.5.tgz#0d20101712715da108742a2bbbd0397569031b01"
+  integrity sha512-il79uStkFqUvofqXJQfOL30qgQyU17MUKxj7IGHv6oT2OxIY/vutTwuPPDbsivtv0yTMHP4dGx/79oys4eAuNw==
+  dependencies:
+    "@react-native-async-storage/async-storage" "^1.13.4"
+    prop-types "^15.5.10"
+    react-native-permissions "^2.0.2"
 
 react-native-reanimated@^3.6.1:
   version "3.6.1"
