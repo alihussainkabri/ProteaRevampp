@@ -80,6 +80,10 @@ function MobilePunchStack() {
         >
             <Stack.Screen name="MobilePunch" component={MobilePunch} />
             <Stack.Screen name="PunchPhoto" component={PunchPhoto} />
+            <Stack.Screen options={{
+                headerShown : true,
+                headerTitle : "Scan QR Code"
+            }} name="QRScanner" component={QRScanner} />
         </Stack.Navigator>
     )
 }
@@ -119,6 +123,10 @@ function RequestStack() {
             <Stack.Screen name="ListLCEG" component={ListLCEG} />
             <Stack.Screen name="CreateLCEG" component={CreateLCEG} />
             <Stack.Screen name="ParticularLCEGReqView" component={ParticularLCEGReqView} />
+            <Stack.Screen options={{
+                headerShown : true,
+                headerTitle : "Scan QR Code"
+            }} name="QRScanner" component={QRScanner} />
         </Stack.Navigator>
     )
 }
@@ -135,6 +143,10 @@ function BookSeatStack() {
         >
             <Stack.Screen name="BookSeat" component={BookSeat} />
             <Stack.Screen name="ViewSeats" component={ViewSeats} />
+            <Stack.Screen options={{
+                headerShown : true,
+                headerTitle : "Scan QR Code"
+            }} name="QRScanner" component={QRScanner} />
         </Stack.Navigator>
     )
 }
@@ -150,6 +162,10 @@ function SalarySlipStack() {
             }}
         >
             <Stack.Screen name="SalarySlip" component={SalarySlip} />
+            <Stack.Screen options={{
+                headerShown : true,
+                headerTitle : "Scan QR Code"
+            }} name="QRScanner" component={QRScanner} />
         </Stack.Navigator>
     )
 }
@@ -165,6 +181,10 @@ function PolicyStack() {
             }}
         >
             <Stack.Screen name="Policy" component={Policy} />
+            <Stack.Screen options={{
+                headerShown : true,
+                headerTitle : "Scan QR Code"
+            }} name="QRScanner" component={QRScanner} />
         </Stack.Navigator>
     )
 }

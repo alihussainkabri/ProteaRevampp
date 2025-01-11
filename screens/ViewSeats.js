@@ -251,7 +251,7 @@ const ViewSeats = ({ navigation, route }) => {
                     <Text fontFamily={fonts.PopSB} fontSize={24} ml={6} color='white'>Select Seat</Text>
                 </HStack>
 
-                <TouchableOpacity onPress={() => alert('Feature will coming soon')}>
+                <TouchableOpacity onPress={() => navigation.navigate('QRScanner')}>
                     <Image source={require('../assets/icons/QR.png')} style={{ width: 26, height: 26 }} />
                 </TouchableOpacity>
             </HStack>

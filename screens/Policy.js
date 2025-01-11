@@ -6,7 +6,7 @@ import { Ionicons, Feather } from 'react-native-vector-icons'
 import { fonts } from '../config/Fonts';
 import { userContext } from '../context/UserContext';
 
-const Policy = () => {
+const Policy = ({navigation}) => {
 
     const [loader, setLoader] = useState(false)
     const { user, defaultUrl } = useContext(userContext)
@@ -86,7 +86,7 @@ const Policy = () => {
                     <Text fontFamily={fonts.PopSB} fontSize={24} ml={6} color='white'>Mobile Policy</Text>
                 </HStack>
 
-                <TouchableOpacity onPress={() => alert('Feature will coming soon')}>
+                <TouchableOpacity onPress={() => navigation.navigate('QRScanner')}>
                     <Image source={require('../assets/icons/QR.png')} style={{ width: 26, height: 26 }} />
                 </TouchableOpacity>
             </HStack>
