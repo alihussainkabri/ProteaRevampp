@@ -165,7 +165,7 @@ const CreateLCEG = ({navigation}) => {
       "RequestType": reportingType ?? '',
       "DayHalfStatus": reportingTime,
       "RId": particularReason?.RId ?? null,
-      "Reason": dutyReason ?? LCEGReason ? LCEGReason : '',
+      "Reason": requestType == 'Special Duty' ? dutyReason : LCEGReason,
       "SpecialDutyShiftDate": requestType == 'Special Duty' ? dutyDate : LCEGDate ,
       "IsLCEGRequest": requestType == 'Special Duty' ? false : true,
       "IsSpecialDutyRequest": requestType == 'Special Duty' ? true : false,

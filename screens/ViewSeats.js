@@ -76,8 +76,9 @@ const ViewSeats = ({ navigation, route }) => {
                 )
 
                 if (seat_result?.length > 0) {
-
+                    
                     return {
+                        'old_data' : seat_result[0],
                         'building': seat_result[0]?.Building,
                         'floor': seat_result[0]?.BuildingArea,
                         'room': seat_result[0]?.Room,
@@ -180,7 +181,7 @@ const ViewSeats = ({ navigation, route }) => {
     };
 
     async function bookSeatFunc() {
-        let selected_seat = { ...showSeatBook?.detail, EmpId : user?.EmpId,SeatId: showSeatBook?.detail?.Seat_Id }
+        let selected_seat = { ...showSeatBook?.detail,SBUId : 0 ,EmpId : user?.EmpId,SeatId: showSeatBook?.detail?.Seat_Id,"WTId": 2, }
 
         delete selected_seat?.coordsx
         delete selected_seat?.coordsxfloor
@@ -190,35 +191,37 @@ const ViewSeats = ({ navigation, route }) => {
         delete selected_seat?.valueofdotfloor
         delete selected_seat?.Seat_Id
 
-        console.log(JSON.stringify(seatData))
-
 
         let payload = {
             "CompanyId": user?.EmployeeDetails?.CompanyId,
+            // "SBUId": showSeatBook?.detail?.SBUId,
             "SBUId": 0,
             "CCId": particularBranch?.CCID,
             "FromDate": fromDate,
             "ToDate": toDate,
             "BuildingId": selected_seat?.BuildingId,
+            "EmployeeId": user?.EmpId,
+            "EmpId": user?.EmpId,
             "BuildingAreaId": selected_seat?.BuildingAreaId,
-            "SeatSelectionGridData": [
-                {
-                    "WTId": 2,
-                    "EmpId": "",
-                    "SeatId": 16,
-                    "CompanyId": 0,
-                    "SBUId": 0,
-                    "CCId": 0,
-                    "BuildingId": 0,
-                    "BuildingAreaId": 0,
-                    "RoomId": 0,
-                    "DepartmentId": 0,
-                    "DivisionId": 0,
-                    "IsActive": 0
-                }
-            ]
+            "SeatSelectionGridData": [selected_seat]
         }
 
+        const response = await fetch("https://" + defaultUrl + "/api/TimeAttendance/CreateSeatSelection",{
+            method : "POST",
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body : JSON.stringify(payload)
+        })
+        console.log('hy', "https://" + defaultUrl + "/api/TimeAttendance/CreateSeatSelection" ,payload)
+
+        if (response.ok == true){
+            const data = await response.json()
+            console.log(data)
+            if (data?.Result == 0){
+                Toast.show(data?.Message)
+            }
+        }
 
     }
 
@@ -280,7 +283,7 @@ const ViewSeats = ({ navigation, route }) => {
                         return <HStack pl={Dimensions.get('window').width / 100 * 2} mt={3} flexWrap='wrap' backgroundColor='#f6f6f6' py={1.5}>
                             <Text style={{ width: Dimensions.get('window').width, fontFamily: fonts.PopSB, fontSize: 16, marginBottom: 8 }}>{item?.building} --&gt; {item?.floor} --&gt; {item?.room}</Text>
                             {item?.seat_results?.length > 0 && item?.seat_results?.map((seat, index) => (
-                                <TouchableOpacity onPress={() => setShowSeatBook({ show: true, detail: seat })}>
+                                <TouchableOpacity onPress={() => setShowSeatBook({ show: true, detail: seat,all_data : item })}>
                                     <Text key={index} style={[styles.particularseat, { backgroundColor: getColor(seat) }]}>{seat?.Seat_Id}</Text>
                                 </TouchableOpacity>
                             ))}

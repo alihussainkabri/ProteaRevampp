@@ -227,9 +227,11 @@ const CreateOptionalHolidays = ({ navigation }) => {
                     <VStack>
                         <Text style={styles.label}>Select Holidays</Text>
                         {applicableHolidayList?.length > 0 && applicableHolidayList?.map((item, index) => {
+                            console.log('item',item)
                             return (
 
-                                <Checkbox key={index} isDisabled={isHolidayInFuture(item) ? item?.IsEnable ? false : true : true} onChange={(value) => markHoliday(value, item)} my={2}>
+                                <Checkbox key={index} isDisabled={isHolidayInFuture(item) ? false : true} onChange={(value) => markHoliday(value, item)} my={2}>
+                                {/* <Checkbox key={index} isDisabled={isHolidayInFuture(item) ? item?.IsEnable ? false : true : true} onChange={(value) => markHoliday(value, item)} my={2}> */}
                                     <View>
                                         <Text fontFamily={fonts.PopB}>{item?.HolidayName}</Text>
                                         <Text>{item?.HolidayDate}</Text>

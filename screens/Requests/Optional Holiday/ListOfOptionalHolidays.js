@@ -36,6 +36,8 @@ const ListOfOptionalHolidays = ({ navigation }) => {
         if (response.ok == true) {
             const data = await response.json()
 
+            console.log(data)
+
             console.log('holidays REQ', data?.HolidayReq?.slice(0, 3))
             setAllReqs(data?.HolidayReq)
             setLoader(false)

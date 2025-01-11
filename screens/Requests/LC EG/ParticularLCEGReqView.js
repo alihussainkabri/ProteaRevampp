@@ -84,17 +84,27 @@ const ParticularLCEGReqView = ({ navigation, route }) => {
                     <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
-                            <Text style={styles.title}>Request Type</Text>
+                            <Text style={styles.title}>Employee ID</Text>
                         </HStack>
-                        <Text style={styles.value}>{item?.IsSpecialDutyRequest ? 'Special Duty' : 'LCEG'}</Text>
+                        <Text style={styles.value}>{item?.EmpId}</Text>
                     </HStack>
 
                     <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
-                            <Text style={styles.title}>From Date</Text>
+                            <Text style={styles.title}>Employee Name</Text>
                         </HStack>
-                        <Text style={styles.value}>{new Date(item?.RequestFromDate).toLocaleDateString('en-GB')}</Text>
+                        <Text style={styles.value}>{item?.EmpName}</Text>
+                    </HStack>
+
+                    
+
+                    <HStack style={styles.infoCard}>
+                        <HStack alignItems='center'>
+                            <Entypo name="v-card" size={20} color="black" />
+                            <Text style={styles.title}>Request Type</Text>
+                        </HStack>
+                        <Text style={styles.value}>{item?.IsSpecialDutyRequest ? 'Special Duty' : 'LCEG'}</Text>
                     </HStack>
 
                     <HStack style={styles.infoCard}>
@@ -108,9 +118,27 @@ const ParticularLCEGReqView = ({ navigation, route }) => {
                     <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
-                            <Text style={styles.title}>Reason</Text>
+                            <Text style={styles.title}>From Date</Text>
                         </HStack>
-                        <Text style={styles.value}>{item?.ReasonTemplate}</Text>
+                        <Text style={styles.value}>{new Date(item?.RequestFromDate).toLocaleDateString('en-GB')}</Text>
+                    </HStack>
+
+                    <HStack style={styles.infoCard}>
+                        <HStack alignItems='center'>
+                            <Entypo name="v-card" size={20} color="black" />
+                            <Text style={styles.title}>To Date</Text>
+                        </HStack>
+                        <Text style={styles.value}>{item?.RequestToDate}</Text>
+                    </HStack>
+
+                    
+
+                    <HStack style={styles.infoCard}>
+                        <HStack alignItems='center'>
+                            <Entypo name="v-card" size={20} color="black" />
+                            <Text style={styles.title}>Request Status</Text>
+                        </HStack>
+                        <Text style={styles.value}>{item?.Reason ? item?.Reason : item?.ReasonTemplate}</Text>
                     </HStack>
 
                     {item?.ReqStatus == 'Pending' && <TouchableOpacity
