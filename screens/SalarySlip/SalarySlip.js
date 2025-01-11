@@ -1,16 +1,10 @@
-import { View, StatusBar, ImageBackground, Dimensions, StyleSheet, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, PermissionsAndroid, Platform } from 'react-native'
+import { StatusBar, StyleSheet, Image, TouchableOpacity, ScrollView, } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { HStack, Input, NativeBaseProvider, Text, VStack } from 'native-base';
 import { fonts } from '../../config/Fonts'
-import { Feather } from 'react-native-vector-icons'
 import Toast from 'react-native-root-toast';
-import { url } from '../../helpers';
 import Loader from '../../component/Loader'
-import { useHeaderHeight } from '@react-navigation/elements'
 import { userContext } from '../../context/UserContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { PERMISSIONS, check, RESULTS, requestMultiple } from 'react-native-permissions';
-import uuid from 'react-native-uuid';
 import { Ionicons, AntDesign, FontAwesome, Entypo, MaterialIcons } from 'react-native-vector-icons'
 import RNFS from "react-native-fs";
 import FileViewer from "react-native-file-viewer";
