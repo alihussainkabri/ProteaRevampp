@@ -36,7 +36,7 @@ const QRScanner = ({navigation}) => {
 
             
     
-            const response = await fetch("https://" + defaultUrl + "/api/TimeAttendanceAPI/CheckQRCodeAssignToEmp",{
+            const response = await fetch("https://" + defaultUrl + "/api/TimeAttendance/CheckQRCodeAssignToEmp",{
                 method : "POST",
                 headers: {
                     "Content-Type": 'application/json'
@@ -45,19 +45,33 @@ const QRScanner = ({navigation}) => {
             })
 
             console.log("https://" + defaultUrl + "/api/TimeAttendanceAPI/CheckQRCodeAssignToEmp")
+            console.log(JSON.stringify(payload))
 
             if (response.ok == true){
+
+                
                 const data = await response.json()
 
                 console.log(data)
 
-                if (data?.Result == 0){
-                    Toast.show(data?.Message)
+                if (data?.Result == 115 || data?.Result == 115){
+                    Alert.alert("Success","QR Code Scanned Successfully!",[
+                        {
+                            text : 'Ok',
+                            onPress : () => {
+                                navigation.goBack()
+                            }
+                        }
+                    ])
                     setLoad(false)
                 }else{
                     setLoad(false)
-                    Toast.show("QR code scanned successfully!")
-                    navigation.goBack()
+                    Alert.alert("Success",data?.Message,[
+                        {
+                            text : 'Ok',
+                            onPress : () => null
+                        }
+                    ])
                 }
             }else{
                 setLoad(false)

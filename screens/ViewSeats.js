@@ -33,6 +33,28 @@ const ViewSeats = ({ navigation, route }) => {
         show: false,
         detail: null
     })
+    const [seatCountData, setSeatCountData] = useState({
+        "TOTALCONTINGENCY": 0, "TOTALEMPLOYEE": 0, "TOTALINACTIVE": 0, "TOTALSEATS": 0, "TOTALSEATSACTIVE": 0, "TOTALSEATSAVAILABLE": 0, "TOTALSEATSBOOKEDA": 0, "TOTALSEATSBOOKEDP": 0, "TOTALSEATSOCCUPIED": 0
+    })
+
+    async function fetchSeatsCount() {
+        setLoader(true)
+
+        const response = await fetch("https://" + defaultUrl + `/api/TimeAttendance/GetSeatavailability?DisplayDate=${new Date().toISOString().split('T')[0]}&UserId=${user?.EmpId}&BuildingId=${Building?.BuildingID}&BuildingAreaId=${BuildingArea?.BuildAreaID}`, {
+            method: 'POST'
+        })
+        if (response.ok == true) {
+            const data = await response.json()
+            if (data['TOTALCONTINGENCY'] > -1) {
+                setSeatCountData(data)
+                setLoader(false)
+            }else{
+                setLoader(false)
+            }
+        }else{
+            setLoader(false)
+        }
+    }
 
 
     async function fetchSeats() {
@@ -76,9 +98,9 @@ const ViewSeats = ({ navigation, route }) => {
                 )
 
                 if (seat_result?.length > 0) {
-                    
+
                     return {
-                        'old_data' : seat_result[0],
+                        'old_data': seat_result[0],
                         'building': seat_result[0]?.Building,
                         'floor': seat_result[0]?.BuildingArea,
                         'room': seat_result[0]?.Room,
@@ -101,6 +123,7 @@ const ViewSeats = ({ navigation, route }) => {
 
     useEffect(() => {
         fetchSeats()
+        fetchSeatsCount()
     }, [])
 
     function getColor(seat) {
@@ -182,7 +205,7 @@ const ViewSeats = ({ navigation, route }) => {
 
     async function bookSeatFunc() {
         setLoader(true)
-        let selected_seat = { ...showSeatBook?.detail,SBUId : 0 ,EmpId : user?.EmpId,SeatId: showSeatBook?.detail?.Seat_Id,"WTId": 2, }
+        let selected_seat = { ...showSeatBook?.detail, SBUId: 0, EmpId: user?.EmpId, SeatId: showSeatBook?.detail?.Seat_Id, "WTId": 2, }
 
         delete selected_seat?.coordsx
         delete selected_seat?.coordsxfloor
@@ -207,27 +230,27 @@ const ViewSeats = ({ navigation, route }) => {
             "SeatSelectionGridData": [selected_seat]
         }
 
-        const response = await fetch("https://" + defaultUrl + "/api/TimeAttendance/CreateSeatSelection",{
-            method : "POST",
+        const response = await fetch("https://" + defaultUrl + "/api/TimeAttendance/CreateSeatSelection", {
+            method: "POST",
             headers: {
                 "Content-Type": 'application/json'
             },
-            body : JSON.stringify(payload)
+            body: JSON.stringify(payload)
         })
-        console.log('hy', "https://" + defaultUrl + "/api/TimeAttendance/CreateSeatSelection" ,payload)
+        console.log('hy', "https://" + defaultUrl + "/api/TimeAttendance/CreateSeatSelection", payload)
 
-        if (response.ok == true){
+        if (response.ok == true) {
             const data = await response.json()
-            
+
             setLoader(false)
-            if (data?.Result == 0){
-                Alert.alert("Error",data?.Message,[
+            if (data?.Result == 0) {
+                Alert.alert("Error", data?.Message, [
                     {
-                        text : 'Ok',
-                        onPress : () => {
+                        text: 'Ok',
+                        onPress: () => {
                             setShowSeatBook({
-                                show : false,
-                                detail : null
+                                show: false,
+                                detail: null
                             })
                         }
                     }
@@ -258,35 +281,35 @@ const ViewSeats = ({ navigation, route }) => {
 
             <ScrollView style={{}} showsVerticalScrollIndicator={false}>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ backgroundColor: '#f0f0f0', paddingHorizontal: 16, paddingVertical: 8, marginTop: 6 }}>
-                    <Text style={styles.seatType} fontWeight={600}>Total Seats: 362</Text>
+                    <Text style={styles.seatType} fontWeight={600}>Total Seats: {seatCountData?.TOTALSEATS}</Text>
                     <HStack alignItems='center'>
                         <View style={[styles.seatClr, { backgroundColor: '#1d810f' }]}></View>
-                        <Text style={styles.seatType}>Booked Seats: 362</Text>
+                        <Text style={styles.seatType}>Booked Seats: {seatCountData?.TOTALSEATSBOOKEDA}</Text>
                     </HStack>
 
                     <HStack alignItems='center'>
                         <View style={[styles.seatClr, { backgroundColor: '#c5c5c5' }]}></View>
-                        <Text style={styles.seatType}>Disabled Seats: 362</Text>
+                        <Text style={styles.seatType}>Disabled Seats: {seatCountData?.TOTALINACTIVE}</Text>
                     </HStack>
 
                     <HStack alignItems='center'>
                         <View style={[styles.seatClr, { backgroundColor: '#5cb1f6' }]}></View>
-                        <Text style={styles.seatType}>Available Seats: 362</Text>
+                        <Text style={styles.seatType}>Available Seats: {seatCountData?.TOTALSEATSAVAILABLE}</Text>
                     </HStack>
 
                     <HStack alignItems='center'>
                         <View style={[styles.seatClr, { backgroundColor: '#f3bdbc' }]}></View>
-                        <Text style={styles.seatType}>Pending Seats: 362</Text>
+                        <Text style={styles.seatType}>Pending Seats: {seatCountData?.TOTALSEATSBOOKEDP}</Text>
                     </HStack>
 
                     <HStack alignItems='center'>
                         <View style={[styles.seatClr, { backgroundColor: '#f86a76' }]}></View>
-                        <Text style={styles.seatType}>Occupied Seats: 362</Text>
+                        <Text style={styles.seatType}>Occupied Seats: {seatCountData?.TOTALSEATSOCCUPIED}</Text>
                     </HStack>
 
                     <HStack alignItems='center' mr={4}>
                         <View style={[styles.seatClr, { backgroundColor: '#8188fa' }]}></View>
-                        <Text style={styles.seatType}>Contingency Seats: 362</Text>
+                        <Text style={styles.seatType}>Contingency Seats: {seatCountData?.TOTALCONTINGENCY}</Text>
                     </HStack>
                 </ScrollView>
 
@@ -295,7 +318,7 @@ const ViewSeats = ({ navigation, route }) => {
                         return <HStack pl={Dimensions.get('window').width / 100 * 2} mt={3} flexWrap='wrap' backgroundColor='#f6f6f6' py={1.5}>
                             <Text style={{ width: Dimensions.get('window').width, fontFamily: fonts.PopSB, fontSize: 16, marginBottom: 8 }}>{item?.building} --&gt; {item?.floor} --&gt; {item?.room}</Text>
                             {item?.seat_results?.length > 0 && item?.seat_results?.map((seat, index) => (
-                                <TouchableOpacity onPress={() => setShowSeatBook({ show: true, detail: seat,all_data : item })}>
+                                <TouchableOpacity onPress={() => setShowSeatBook({ show: true, detail: seat, all_data: item })}>
                                     <Text key={index} style={[styles.particularseat, { backgroundColor: getColor(seat) }]}>{seat?.Seat_Id}</Text>
                                 </TouchableOpacity>
                             ))}
@@ -303,7 +326,7 @@ const ViewSeats = ({ navigation, route }) => {
                     })}
                 </HStack>
 
-                <Modal style={{zIndex : 1}} isOpen={showSeatBook.show} onClose={() => setShowSeatBook({ show: false, detail: null })}>
+                <Modal style={{ zIndex: 1 }} isOpen={showSeatBook.show} onClose={() => setShowSeatBook({ show: false, detail: null })}>
                     <Modal.Content maxWidth="400px">
                         <Modal.CloseButton />
                         <Modal.Body style={{ marginTop: 26 }}>
