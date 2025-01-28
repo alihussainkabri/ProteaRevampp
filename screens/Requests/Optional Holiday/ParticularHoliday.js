@@ -1,4 +1,4 @@
-import { View, StatusBar, TouchableOpacity, Image, StyleSheet, ScrollView } from 'react-native'
+import { View, StatusBar, TouchableOpacity, Image, StyleSheet, ScrollView, ActivityIndicator } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { HStack, Text, NativeBaseProvider, VStack, Modal, FormControl, TextArea, Button } from 'native-base';
 import Loader from '../../../component/Loader';
@@ -140,7 +140,7 @@ const ParticularHoliday = ({ navigation, route }) => {
                 <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
                     <Modal.Content maxWidth="400px">
                         <Modal.CloseButton />
-                        <Modal.Header>Cancel OD Request</Modal.Header>
+                        <Modal.Header>Cancel OH Request</Modal.Header>
                         <Modal.Body>
                             <FormControl>
                                 <FormControl.Label>Enter Remark</FormControl.Label>
@@ -155,7 +155,7 @@ const ParticularHoliday = ({ navigation, route }) => {
                                     Close
                                 </Button>
                                 <Button colorScheme='danger' onPress={cancelLeave}>
-                                    Submit
+                                    {loader ? <ActivityIndicator size='large' color='red' /> : 'Submit'}
                                 </Button>
                             </Button.Group>
                         </Modal.Footer>

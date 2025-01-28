@@ -18,8 +18,7 @@ const VerifyOTP = ({ navigation, route }) => {
 
     useEffect(() => {
         async function sendOTP() {
-            setLoader(true)
-
+            
             var raw = JSON.stringify({
                 "EmpId": JSON.parse(route?.params?.data)?.EmpId
             });
@@ -31,11 +30,9 @@ const VerifyOTP = ({ navigation, route }) => {
                 },
                 body: raw
             })
-            setLoader(false)
+            
             if (response.ok == true) {
                 const data = await response.json()
-
-                setLoader(false)
                 Toast.show(data?.error_msg, {
                     duration: 3000,
                 })
@@ -44,7 +41,6 @@ const VerifyOTP = ({ navigation, route }) => {
                 Toast.show('Internal server error', {
                     duration: 3000,
                 })
-                setLoader(false)
             }
         }
 
@@ -105,7 +101,7 @@ const VerifyOTP = ({ navigation, route }) => {
             {loader && <Loader />}
 
             <ScrollView keyboardShouldPersistTaps='always'>
-                <VStack flex={1} justifyContent='space-between' height={Dimensions.get('window').height + 10}>
+                <VStack flex={1} justifyContent='space-between' height={Dimensions.get('window').height - 10}>
                     <View>
                         <ImageBackground source={require('../../assets/images/login-BG.png')} style={styles.titleBG} resizeMode='stretch'>
                             <TouchableOpacity onPress={() => navigation.goBack()} style={{ position: 'absolute', top: 64, left: 28 }}>

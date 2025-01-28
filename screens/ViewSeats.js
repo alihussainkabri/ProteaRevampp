@@ -1,4 +1,4 @@
-import { View, StatusBar, TouchableOpacity, Image, ScrollView, StyleSheet, Dimensions, Alert } from 'react-native'
+import { View, StatusBar, TouchableOpacity, Image, ScrollView, StyleSheet, Dimensions, Alert, ActivityIndicator } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import Loader from '../component/Loader';
 import { Actionsheet, Button, HStack, Modal, NativeBaseProvider, Text, VStack } from 'native-base';
@@ -48,10 +48,10 @@ const ViewSeats = ({ navigation, route }) => {
             if (data['TOTALCONTINGENCY'] > -1) {
                 setSeatCountData(data)
                 setLoader(false)
-            }else{
+            } else {
                 setLoader(false)
             }
-        }else{
+        } else {
             setLoader(false)
         }
     }
@@ -157,7 +157,7 @@ const ViewSeats = ({ navigation, route }) => {
             }
 
             if (iscontingency == true) {
-                return "purple" //"contingency"
+                return "#8188fa" //"contingency"
             }
         } else {
             let isbooked = false;
@@ -173,7 +173,7 @@ const ViewSeats = ({ navigation, route }) => {
                         if (emp.RequestStatus == 'A') {
                             if (emp.IsSubbmitQrCode == 2) {
                                 // console.log("2", seat?.Seat_Id)
-                                return "yellow" //"Occupied"
+                                return "#1d810f" //"Occupied"
                             }
                             else {
                                 // console.log("3", seat?.Seat_Id)
@@ -184,9 +184,11 @@ const ViewSeats = ({ navigation, route }) => {
                     isbooked = true;
                 }
 
-                if (isbooked == false) {
-                    return "#5cb1f6" //"available"
-                }
+
+            }
+
+            if (isbooked == false) {
+                return "#5cb1f6" //"available"
             }
         }
     }
@@ -237,7 +239,6 @@ const ViewSeats = ({ navigation, route }) => {
             },
             body: JSON.stringify(payload)
         })
-        console.log('hy', "https://" + defaultUrl + "/api/TimeAttendance/CreateSeatSelection", payload)
 
         if (response.ok == true) {
             const data = await response.json()
@@ -245,6 +246,15 @@ const ViewSeats = ({ navigation, route }) => {
             setLoader(false)
             if (data?.Result == 0) {
                 Alert.alert("Error", data?.Message, [
+                    {
+                        text: 'Ok',
+                        onPress: () => null
+                    }
+                ])
+            } else {
+                fetchSeats()
+                fetchSeatsCount()
+                Alert.alert("Success", data?.Message, [
                     {
                         text: 'Ok',
                         onPress: () => {
@@ -280,8 +290,11 @@ const ViewSeats = ({ navigation, route }) => {
             </HStack>
 
             <ScrollView style={{}} showsVerticalScrollIndicator={false}>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ backgroundColor: '#f0f0f0', paddingHorizontal: 16, paddingVertical: 8, marginTop: 6 }}>
-                    <Text style={styles.seatType} fontWeight={600}>Total Seats: {seatCountData?.TOTALSEATS}</Text>
+
+
+                <Text style={{ ...styles.seatType, textAlign: 'center',marginVertical : 8 }} fontWeight={600}>Total Seats: {seatCountData?.TOTALSEATS}</Text>
+                <View style={{paddingHorizontal : 10}}>
+                <HStack justifyContent="space-between" mb={1}>
                     <HStack alignItems='center'>
                         <View style={[styles.seatClr, { backgroundColor: '#1d810f' }]}></View>
                         <Text style={styles.seatType}>Booked Seats: {seatCountData?.TOTALSEATSBOOKEDA}</Text>
@@ -291,7 +304,9 @@ const ViewSeats = ({ navigation, route }) => {
                         <View style={[styles.seatClr, { backgroundColor: '#c5c5c5' }]}></View>
                         <Text style={styles.seatType}>Disabled Seats: {seatCountData?.TOTALINACTIVE}</Text>
                     </HStack>
+                </HStack>
 
+                <HStack justifyContent="space-between" mb={1}>
                     <HStack alignItems='center'>
                         <View style={[styles.seatClr, { backgroundColor: '#5cb1f6' }]}></View>
                         <Text style={styles.seatType}>Available Seats: {seatCountData?.TOTALSEATSAVAILABLE}</Text>
@@ -301,24 +316,30 @@ const ViewSeats = ({ navigation, route }) => {
                         <View style={[styles.seatClr, { backgroundColor: '#f3bdbc' }]}></View>
                         <Text style={styles.seatType}>Pending Seats: {seatCountData?.TOTALSEATSBOOKEDP}</Text>
                     </HStack>
+                </HStack>
 
+                <HStack justifyContent="space-between">
                     <HStack alignItems='center'>
                         <View style={[styles.seatClr, { backgroundColor: '#f86a76' }]}></View>
                         <Text style={styles.seatType}>Occupied Seats: {seatCountData?.TOTALSEATSOCCUPIED}</Text>
                     </HStack>
 
-                    <HStack alignItems='center' mr={4}>
+                    <HStack alignItems='center'>
                         <View style={[styles.seatClr, { backgroundColor: '#8188fa' }]}></View>
                         <Text style={styles.seatType}>Contingency Seats: {seatCountData?.TOTALCONTINGENCY}</Text>
                     </HStack>
-                </ScrollView>
+                </HStack>
+                </View>
+
 
                 <HStack mt={3} flexWrap='wrap'>
                     {seatList?.length > 0 && seatList?.map((item) => {
                         return <HStack pl={Dimensions.get('window').width / 100 * 2} mt={3} flexWrap='wrap' backgroundColor='#f6f6f6' py={1.5}>
                             <Text style={{ width: Dimensions.get('window').width, fontFamily: fonts.PopSB, fontSize: 16, marginBottom: 8 }}>{item?.building} --&gt; {item?.floor} --&gt; {item?.room}</Text>
                             {item?.seat_results?.length > 0 && item?.seat_results?.map((seat, index) => (
-                                <TouchableOpacity onPress={() => setShowSeatBook({ show: true, detail: seat, all_data: item })}>
+                                <TouchableOpacity onPress={() => {
+                                    setShowSeatBook({ show: true, detail: seat, all_data: item })
+                                }}>
                                     <Text key={index} style={[styles.particularseat, { backgroundColor: getColor(seat) }]}>{seat?.Seat_Id}</Text>
                                 </TouchableOpacity>
                             ))}
@@ -326,9 +347,10 @@ const ViewSeats = ({ navigation, route }) => {
                     })}
                 </HStack>
 
-                <Modal style={{ zIndex: 1 }} isOpen={showSeatBook.show} onClose={() => setShowSeatBook({ show: false, detail: null })}>
+                <Modal style={{ zIndex: -1 }} isOpen={showSeatBook.show} onClose={() => setShowSeatBook({ show: false, detail: null })}>
                     <Modal.Content maxWidth="400px">
-                        <Modal.CloseButton />
+                        {!loader && <Modal.CloseButton />}
+                        
                         <Modal.Body style={{ marginTop: 26 }}>
                             <Text fontFamily={fonts.PopSB} color='green.800' fontSize={18}>Seat Number: {showSeatBook?.detail?.Seat_Id}</Text>
 
@@ -368,8 +390,12 @@ const ViewSeats = ({ navigation, route }) => {
                         </Modal.Body>
                         <Modal.Footer>
                             <Button.Group space={2}>
-                                <Button onPress={bookSeatFunc} colorScheme='green'>
-                                    Book Seat
+                                <Button onPress={() => {
+                                    if (!loader){
+                                        bookSeatFunc()
+                                    }
+                                }} colorScheme='green'>
+                                    {!loader ? 'Book Seat' : <ActivityIndicator size='large' color='red' /> }
                                 </Button>
                             </Button.Group>
                         </Modal.Footer>

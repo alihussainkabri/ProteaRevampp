@@ -210,7 +210,7 @@ const ParticularODRequestView = ({ navigation, route }) => {
                 <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
                     <Modal.Content maxWidth="400px">
                         <Modal.CloseButton />
-                        <Modal.Header>Cancel OD Request</Modal.Header>
+                        <Modal.Header>Cancel OH Request</Modal.Header>
                         <Modal.Body>
                             <FormControl>
                                 <FormControl.Label>Enter Remark</FormControl.Label>

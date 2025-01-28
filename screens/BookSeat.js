@@ -135,7 +135,7 @@ const BookSeat = ({ navigation }) => {
             api_BuildingID = Building?.BuildingID
         }
 
-        console.log('api building check: ',api_BuildingID)
+        console.log('api building check: ', api_BuildingID)
 
         const response = await fetch("https://" + defaultUrl + `/api/CommonData/ListOfBuildingArea?EmpId=${user?.EmpId}&BuildingID=${api_BuildingID}`, {
             method: 'POST',
@@ -295,12 +295,17 @@ const BookSeat = ({ navigation }) => {
                     />
                 </VStack>
 
-                <TouchableOpacity onPress={() => navigation.navigate('ViewSeats', {
-                    particularBranch,
-                    Building,
-                    BuildingArea,
-                    date,
-                })} style={styles.btn}>
+                <TouchableOpacity onPress={() => {
+                    if (BuildingArea?.BuildAreaID) {
+                        navigation.navigate('ViewSeats', {
+                            particularBranch,
+                            Building,
+                            BuildingArea,
+                            date,
+                        })
+                    }
+                }
+                } style={styles.btn}>
                     <Text color='white' fontSize={17} textAlign='center' fontFamily={fonts.PopM}>View Seats</Text>
                 </TouchableOpacity>
             </ScrollView>
