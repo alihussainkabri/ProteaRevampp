@@ -26,27 +26,27 @@ const MobilePunch = ({ navigation }) => {
     const [isInsideBoundary, setIsInsideBoundary] = useState(false);
 
     useEffect(() => {
-    // PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then(result => {
-    //     console.log(result)
-    //     if (result == PermissionsAndroid.RESULTS.GRANTED) {
-    //         Geolocation.getCurrentPosition(info => {
-    //             console.log('geo info', info)
-    //             setLatitude(info.coords.latitude)
-    //             setLongitude(info.coords.longitude)
-    //         })
-    //     }
-    // })
+        // PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then(result => {
+        //     console.log(result)
+        //     if (result == PermissionsAndroid.RESULTS.GRANTED) {
+        //         Geolocation.getCurrentPosition(info => {
+        //             console.log('geo info', info)
+        //             setLatitude(info.coords.latitude)
+        //             setLongitude(info.coords.longitude)
+        //         })
+        //     }
+        // })
 
-    Geolocation.getCurrentPosition(info => {
-        console.log('geo info', info)
-        console.log('geo info latitude', info.coords.latitude.toString())
-        setLatitude(info.coords.latitude)
-        setLongitude(info.coords.longitude)
-        setUserLocation({
-            latitude: info.coords.latitude,
-            longitude: info.coords.longitude,
+        Geolocation.getCurrentPosition(info => {
+            console.log('geo info', info)
+            console.log('geo info latitude', info.coords.latitude.toString())
+            setLatitude(info.coords.latitude)
+            setLongitude(info.coords.longitude)
+            setUserLocation({
+                latitude: info.coords.latitude,
+                longitude: info.coords.longitude,
+            })
         })
-    })
     }, [])
 
     useEffect(() => {
