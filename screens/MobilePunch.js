@@ -10,6 +10,7 @@ import Toast from 'react-native-root-toast';
 import Geolocation from '@react-native-community/geolocation'
 import Loader from '../component/Loader';
 import { useHeaderHeight } from '@react-navigation/elements'
+import { Image as CImage } from 'react-native-compressor'
 // import geolib from 'geolib';
 import * as geolib from 'geolib';
 
@@ -26,20 +27,10 @@ const MobilePunch = ({ navigation }) => {
     const [isInsideBoundary, setIsInsideBoundary] = useState(false);
 
     useEffect(() => {
-        // PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then(result => {
-        //     console.log(result)
-        //     if (result == PermissionsAndroid.RESULTS.GRANTED) {
-        //         Geolocation.getCurrentPosition(info => {
-        //             console.log('geo info', info)
-        //             setLatitude(info.coords.latitude)
-        //             setLongitude(info.coords.longitude)
-        //         })
-        //     }
-        // })
+        
 
         Geolocation.getCurrentPosition(info => {
-            console.log('geo info', info)
-            console.log('geo info latitude', info.coords.latitude.toString())
+            
             setLatitude(info.coords.latitude)
             setLongitude(info.coords.longitude)
             setUserLocation({
@@ -94,7 +85,7 @@ const MobilePunch = ({ navigation }) => {
             if (response.ok == true) {
                 const data = await response.json()
 
-                console.log('goeLoc: ', data)
+                
                 if (data?.length > 0) {
 
                     setMyGeoLocation([
@@ -154,95 +145,105 @@ const MobilePunch = ({ navigation }) => {
         if (remark) {
             const options = {
                 title: 'Add Image',
-                storageOptions: {
-                    skipBackup: true,
-                    pathL: 'images'
-                },
+                mediaType : "photo",
                 cameraType: 'front',
-                includeBase64: true,
-                quality: 0.1
+                quality: 0.1,
+                conversionQuality: 0.1
             }
 
-            console.log('hy')
-
+            
+            setLoader(true)
             launchCamera(options, async (response) => {
                 if (response?.assets?.length > 0) {
 
-                    console.log('key name', Object.keys(response.assets[0]))
+                    CImage.compress(response.assets[0].uri,{
+                        returnableOutputType : 'base64'
+                    }).then(async compressedImage => {
 
-                    setLoader(true)
-
-                    // get current latitute & longitute
-                    Geolocation.getCurrentPosition(info => {
-                        console.log('geo info', info)
-                        console.log('geo info latitude', info.coords.latitude.toString())
-                        setLatitude(info.coords.latitude)
-                        setLongitude(info.coords.longitude)
-                        setUserLocation({
-                            latitude: info.coords.latitude,
-                            longitude: info.coords.longitude,
+                        
+                        // get current latitute & longitute
+                        Geolocation.getCurrentPosition(info => {
+                            
+                            setLatitude(info.coords.latitude)
+                            setLongitude(info.coords.longitude)
+                            setUserLocation({
+                                latitude: info.coords.latitude,
+                                longitude: info.coords.longitude,
+                            })
                         })
-                    })
 
-                    // calculate current date & time 
-                    const currentDateTime = getCurrentDateTime();
+                        // calculate current date & time 
+                        const currentDateTime = getCurrentDateTime();
 
-                    var raw = JSON.stringify({
-                        "EmpId": user?.EmpId,
-                        "Latitude": latitude?.toString(),
-                        "Longitutde": longitude?.toString(),
-                        "DateTime": currentDateTime,
-                        "OffSet": "+05:30",
-                        "CardNO": user?.EmployeeDetails?.CardNo,
-                        "Address": "Pune",
-                        "remarks": remark,
-                        "IMEINO": "335def16-824b-4ddd-a543-663b3cb7107a",
-                        "MobileNO": "",
-                        "PunchType": "M",
-                        "PunchCategory": "Mobile",
-                        "OriginalPunchDirection": operation,
-                        "PunchAddress": "",
-                        "IsNewAddress": true,
-                        "EmpImage": response.assets[0].base64
-                    });
+                        var raw = JSON.stringify({
+                            "EmpId": user?.EmpId,
+                            "Latitude": latitude?.toString(),
+                            "Longitutde": longitude?.toString(),
+                            "DateTime": currentDateTime,
+                            "OffSet": "+05:30",
+                            "CardNO": user?.EmployeeDetails?.CardNo,
+                            "Address": "Pune",
+                            "remarks": remark,
+                            "IMEINO": "335def16-824b-4ddd-a543-663b3cb7107a",
+                            "MobileNO": "",
+                            "PunchType": "M",
+                            "PunchCategory": "Mobile",
+                            "OriginalPunchDirection": operation,
+                            "PunchAddress": "",
+                            "IsNewAddress": true,
+                            "EmpImage": compressedImage
+                        });
 
-                    console.log('raw: ', raw)
+                        
 
-                    const response1 = await fetch("https://" + defaultUrl + '/api/PunchInout/PunchIn', {
-                        method: 'POST',
-                        headers: {
-                            "Content-Type": 'application/json'
-                        },
-                        body: raw
-                    })
+                        const response1 = await fetch("https://" + defaultUrl + '/api/PunchInout/PunchIn', {
+                            method: 'POST',
+                            headers: {
+                                "Content-Type": 'application/json'
+                            },
+                            body: raw
+                        })
 
-                    if (response1.ok == true) {
-                        const data = await response1.json()
+                        if (response1.ok == true) {
+                            const data = await response1.json()
 
-                        console.log('punch data: ', JSON.stringify(data))
+                            
 
-                        if (data?.Message == 'Success') {
-                            Toast.show(operation == 1 ? 'Punch in successfull' : 'Punch out successfull', {
-                                duration: 3000,
-                            })
+                            if (data?.Message == 'Success') {
+                                Toast.show(operation == 1 ? 'Punch in successfull' : 'Punch out successfull', {
+                                    duration: 3000,
+                                })
 
-                            Alert.alert('Success', operation == 1 ? 'Punch in successfull' : 'Punch out successfull', [
-                                {
-                                    text: 'Ok',
-                                    onPress: () => null
-                                },
-                            ])
+                                Alert.alert('Success', operation == 1 ? 'Punch in successfull' : 'Punch out successfull', [
+                                    {
+                                        text: 'Ok',
+                                        onPress: () => null
+                                    },
+                                ])
 
-                            // alert(operation == 1 ? 'Punch in successfull' : 'Punch out successfull')
+                                // alert(operation == 1 ? 'Punch in successfull' : 'Punch out successfull')
 
-                            setRemark('')
-                            setLoader(false)
+                                setRemark('')
+                                setLoader(false)
+                            } else {
+                                Toast.show(data?.error_msg, {
+                                    duration: 3000,
+                                })
+
+                                Alert.alert('Error', data?.error_msg, [
+                                    {
+                                        text: 'Ok',
+                                        onPress: () => null
+                                    },
+                                ])
+                                setLoader(false)
+                            }
+
                         } else {
-                            Toast.show(data?.error_msg, {
+                            Toast.show('Internal server error', {
                                 duration: 3000,
                             })
-
-                            Alert.alert('Error', data?.error_msg, [
+                            Alert.alert('Error', 'Internal Server Error', [
                                 {
                                     text: 'Ok',
                                     onPress: () => null
@@ -250,21 +251,7 @@ const MobilePunch = ({ navigation }) => {
                             ])
                             setLoader(false)
                         }
-
-                    } else {
-                        Toast.show('Internal server error', {
-                            duration: 3000,
-                        })
-                        Alert.alert('Error', 'Internal Server Error', [
-                            {
-                                text: 'Ok',
-                                onPress: () => null
-                            },
-                        ])
-                        setLoader(false)
-                    }
-
-                    // console.log('all keys', Object.keys(response.assets[0]))
+                    })
                 }
             })
         } else {

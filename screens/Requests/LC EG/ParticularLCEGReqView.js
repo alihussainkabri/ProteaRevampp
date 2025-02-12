@@ -123,13 +123,13 @@ const ParticularLCEGReqView = ({ navigation, route }) => {
                         <Text style={styles.value}>{new Date(item?.RequestFromDate).toLocaleDateString('en-GB')}</Text>
                     </HStack>
 
-                    <HStack style={styles.infoCard}>
+                    {/* <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
                             <Text style={styles.title}>To Date</Text>
                         </HStack>
                         <Text style={styles.value}>{item?.RequestToDate}</Text>
-                    </HStack>
+                    </HStack> */}
 
                     
 

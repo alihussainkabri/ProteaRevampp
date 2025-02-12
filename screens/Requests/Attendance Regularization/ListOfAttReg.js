@@ -33,8 +33,6 @@ const ListOfAttReg = ({ navigation }) => {
 
         if (response.ok == true) {
             const data = await response.json()
-
-            console.log('all reqs', data?.RegularizationReq)
             setAllReqs(data?.RegularizationReq)
             setLoader(false)
 

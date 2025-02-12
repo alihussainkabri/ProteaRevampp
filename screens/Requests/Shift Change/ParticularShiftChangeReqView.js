@@ -1,4 +1,4 @@
-import { View, StatusBar, TouchableOpacity, Image, StyleSheet, ScrollView } from 'react-native'
+import { View, StatusBar, TouchableOpacity, Image, StyleSheet, ScrollView, ActivityIndicator } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { HStack, Text, NativeBaseProvider, VStack, Modal, FormControl, TextArea, Button } from 'native-base';
 import Loader from '../../../component/Loader';
@@ -159,8 +159,12 @@ const ParticularShiftChangeReqView = ({ navigation, route }) => {
                                 }}>
                                     Close
                                 </Button>
-                                <Button colorScheme='danger' onPress={cancelReq}>
-                                    Submit
+                                <Button colorScheme='danger' onPress={() => {
+                                    if (!loader) {
+                                        cancelReq()
+                                    }
+                                }}>
+                                    {loader ? <ActivityIndicator color="white" /> : 'Submit'}
                                 </Button>
                             </Button.Group>
                         </Modal.Footer>

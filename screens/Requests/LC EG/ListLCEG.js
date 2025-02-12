@@ -24,7 +24,7 @@ const ListLCEG = ({ navigation }) => {
             "LEId": null
         });
 
-        console.log("raw is here ok:", raw)
+
 
         const response = await fetch("https://" + defaultUrl + '/api/LCEGRequest/GetLCEGRequest', {
             method: 'POST',
@@ -36,7 +36,7 @@ const ListLCEG = ({ navigation }) => {
 
         if (response.ok == true) {
             const data = await response.json()
-            console.log("LCEG data here: ", data?.LCEGReq.slice(0, 1))
+
             setAllReqs(data?.LCEGReq)
             setLoader(false)
 
@@ -89,21 +89,24 @@ const ListLCEG = ({ navigation }) => {
                                         {item?.ReqStatus == 'Cancelled' && <Image source={require('../../../assets/images/cancelled.png')} style={{ width: 38, height: 38, resizeMode: 'cover' }} />}
                                         {item?.ReqStatus == 'Approved' && <Image source={require('../../../assets/images/Approve.png')} style={{ width: 38, height: 38, resizeMode: 'cover' }} />}
                                         {item?.ReqStatus == 'Rejected' && <Image source={require('../../../assets/images/reject.png')} style={{ width: 38, height: 38, resizeMode: 'cover' }} />}
-                                        <Text numberOfLines={1} ellipsizeMode='tail' width='200px' color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={16} ml={3}>{item?.ReasonTemplate ?? item?.Reason}</Text>
+                                        <VStack>
+                                            <Text numberOfLines={1} ellipsizeMode='tail' width='200px' color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={16} ml={3}>{item?.ReasonTemplate ?? item?.Reason}</Text>
+                                            <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{item?.IsLCEGRequest ? 'LCEG' : 'Special Duty'}</Text>
+                                        </VStack>
                                     </HStack>
 
                                     <HStack alignItems='center' mt={4}>
                                         <VStack>
-                                            <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{item?.IsLCEGRequest ? 'LCEG' : 'Special Duty'}</Text>
+                                            <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{item?.RequestFromDate?.split('T')?.length > 0 ? item?.RequestFromDate?.split('T')[0] : ''}</Text>
                                             <Text color='#bbbbbb' fontFamily={fonts.PopM} fontSize={12}>From Date</Text>
                                         </VStack>
 
-                                        <View style={{ backgroundColor: '#c6c6c6', height: 2, width: 40, marginHorizontal: 20 }}></View>
+                                        {/* <View style={{ backgroundColor: '#c6c6c6', height: 2, width: 40, marginHorizontal: 20 }}></View>
 
                                         <VStack>
-                                            <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{new Date(item?.RequestFromDate).toLocaleDateString('en-GB')}</Text>
-                                            <Text color='#bbbbbb' fontFamily={fonts.PopM} fontSize={12}>Date</Text>
-                                        </VStack>
+                                            <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{new Date(item?.RequestToDate  ).toLocaleDateString('en-GB')}</Text>
+                                            <Text color='#bbbbbb' fontFamily={fonts.PopM} fontSize={12}>To Date</Text>
+                                        </VStack> */}
 
                                     </HStack>
                                 </VStack>

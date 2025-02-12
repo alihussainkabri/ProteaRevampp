@@ -191,7 +191,7 @@ const CreateEHCRequest = ({ navigation }) => {
                     <Ionicons name="md-menu-sharp" size={32} color="white" />
                 </TouchableOpacity>
 
-                <Text fontFamily={fonts.PopSB} fontSize={22} ml={6} color='white'>Apply ECH/OT</Text>
+                <Text fontFamily={fonts.PopSB} fontSize={22} ml={6} color='white'>Apply EHC/OT</Text>
             </HStack>
 
             <ScrollView style={{ paddingHorizontal: 16, paddingTop: 16 }}>

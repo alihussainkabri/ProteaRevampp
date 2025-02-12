@@ -184,8 +184,6 @@ const CreateLCEG = ({navigation}) => {
       }) : []
     });
 
-    console.log('ODRequest consoled here', raw)
-
     const response = await fetch("https://" + defaultUrl + '/api/LCEGRequest/AddLCEGRequest', {
       method: 'POST',
       headers: {
@@ -196,7 +194,6 @@ const CreateLCEG = ({navigation}) => {
 
     if (response.ok == true) {
       const data = await response.json()
-      console.log('data heere: ', data)
       Toast.show(data?.error_msg ? data?.error_msg : 'Request Has Been Submitted')
       setLoader(false)
       if (!data?.error_msg) {

@@ -310,7 +310,8 @@ const Policy = ({navigation}) => {
                         <HStack alignItems='center'>
                             <Text style={styles.title}>Remark Mendatory In Punch:</Text>
                         </HStack>
-                        {details?.RemarkMendatoryInPunches ? <Feather name="check" size={24} color="green" /> : <Ionicons name="close" size={24} color="red" />}
+                        <Feather name="check" size={24} color="green" />
+                        {/* {details?.RemarkMendatoryInPunches ? <Feather name="check" size={24} color="green" /> : <Ionicons name="close" size={24} color="red" />} */}
                     </HStack>
 
                     <HStack style={styles.infoCard}>
