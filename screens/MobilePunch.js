@@ -27,10 +27,10 @@ const MobilePunch = ({ navigation }) => {
     const [isInsideBoundary, setIsInsideBoundary] = useState(false);
 
     useEffect(() => {
-        
+
 
         Geolocation.getCurrentPosition(info => {
-            
+
             setLatitude(info.coords.latitude)
             setLongitude(info.coords.longitude)
             setUserLocation({
@@ -85,7 +85,7 @@ const MobilePunch = ({ navigation }) => {
             if (response.ok == true) {
                 const data = await response.json()
 
-                
+
                 if (data?.length > 0) {
 
                     setMyGeoLocation([
@@ -145,121 +145,99 @@ const MobilePunch = ({ navigation }) => {
         if (remark) {
             const options = {
                 title: 'Add Image',
-                mediaType : "photo",
+                mediaType: "photo",
                 cameraType: 'front',
                 quality: 0.1,
                 conversionQuality: 0.1
-            }
+            };
 
-            
-            setLoader(true)
+            setLoader(true);
             launchCamera(options, async (response) => {
                 if (response?.assets?.length > 0) {
+                    // CImage.compress(response.assets[0].uri, {
+                    //     returnableOutputType: 'base64'
+                    // }).then(async (compressedImage) => {
 
-                    CImage.compress(response.assets[0].uri,{
-                        returnableOutputType : 'base64'
-                    }).then(async compressedImage => {
-
-                        
-                        // get current latitute & longitute
-                        Geolocation.getCurrentPosition(info => {
-                            
-                            setLatitude(info.coords.latitude)
-                            setLongitude(info.coords.longitude)
+                    // Get the current latitude & longitude
+                    Geolocation.getCurrentPosition(
+                        async (info) => {
+                            const currentLatitude = info.coords.latitude;
+                            const currentLongitude = info.coords.longitude;
+                            setLatitude(currentLatitude);
+                            setLongitude(currentLongitude);
                             setUserLocation({
-                                latitude: info.coords.latitude,
-                                longitude: info.coords.longitude,
-                            })
-                        })
+                                latitude: currentLatitude,
+                                longitude: currentLongitude,
+                            });
 
-                        // calculate current date & time 
-                        const currentDateTime = getCurrentDateTime();
+                            // Calculate current date & time
+                            const currentDateTime = getCurrentDateTime();
 
-                        var raw = JSON.stringify({
-                            "EmpId": user?.EmpId,
-                            "Latitude": latitude?.toString(),
-                            "Longitutde": longitude?.toString(),
-                            "DateTime": currentDateTime,
-                            "OffSet": "+05:30",
-                            "CardNO": user?.EmployeeDetails?.CardNo,
-                            "Address": "Pune",
-                            "remarks": remark,
-                            "IMEINO": "335def16-824b-4ddd-a543-663b3cb7107a",
-                            "MobileNO": "",
-                            "PunchType": "M",
-                            "PunchCategory": "Mobile",
-                            "OriginalPunchDirection": operation,
-                            "PunchAddress": "",
-                            "IsNewAddress": true,
-                            "EmpImage": compressedImage
-                        });
+                            const raw = JSON.stringify({
+                                "EmpId": user?.EmpId,
+                                "Latitude": currentLatitude.toString(),
+                                "Longitutde": currentLongitude.toString(),
+                                "DateTime": currentDateTime,
+                                "OffSet": "+05:30",
+                                "CardNO": user?.EmployeeDetails?.CardNo,
+                                "Address": "Pune",
+                                "remarks": remark,
+                                "IMEINO": "335def16-824b-4ddd-a543-663b3cb7107a",
+                                "MobileNO": "",
+                                "PunchType": "M",
+                                "PunchCategory": "Mobile",
+                                "OriginalPunchDirection": operation,
+                                "PunchAddress": "",
+                                "IsNewAddress": true,
+                                "EmpImage": "abcdef"
+                            });
 
-                        
+                            try {
+                                const response1 = await fetch(`https://${defaultUrl}/api/PunchInout/PunchIn`, {
+                                    method: 'POST',
+                                    headers: { "Content-Type": 'application/json' },
+                                    body: raw
+                                });
 
-                        const response1 = await fetch("https://" + defaultUrl + '/api/PunchInout/PunchIn', {
-                            method: 'POST',
-                            headers: {
-                                "Content-Type": 'application/json'
-                            },
-                            body: raw
-                        })
+                                if (response1.ok) {
+                                    const data = await response1.json();
+                                    if (data?.Message === 'Success') {
+                                        Toast.show(operation === 1 ? 'Punch in successful' : 'Punch out successful', { duration: 3000 });
 
-                        if (response1.ok == true) {
-                            const data = await response1.json()
+                                        Alert.alert('Success', operation === 1 ? 'Punch in successful' : 'Punch out successful', [
+                                            { text: 'Ok', onPress: () => null }
+                                        ]);
 
-                            
-
-                            if (data?.Message == 'Success') {
-                                Toast.show(operation == 1 ? 'Punch in successfull' : 'Punch out successfull', {
-                                    duration: 3000,
-                                })
-
-                                Alert.alert('Success', operation == 1 ? 'Punch in successfull' : 'Punch out successfull', [
-                                    {
-                                        text: 'Ok',
-                                        onPress: () => null
-                                    },
-                                ])
-
-                                // alert(operation == 1 ? 'Punch in successfull' : 'Punch out successfull')
-
-                                setRemark('')
-                                setLoader(false)
-                            } else {
-                                Toast.show(data?.error_msg, {
-                                    duration: 3000,
-                                })
-
-                                Alert.alert('Error', data?.error_msg, [
-                                    {
-                                        text: 'Ok',
-                                        onPress: () => null
-                                    },
-                                ])
-                                setLoader(false)
+                                        setRemark('');
+                                    } else {
+                                        Toast.show(data?.error_msg, { duration: 3000 });
+                                        Alert.alert('Error', data?.error_msg, [{ text: 'Ok', onPress: () => null }]);
+                                    }
+                                } else {
+                                    throw new Error('Internal server error');
+                                }
+                            } catch (error) {
+                                Toast.show(error.message, { duration: 3000 });
+                                Alert.alert('Error', error.message, [{ text: 'Ok', onPress: () => null }]);
+                            } finally {
+                                setLoader(false);
                             }
-
-                        } else {
-                            Toast.show('Internal server error', {
-                                duration: 3000,
-                            })
-                            Alert.alert('Error', 'Internal Server Error', [
-                                {
-                                    text: 'Ok',
-                                    onPress: () => null
-                                },
-                            ])
-                            setLoader(false)
-                        }
-                    })
+                        },
+                        (error) => {
+                            console.error('Geolocation error:', error);
+                            Toast.show('Failed to get location', { duration: 3000 });
+                            setLoader(false);
+                        },
+                        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+                    );
+                    // });
                 }
-            })
+            });
         } else {
-            Toast.show('Please write remarks', {
-                duration: 3000,
-            })
+            Toast.show('Please write remarks', { duration: 3000 });
         }
-    }
+    };
+
 
     const headerHight = useHeaderHeight()
 
