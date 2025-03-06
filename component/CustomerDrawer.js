@@ -9,14 +9,22 @@ import { node_url, url } from '../helpers'
 import Toast from 'react-native-root-toast'
 import Loader from './Loader'
 import { fonts } from '../config/Fonts'
+import { checkVersion } from "react-native-check-version";
 
 const CustomDrawer = (props) => {
 
     const { setUser, user } = useContext(userContext)
     const [img, setImg] = useState('')
     const [loader, setLoader] = useState(false)
+    const [version, setVersion] = useState("1.0.0")
 
     useEffect(() => {
+
+
+        checkVersion().then(version => {
+            setVersion(version.version)
+        })
+
 
         async function fetchImage() {
             var raw = JSON.stringify({
@@ -151,6 +159,11 @@ const CustomDrawer = (props) => {
                         <Image source={require('../assets/icons/logout.png')} style={{ width: 28, height: undefined, aspectRatio: 1 }} />
                         <Text fontSize={17.5} ml={2.5} fontFamily={fonts.PopB}>Logout</Text>
                     </TouchableOpacity>
+                </View>
+                <View style={{ paddingHorizontal: 20, marginBottom: 10, }}>
+
+                    <Text ml={2.5}>App Version : {version}</Text>
+
                 </View>
             </View>
         </NativeBaseProvider>

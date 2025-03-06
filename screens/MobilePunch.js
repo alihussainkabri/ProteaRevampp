@@ -7,38 +7,23 @@ import { userContext } from '../context/UserContext';
 import { url } from '../helpers';
 import { launchCamera } from 'react-native-image-picker';
 import Toast from 'react-native-root-toast';
-import Geolocation from '@react-native-community/geolocation'
 import Loader from '../component/Loader';
 import { useHeaderHeight } from '@react-navigation/elements'
 import { Image as CImage } from 'react-native-compressor'
 // import geolib from 'geolib';
 import * as geolib from 'geolib';
+import DeviceInfo from 'react-native-device-info';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const MobilePunch = ({ navigation }) => {
 
-    const { user, defaultUrl } = useContext(userContext)
+    const { user, defaultUrl, latitude, longitude,setUser } = useContext(userContext)
     const [img, setImg] = useState('')
     const [remark, setRemark] = useState('')
     const [loader, setLoader] = useState(false)
-    const [latitude, setLatitude] = useState('')
-    const [longitude, setLongitude] = useState('')
-    const [myGeoLocation, setMyGeoLocation] = useState([])
-    const [userLocation, setUserLocation] = useState([]);
+    const [address, setAddress] = useState('')
     const [isInsideBoundary, setIsInsideBoundary] = useState(false);
-
-    useEffect(() => {
-
-
-        Geolocation.getCurrentPosition(info => {
-
-            setLatitude(info.coords.latitude)
-            setLongitude(info.coords.longitude)
-            setUserLocation({
-                latitude: info.coords.latitude,
-                longitude: info.coords.longitude,
-            })
-        })
-    }, [])
+    const [uniqueId, setUniqueId] = useState('')
 
     useEffect(() => {
         async function fetchImage() {
@@ -78,48 +63,38 @@ const MobilePunch = ({ navigation }) => {
             }
         }
 
-        async function fetchGeoLocation() {
-            setLoader(true)
+        fetchImage()
 
-            const response = await fetch("https://" + defaultUrl + '/api/PunchInout/GetGEOLocationDetails?EmpId=' + `${user?.EmpId}`)
-            if (response.ok == true) {
-                const data = await response.json()
+        function getAddress(lat, lng) {
+            const apiKey = user?.GKey;
+            const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`;
 
-
-                if (data?.length > 0) {
-
-                    setMyGeoLocation([
-                        {
-                            latitude: data[0]?.Latitude,
-                            longitude: data[0]?.Longitude
-                        },
-                        {
-                            latitude: data[0]?.NorthEastLatitude,
-                            longitude: data[0]?.NorthEastLongitude
-                        },
-                        {
-                            latitude: data[0]?.SouthWestlatitude,
-                            longitude: data[0]?.SouthWestLongitude
-                        }
-                    ])
-                    setLoader(false)
-                } else {
-                    // Toast.show(data?.error_msg, {
-                    //     duration: 3000,
-                    // })
-                    setLoader(false)
-                }
-
-            } else {
-                // Toast.show('Internal server error', {
-                //     duration: 3000,
-                // })
-                setLoader(false)
-            }
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "OK") {
+                        setAddress(data.results[0].formatted_address);
+                    } else {
+                        console.log("No address found");
+                    }
+                })
+                .catch(error => console.error("Error:", error));
         }
 
-        fetchImage()
-        fetchGeoLocation()
+        if (user?.GKey){
+            getAddress(latitude, longitude)
+        }
+        
+
+
+        async function fetchUniqueId() {
+            const id = await DeviceInfo.getUniqueId()
+            setUniqueId(id)
+        }
+
+        fetchUniqueId()
+
+
     }, [])
 
     function getCurrentDateTime() {
@@ -141,7 +116,7 @@ const MobilePunch = ({ navigation }) => {
         return formattedDateTime;
     }
 
-    const capturePunchImage = (operation) => {
+    const capturePunchImage = async (operation) => {
         if (remark) {
             const options = {
                 title: 'Add Image',
@@ -152,87 +127,86 @@ const MobilePunch = ({ navigation }) => {
             };
 
             setLoader(true);
-            launchCamera(options, async (response) => {
-                if (response?.assets?.length > 0) {
-                    // CImage.compress(response.assets[0].uri, {
-                    //     returnableOutputType: 'base64'
-                    // }).then(async (compressedImage) => {
 
-                    // Get the current latitude & longitude
-                    Geolocation.getCurrentPosition(
-                        async (info) => {
-                            const currentLatitude = info.coords.latitude;
-                            const currentLongitude = info.coords.longitude;
-                            setLatitude(currentLatitude);
-                            setLongitude(currentLongitude);
-                            setUserLocation({
-                                latitude: currentLatitude,
-                                longitude: currentLongitude,
-                            });
+            launchCamera(options).then(async response => {
 
-                            // Calculate current date & time
-                            const currentDateTime = getCurrentDateTime();
+                if (response.assets.length > 0) {
+                    const currentDateTime = getCurrentDateTime();
 
-                            const raw = JSON.stringify({
-                                "EmpId": user?.EmpId,
-                                "Latitude": currentLatitude.toString(),
-                                "Longitutde": currentLongitude.toString(),
-                                "DateTime": currentDateTime,
-                                "OffSet": "+05:30",
-                                "CardNO": user?.EmployeeDetails?.CardNo,
-                                "Address": "Pune",
-                                "remarks": remark,
-                                "IMEINO": "335def16-824b-4ddd-a543-663b3cb7107a",
-                                "MobileNO": "",
-                                "PunchType": "M",
-                                "PunchCategory": "Mobile",
-                                "OriginalPunchDirection": operation,
-                                "PunchAddress": "",
-                                "IsNewAddress": true,
-                                "EmpImage": "abcdef"
-                            });
+                    const raw = {
+                        "EmpId": user?.EmpId,
+                        "Latitude": latitude?.toString() ?? '0',
+                        "Longitutde": longitude?.toString() ?? '0',
+                        "DateTime": currentDateTime,
+                        "OffSet": "+05:30",
+                        "CardNO": user?.EmployeeDetails?.CardNo,
+                        "Address": address,
+                        "remarks": remark,
+                        "IMEINO": uniqueId,
+                        "MobileNO": "",
+                        "PunchType": "M",
+                        "PunchCategory": "Mobile",
+                        "OriginalPunchDirection": operation,
+                        "PunchAddress": "",
+                        "IsNewAddress": true,
+                    };
 
-                            try {
-                                const response1 = await fetch(`https://${defaultUrl}/api/PunchInout/PunchIn`, {
-                                    method: 'POST',
-                                    headers: { "Content-Type": 'application/json' },
-                                    body: raw
-                                });
+                    const formData = new FormData()
 
-                                if (response1.ok) {
-                                    const data = await response1.json();
-                                    if (data?.Message === 'Success') {
-                                        Toast.show(operation === 1 ? 'Punch in successful' : 'Punch out successful', { duration: 3000 });
+                    for (const key in raw) {
+                        formData.append(key, raw[key]);
+                    }
 
-                                        Alert.alert('Success', operation === 1 ? 'Punch in successful' : 'Punch out successful', [
-                                            { text: 'Ok', onPress: () => null }
-                                        ]);
+                    let var_image = {
+                        uri: response.assets[0].uri,
+                        name: response.assets[0].fileName,
+                        type: response.assets[0].type
+                    }
 
-                                        setRemark('');
-                                    } else {
-                                        Toast.show(data?.error_msg, { duration: 3000 });
-                                        Alert.alert('Error', data?.error_msg, [{ text: 'Ok', onPress: () => null }]);
+                    formData.append("EmpImage", var_image, var_image.name)
+
+                    try {
+                        const response1 = await fetch(`https://${defaultUrl}/api/PunchInout/PunchIn_New`, {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        if (response1.ok) {
+                            const data = await response1.json();
+                            if (data?.Message === 'Success') {
+                                setLoader(false)
+                                Toast.show(operation === 1 ? 'Punch in successful' : 'Punch out successful', { duration: 3000 });
+
+                                Alert.alert('Success', operation === 1 ? 'Punch in successful' : 'Punch out successful', [
+                                    { text: 'Ok', onPress: () => null }
+                                ]);
+
+                                setRemark('');
+                            } else if (data?.error_code == 210) {
+                                setLoader(false)
+                                Alert.alert('Error', "You have been logged in into other mobile", [{
+                                    text: 'Ok', onPress: async () => {
+                                        await AsyncStorage.removeItem('app_user')
+                                        await AsyncStorage.removeItem('app_user_imputs')
+                                        setUser(null)
                                     }
-                                } else {
-                                    throw new Error('Internal server error');
-                                }
-                            } catch (error) {
-                                Toast.show(error.message, { duration: 3000 });
-                                Alert.alert('Error', error.message, [{ text: 'Ok', onPress: () => null }]);
-                            } finally {
-                                setLoader(false);
+                                }]);
+                            } else {
+                                setLoader(false)
+                                Toast.show(data?.error_msg, { duration: 3000 });
+                                Alert.alert('Error', data?.error_msg, [{ text: 'Ok', onPress: () => null }]);
                             }
-                        },
-                        (error) => {
-                            console.error('Geolocation error:', error);
-                            Toast.show('Failed to get location', { duration: 3000 });
-                            setLoader(false);
-                        },
-                        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-                    );
-                    // });
+                        } else {
+                            setLoader(false)
+                            throw new Error('Internal server error');
+                        }
+                    } catch (error) {
+                        setLoader(false)
+                        Toast.show(error.message, { duration: 3000 });
+                        Alert.alert('Error', error.message, [{ text: 'Ok', onPress: () => null }]);
+                    }
                 }
-            });
+            })
         } else {
             Toast.show('Please write remarks', { duration: 3000 });
         }
@@ -288,7 +262,7 @@ const MobilePunch = ({ navigation }) => {
 
                             <HStack mt={12} justifyContent='space-between'>
                                 <TouchableOpacity onPress={() => {
-                                    if (userLocation?.latitude) {
+                                    if (latitude) {
                                         // if (myGeoLocation.length > 0) {
 
                                         //     const isInside = geolib.isPointInPolygon(
@@ -311,7 +285,7 @@ const MobilePunch = ({ navigation }) => {
                                 </TouchableOpacity>
 
                                 <TouchableOpacity onPress={() => {
-                                    if (userLocation?.latitude) {
+                                    if (latitude) {
                                         // if (myGeoLocation.length > 0) {
 
                                         //     const isInside = geolib.isPointInPolygon(

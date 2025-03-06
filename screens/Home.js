@@ -11,6 +11,7 @@ import Loader from '../component/Loader'
 import VersionInfo from 'react-native-version-info';
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import DeviceInfo from 'react-native-device-info'
 
 const Home = ({ navigation }) => {
 
@@ -21,40 +22,6 @@ const Home = ({ navigation }) => {
   const [anniversary, setAnniversary] = useState([])
   const [events, setEvents] = useState('')
   const { user, defaultUrl, setUser } = useContext(userContext)
-
-  // useEffect(() => {
-  //   async function ReLogin() {
-  //     const inputs = await AsyncStorage.getItem("app_user_imputs")
-  //     console.log('inputs home', inputs)
-  //     if (inputs) {
-  //       const response = await fetch("https://" + defaultUrl + '/api/LoginDetails/Post', {
-  //         method: 'POST',
-  //         headers: {
-  //           "Content-Type": 'application/json'
-  //         },
-  //         body: inputs
-  //       })
-
-  //       if (response.ok == true) {
-  //         const data = await response.json()
-  //         console.log('relogin home', data)
-  //         if (data?.EmpId) {
-
-  //         } else {
-  //           await AsyncStorage.removeItem('app_user')
-  //           await AsyncStorage.removeItem('app_user_imputs')
-  //           setUser(null)
-  //         }
-
-  //       }
-  //     }
-  //   }
-
-  //   if (user && defaultUrl) {
-  //     ReLogin()
-  //     console.log('check relogin home')
-  //   }
-  // }, [])
 
   useEffect(() => {
 
@@ -179,35 +146,47 @@ const Home = ({ navigation }) => {
     fetchMonthlySummary();
     fetchBirthdayAndWorkAnniversary();
     fetchEvents();
-    console.log('user data: ', user)
   }, [])
 
   async function fetchNotification() {
     setLoader(true)
 
-    var raw = JSON.stringify({
-      "EmpId": user?.EmpId,
-    });
+    DeviceInfo.getUniqueId().then(async id => {
+      var raw = JSON.stringify({
+        "EmpId": user?.EmpId,
+        "IMEINO": id
+      });
 
-    const response = await fetch("https://" + defaultUrl + '/api/Requests/PendingNotifications', {
-      method: 'POST',
-      headers: {
-        "Content-Type": 'application/json'
-      },
-      body: raw
-    })
-
-    if (response.ok == true) {
-      const data = await response.json()
-      setNotification(data)
-      setLoader(false)
-
-    } else {
-      Toast.show('Internal server error', {
-        duration: 3000,
+      const response = await fetch("https://" + defaultUrl + '/api/Requests/PendingNotifications', {
+        method: 'POST',
+        headers: {
+          "Content-Type": 'application/json'
+        },
+        body: raw
       })
-      setLoader(false)
-    }
+
+      if (response.ok == true) {
+        const data = await response.json()
+        if (data?.error_code == "210") {
+          Alert.alert('Error', "You have been logged in into other mobile", [{
+            text: 'Ok', onPress: async () => {
+              await AsyncStorage.removeItem('app_user')
+              await AsyncStorage.removeItem('app_user_imputs')
+              setUser(null)
+            }
+          }]);
+        } else {
+          setNotification(data)
+        }
+        setLoader(false)
+
+      } else {
+        Toast.show('Internal server error', {
+          duration: 3000,
+        })
+        setLoader(false)
+      }
+    })
   }
 
   useEffect(() => {
