@@ -4,26 +4,27 @@ import { HStack, Input, NativeBaseProvider, Stack, Text, TextArea, VStack } from
 import { Ionicons, AntDesign } from 'react-native-vector-icons'
 import { fonts } from '../config/Fonts';
 import { userContext } from '../context/UserContext';
-import { url } from '../helpers';
 import { launchCamera } from 'react-native-image-picker';
 import Toast from 'react-native-root-toast';
 import Loader from '../component/Loader';
 import { useHeaderHeight } from '@react-navigation/elements'
-import { Image as CImage } from 'react-native-compressor'
-// import geolib from 'geolib';
-import * as geolib from 'geolib';
 import DeviceInfo from 'react-native-device-info';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import CameraModal from '../component/CameraModal';
 
 const MobilePunch = ({ navigation }) => {
 
-    const { user, defaultUrl, latitude, longitude,setUser } = useContext(userContext)
+    const { user, defaultUrl, latitude, longitude, setUser } = useContext(userContext)
     const [img, setImg] = useState('')
     const [remark, setRemark] = useState('')
     const [loader, setLoader] = useState(false)
     const [address, setAddress] = useState('')
     const [isInsideBoundary, setIsInsideBoundary] = useState(false);
     const [uniqueId, setUniqueId] = useState('')
+    const [modalVisible, setModalVisible] = useState({
+        show: false,
+        operation: null
+    })
 
     useEffect(() => {
         async function fetchImage() {
@@ -81,10 +82,10 @@ const MobilePunch = ({ navigation }) => {
                 .catch(error => console.error("Error:", error));
         }
 
-        if (user?.GKey){
+        if (user?.GKey) {
             getAddress(latitude, longitude)
         }
-        
+
 
 
         async function fetchUniqueId() {
@@ -116,99 +117,87 @@ const MobilePunch = ({ navigation }) => {
         return formattedDateTime;
     }
 
-    const capturePunchImage = async (operation) => {
-        if (remark) {
-            const options = {
-                title: 'Add Image',
-                mediaType: "photo",
-                cameraType: 'front',
-                quality: 0.1
+    const capturePunchImage = async (operation, image_data) => {
+        if (image_data?.uri) {
+            setLoader(true)
+            const currentDateTime = getCurrentDateTime();
+
+            const raw = {
+                "EmpId": user?.EmpId,
+                "Latitude": latitude?.toString() ?? '0',
+                "Longitutde": longitude?.toString() ?? '0',
+                "DateTime": currentDateTime,
+                "OffSet": "+05:30",
+                "CardNO": user?.EmployeeDetails?.CardNo,
+                "Address": address,
+                "remarks": remark,
+                "IMEINO": uniqueId,
+                "MobileNO": "",
+                "PunchType": "M",
+                "PunchCategory": "Mobile",
+                "OriginalPunchDirection": operation,
+                "PunchAddress": "",
+                "IsNewAddress": true,
             };
 
-            setLoader(true);
+            const formData = new FormData()
 
-            launchCamera(options).then(async response => {
+            for (const key in raw) {
+                formData.append(key, raw[key]);
+            }
 
-                
-                if (response?.assets?.length > 0) {
-                    const currentDateTime = getCurrentDateTime();
+            const uriParts = image_data.uri.split("/");
+            const fileName = uriParts[uriParts.length - 1];
+            const fileType = fileName.endsWith(".png") ? "image/png" : "image/jpeg";
 
-                    const raw = {
-                        "EmpId": user?.EmpId,
-                        "Latitude": latitude?.toString() ?? '0',
-                        "Longitutde": longitude?.toString() ?? '0',
-                        "DateTime": currentDateTime,
-                        "OffSet": "+05:30",
-                        "CardNO": user?.EmployeeDetails?.CardNo,
-                        "Address": address,
-                        "remarks": remark,
-                        "IMEINO": uniqueId,
-                        "MobileNO": "",
-                        "PunchType": "M",
-                        "PunchCategory": "Mobile",
-                        "OriginalPunchDirection": operation,
-                        "PunchAddress": "",
-                        "IsNewAddress": true,
-                    };
+            let var_image = {
+                uri: image_data?.uri,
+                name: fileName,
+                type: fileType
+            }
 
-                    const formData = new FormData()
+            formData.append("EmpImage", var_image, var_image.name)
 
-                    for (const key in raw) {
-                        formData.append(key, raw[key]);
-                    }
+            try {
+                const response1 = await fetch(`https://${defaultUrl}/api/PunchInout/PunchIn_New`, {
+                    method: 'POST',
+                    body: formData
+                });
 
-                    let var_image = {
-                        uri: response.assets[0].uri,
-                        name: response.assets[0].fileName,
-                        type: response.assets[0].type
-                    }
-
-                    formData.append("EmpImage", var_image, var_image.name)
-
-                    try {
-                        const response1 = await fetch(`https://${defaultUrl}/api/PunchInout/PunchIn_New`, {
-                            method: 'POST',
-                            body: formData
-                        });
-
-                        if (response1.ok) {
-                            const data = await response1.json();
-                            if (data?.Message === 'Success') {
-                                setLoader(false)
-                                Toast.show(operation === 1 ? 'Punch in successful' : 'Punch out successful', { duration: 3000 });
-
-                                Alert.alert('Success', operation === 1 ? 'Punch in successful' : 'Punch out successful', [
-                                    { text: 'Ok', onPress: () => null }
-                                ]);
-
-                                setRemark('');
-                            } else if (data?.error_code == 210) {
-                                setLoader(false)
-                                Alert.alert('Error', "You have been logged in into other mobile", [{
-                                    text: 'Ok', onPress: async () => {
-                                        await AsyncStorage.removeItem('app_user')
-                                        await AsyncStorage.removeItem('app_user_imputs')
-                                        setUser(null)
-                                    }
-                                }]);
-                            } else {
-                                setLoader(false)
-                                Toast.show(data?.error_msg, { duration: 3000 });
-                                Alert.alert('Error', data?.error_msg, [{ text: 'Ok', onPress: () => null }]);
-                            }
-                        } else {
-                            setLoader(false)
-                            throw new Error('Internal server error');
-                        }
-                    } catch (error) {
+                if (response1.ok) {
+                    const data = await response1.json();
+                    if (data?.Message === 'Success') {
                         setLoader(false)
-                        Toast.show(error.message, { duration: 3000 });
-                        Alert.alert('Error', error.message, [{ text: 'Ok', onPress: () => null }]);
+                        Toast.show(operation === 1 ? 'Punch in successful' : 'Punch out successful', { duration: 3000 });
+
+                        Alert.alert('Success', operation === 1 ? 'Punch in successful' : 'Punch out successful', [
+                            { text: 'Ok', onPress: () => null }
+                        ]);
+
+                        setRemark('');
+                    } else if (data?.error_code == 210) {
+                        setLoader(false)
+                        Alert.alert('Error', "You have been logged in into other mobile", [{
+                            text: 'Ok', onPress: async () => {
+                                await AsyncStorage.removeItem('app_user')
+                                await AsyncStorage.removeItem('app_user_imputs')
+                                setUser(null)
+                            }
+                        }]);
+                    } else {
+                        setLoader(false)
+                        Toast.show(data?.error_msg, { duration: 3000 });
+                        Alert.alert('Error', data?.error_msg, [{ text: 'Ok', onPress: () => null }]);
                     }
+                } else {
+                    setLoader(false)
+                    throw new Error('Internal server error');
                 }
-            })
-        } else {
-            Toast.show('Please write remarks', { duration: 3000 });
+            } catch (error) {
+                setLoader(false)
+                Toast.show(error.message, { duration: 3000 });
+                Alert.alert('Error', error.message, [{ text: 'Ok', onPress: () => null }]);
+            }
         }
     };
 
@@ -275,7 +264,15 @@ const MobilePunch = ({ navigation }) => {
                                         //         capturePunchImage(1)
                                         //     }
                                         // } else {
-                                        capturePunchImage(1)
+                                        // capturePunchImage(1)
+                                        if (remark) {
+                                            setModalVisible({
+                                                show: true,
+                                                operation: 1
+                                            })
+                                        } else {
+                                            Toast.show('Please write remarks', { duration: 3000 });
+                                        }
                                         // }
                                     } else {
                                         alert('Please Enable Location And Restart Mobile Application To Perform This Action!')
@@ -298,7 +295,14 @@ const MobilePunch = ({ navigation }) => {
                                         //         capturePunchImage(2)
                                         //     }
                                         // } else {
-                                        capturePunchImage(2)
+                                        if (remark) {
+                                            setModalVisible({
+                                                show: true,
+                                                operation: 2
+                                            })
+                                        } else {
+                                            Toast.show('Please write remarks', { duration: 3000 });
+                                        }
                                         // }
                                     } else {
                                         alert('Please Enable Location And Restart Mobile Application To Perform This Action!')
@@ -310,6 +314,8 @@ const MobilePunch = ({ navigation }) => {
                         </VStack>
                     </View>
                 </ScrollView>
+
+                <CameraModal capturePunchImage={capturePunchImage} modalVisible={modalVisible} setModalVisible={setModalVisible} />
             </KeyboardAvoidingView>
         </NativeBaseProvider >
     )
