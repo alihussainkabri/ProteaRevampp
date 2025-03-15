@@ -122,15 +122,15 @@ const MobilePunch = ({ navigation }) => {
                 title: 'Add Image',
                 mediaType: "photo",
                 cameraType: 'front',
-                quality: 0.1,
-                conversionQuality: 0.1
+                quality: 0.1
             };
 
             setLoader(true);
 
             launchCamera(options).then(async response => {
 
-                if (response.assets.length > 0) {
+                
+                if (response?.assets?.length > 0) {
                     const currentDateTime = getCurrentDateTime();
 
                     const raw = {

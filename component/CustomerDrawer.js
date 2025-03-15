@@ -160,11 +160,11 @@ const CustomDrawer = (props) => {
                         <Text fontSize={17.5} ml={2.5} fontFamily={fonts.PopB}>Logout</Text>
                     </TouchableOpacity>
                 </View>
-                <View style={{ paddingHorizontal: 20, marginBottom: 10, }}>
+                {/* <View style={{ paddingHorizontal: 20, marginBottom: 10, }}>
 
                     <Text ml={2.5}>App Version : {version}</Text>
 
-                </View>
+                </View> */}
             </View>
         </NativeBaseProvider>
     )
