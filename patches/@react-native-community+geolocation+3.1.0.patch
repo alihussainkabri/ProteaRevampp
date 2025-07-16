@@ -1,0 +1,16 @@
+diff --git a/node_modules/@react-native-community/geolocation/android/build.gradle b/node_modules/@react-native-community/geolocation/android/build.gradle
+index 06c8bd1..121325e 100644
+--- a/node_modules/@react-native-community/geolocation/android/build.gradle
++++ b/node_modules/@react-native-community/geolocation/android/build.gradle
+@@ -28,7 +28,11 @@ if (isNewArchitectureEnabled()) {
+ }
+ 
+ android {
++  namespace "com.reactnativecommunity.geolocation"
+   compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
++  buildFeatures {
++    buildConfig true
++  }
+ 
+   defaultConfig {
+     minSdkVersion getExtOrIntegerDefault('minSdkVersion')

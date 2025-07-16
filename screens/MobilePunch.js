@@ -1,44 +1,30 @@
-import { Dimensions, Image, ImageBackground, KeyboardAvoidingView, PermissionsAndroid, Platform, ScrollView, StatusBar, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
+import { Alert, Dimensions, Image, ImageBackground, KeyboardAvoidingView, PermissionsAndroid, Platform, ScrollView, StatusBar, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { HStack, Input, NativeBaseProvider, Stack, Text, TextArea, VStack } from 'native-base';
 import { Ionicons, AntDesign } from 'react-native-vector-icons'
 import { fonts } from '../config/Fonts';
 import { userContext } from '../context/UserContext';
-import { url } from '../helpers';
 import { launchCamera } from 'react-native-image-picker';
 import Toast from 'react-native-root-toast';
-import Geolocation from '@react-native-community/geolocation'
 import Loader from '../component/Loader';
 import { useHeaderHeight } from '@react-navigation/elements'
+import DeviceInfo from 'react-native-device-info';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import CameraModal from '../component/CameraModal';
 
 const MobilePunch = ({ navigation }) => {
 
-    const { user, defaultUrl } = useContext(userContext)
+    const { user, defaultUrl, latitude, longitude, setUser } = useContext(userContext)
     const [img, setImg] = useState('')
     const [remark, setRemark] = useState('')
     const [loader, setLoader] = useState(false)
-    const [latitude, setLatitude] = useState('')
-    const [longitude, setLongitude] = useState('')
-
-    useEffect(() => {
-        // PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION).then(result => {
-        //     console.log(result)
-        //     if (result == PermissionsAndroid.RESULTS.GRANTED) {
-        //         Geolocation.getCurrentPosition(info => {
-        //             console.log('geo info', info)
-        //             setLatitude(info.coords.latitude)
-        //             setLongitude(info.coords.longitude)
-        //         })
-        //     }
-        // })
-
-        Geolocation.getCurrentPosition(info => {
-            console.log('geo info', info)
-            console.log('geo info latitude', info.coords.latitude.toString())
-            setLatitude(info.coords.latitude)
-            setLongitude(info.coords.longitude)
-        })
-    }, [])
+    const [address, setAddress] = useState('')
+    const [isInsideBoundary, setIsInsideBoundary] = useState(false);
+    const [uniqueId, setUniqueId] = useState('')
+    const [modalVisible, setModalVisible] = useState({
+        show: false,
+        operation: null
+    })
 
     useEffect(() => {
         async function fetchImage() {
@@ -79,6 +65,37 @@ const MobilePunch = ({ navigation }) => {
         }
 
         fetchImage()
+
+        function getAddress(lat, lng) {
+            const apiKey = user?.GKey;
+            const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "OK") {
+                        setAddress(data.results[0].formatted_address);
+                    } else {
+                        console.log("No address found");
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
+        if (user?.GKey) {
+            getAddress(latitude, longitude)
+        }
+
+
+
+        async function fetchUniqueId() {
+            const id = await DeviceInfo.getUniqueId()
+            setUniqueId(id)
+        }
+
+        fetchUniqueId()
+
+
     }, [])
 
     function getCurrentDateTime() {
@@ -100,91 +117,90 @@ const MobilePunch = ({ navigation }) => {
         return formattedDateTime;
     }
 
-    const capturePunchImage = (operation) => {
-        if (remark) {
-            const options = {
-                title: 'Add Image',
-                storageOptions: {
-                    skipBackup: true,
-                    pathL: 'images'
-                },
-                cameraType: 'front',
-                includeBase64: true,
-                quality : 0.2
+    const capturePunchImage = async (operation, image_data) => {
+        if (image_data?.uri) {
+            setLoader(true)
+            const currentDateTime = getCurrentDateTime();
+
+            const raw = {
+                "EmpId": user?.EmpId,
+                "Latitude": latitude?.toString() ?? '0',
+                "Longitutde": longitude?.toString() ?? '0',
+                "DateTime": currentDateTime,
+                "OffSet": "+05:30",
+                "CardNO": user?.EmployeeDetails?.CardNo,
+                "Address": address,
+                "remarks": remark,
+                "IMEINO": uniqueId,
+                "MobileNO": "",
+                "PunchType": "M",
+                "PunchCategory": "Mobile",
+                "OriginalPunchDirection": operation,
+                "PunchAddress": "",
+                "IsNewAddress": true,
+            };
+
+            const formData = new FormData()
+
+            for (const key in raw) {
+                formData.append(key, raw[key]);
             }
 
-            console.log('hy')
+            const uriParts = image_data.uri.split("/");
+            const fileName = uriParts[uriParts.length - 1];
+            const fileType = fileName.endsWith(".png") ? "image/png" : "image/jpeg";
 
-            launchCamera(options, async (response) => {
-                if (response?.assets?.length > 0) {
+            let var_image = {
+                uri: image_data?.uri,
+                name: fileName,
+                type: fileType
+            }
 
-                    console.log('key name', Object.keys(response.assets[0]))
+            formData.append("EmpImage", var_image, var_image.name)
 
-                    setLoader(true)
+            try {
+                const response1 = await fetch(`https://${defaultUrl}/api/PunchInout/PunchIn_New`, {
+                    method: 'POST',
+                    body: formData
+                });
 
-                    const currentDateTime = getCurrentDateTime();
-
-                    var raw = JSON.stringify({
-                        "EmpId": user?.EmpId,
-                        "Latitude": latitude?.toString(),
-                        "Longitutde": longitude?.toString(),
-                        "DateTime": currentDateTime,
-                        "OffSet": "+05:30",
-                        "CardNO": user?.EmployeeDetails?.CardNo,
-                        "Address": "Pune",
-                        "remarks": remark,
-                        "IMEINO": "335def16-824b-4ddd-a543-663b3cb7107a",
-                        "MobileNO": "",
-                        "PunchType": "M",
-                        "PunchCategory": "Mobile",
-                        "OriginalPunchDirection": operation,
-                        "PunchAddress": "",
-                        "IsNewAddress": true,
-                        "EmpImage": response.assets[0].base64
-                    });
-
-                    const response1 = await fetch("https://" + defaultUrl + '/api/PunchInout/PunchIn', {
-                        method: 'POST',
-                        headers: {
-                            "Content-Type": 'application/json'
-                        },
-                        body: raw
-                    })
-
-                    if (response1.ok == true) {
-                        const data = await response1.json()
-
-                        console.log(data)
-
-                        if (data?.Message == 'Success') {
-                            Toast.show(operation == 1 ? 'Punch in successfull' : 'Punch out successfull', {
-                                duration: 3000,
-                            })
-                            setRemark('')
-                            setLoader(false)
-                        } else {
-                            Toast.show(data?.error_msg, {
-                                duration: 3000,
-                            })
-                            setLoader(false)
-                        }
-
-                    } else {
-                        Toast.show('Internal server error', {
-                            duration: 3000,
-                        })
+                if (response1.ok) {
+                    const data = await response1.json();
+                    if (data?.Message === 'Success') {
                         setLoader(false)
-                    }
+                        Toast.show(operation === 1 ? 'Punch in successful' : 'Punch out successful', { duration: 3000 });
 
-                    // console.log('all keys', Object.keys(response.assets[0]))
+                        Alert.alert('Success', operation === 1 ? 'Punch in successful' : 'Punch out successful', [
+                            { text: 'Ok', onPress: () => null }
+                        ]);
+
+                        setRemark('');
+                    } else if (data?.error_code == 210) {
+                        setLoader(false)
+                        Alert.alert('Error', "You have been logged in into other mobile", [{
+                            text: 'Ok', onPress: async () => {
+                                await AsyncStorage.removeItem('app_user')
+                                await AsyncStorage.removeItem('app_user_imputs')
+                                setUser(null)
+                            }
+                        }]);
+                    } else {
+                        setLoader(false)
+                        Toast.show(data?.error_msg, { duration: 3000 });
+                        Alert.alert('Error', data?.error_msg, [{ text: 'Ok', onPress: () => null }]);
+                    }
+                } else {
+                    setLoader(false)
+                    throw new Error('Internal server error');
                 }
-            })
-        } else {
-            Toast.show('Please write remarks', {
-                duration: 3000,
-            })
+            } catch (error) {
+                setLoader(false)
+                Toast.show(error.message, { duration: 3000 });
+                Alert.alert('Error', error.message, [{ text: 'Ok', onPress: () => null }]);
+            }
         }
-    }
+    };
+
 
     const headerHight = useHeaderHeight()
 
@@ -205,7 +221,7 @@ const MobilePunch = ({ navigation }) => {
                                 <Text fontFamily={fonts.PopSB} fontSize={26} ml={7} color='white'>Mobile Punch</Text>
                             </HStack>
 
-                            <TouchableOpacity onPress={() => alert('Feature will coming soon')}>
+                            <TouchableOpacity onPress={() => navigation.navigate('QRScanner')}>
                                 <Image source={require('../assets/icons/QR.png')} style={{ width: 26, height: 26 }} />
                             </TouchableOpacity>
                         </HStack>
@@ -215,6 +231,7 @@ const MobilePunch = ({ navigation }) => {
                                 <AntDesign name="user" size={60} color="white" />
                             }
                         </View>
+
                         <Text fontFamily={fonts.PopB} textAlign='center' fontSize={26} color='white' mb={7}>{user?.Name}</Text>
                     </ImageBackground>
 
@@ -233,19 +250,74 @@ const MobilePunch = ({ navigation }) => {
                             </Stack>
 
                             <HStack mt={12} justifyContent='space-between'>
-                                <TouchableOpacity onPress={() => capturePunchImage(1)}>
+                                <TouchableOpacity onPress={() => {
+                                    if (latitude) {
+                                        // if (myGeoLocation.length > 0) {
+
+                                        //     const isInside = geolib.isPointInPolygon(
+                                        //         userLocation,
+                                        //         myGeoLocation
+                                        //     );
+                                        //     if (!isInside) {
+                                        //         alert('You are not in your work area!')
+                                        //     } else {
+                                        //         capturePunchImage(1)
+                                        //     }
+                                        // } else {
+                                        // capturePunchImage(1)
+                                        if (remark) {
+                                            setModalVisible({
+                                                show: true,
+                                                operation: 1
+                                            })
+                                        } else {
+                                            Toast.show('Please write remarks', { duration: 3000 });
+                                        }
+                                        // }
+                                    } else {
+                                        alert('Please Enable Location And Restart Mobile Application To Perform This Action!')
+                                    }
+                                }}>
                                     <Image source={require('../assets/images/punch-in.png')} style={styles.puchBTN} />
                                 </TouchableOpacity>
 
-                                <TouchableOpacity onPress={() => capturePunchImage(2)}>
+                                <TouchableOpacity onPress={() => {
+                                    if (latitude) {
+                                        // if (myGeoLocation.length > 0) {
+
+                                        //     const isInside = geolib.isPointInPolygon(
+                                        //         userLocation,
+                                        //         myGeoLocation
+                                        //     );
+                                        //     if (!isInside) {
+                                        //         alert('You are not in your work area!')
+                                        //     } else {
+                                        //         capturePunchImage(2)
+                                        //     }
+                                        // } else {
+                                        if (remark) {
+                                            setModalVisible({
+                                                show: true,
+                                                operation: 2
+                                            })
+                                        } else {
+                                            Toast.show('Please write remarks', { duration: 3000 });
+                                        }
+                                        // }
+                                    } else {
+                                        alert('Please Enable Location And Restart Mobile Application To Perform This Action!')
+                                    }
+                                }}>
                                     <Image source={require('../assets/images/punch-out.png')} style={styles.puchBTN} />
                                 </TouchableOpacity>
                             </HStack>
                         </VStack>
                     </View>
                 </ScrollView>
+
+                <CameraModal capturePunchImage={capturePunchImage} modalVisible={modalVisible} setModalVisible={setModalVisible} />
             </KeyboardAvoidingView>
-        </NativeBaseProvider>
+        </NativeBaseProvider >
     )
 }
 

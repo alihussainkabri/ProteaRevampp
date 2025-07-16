@@ -11,6 +11,7 @@ import { userContext } from '../../context/UserContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PERMISSIONS, check, RESULTS, requestMultiple } from 'react-native-permissions';
 import uuid from 'react-native-uuid';
+import DeviceInfo from 'react-native-device-info';
 
 const Login = ({ navigation }) => {
 
@@ -24,13 +25,8 @@ const Login = ({ navigation }) => {
 
   useEffect(() => {
     async function fetchUniqueId() {
-
-      const uniqueValue = await AsyncStorage.getItem("app_user_uniqueId")
-      if (uniqueValue) {
-        setUniqueId(uniqueValue)
-      } else {
-        setUniqueId(uuid.v4())
-      }
+      const id = await DeviceInfo.getUniqueId()
+      setUniqueId(id)
     }
 
     fetchUniqueId()
@@ -46,7 +42,7 @@ const Login = ({ navigation }) => {
         "imei": uniqueId
       });
 
-      console.log('payload: ', raw, "API: ", "https://" + defaultUrl + '/api/LoginDetails/Post')
+      console.log(raw)
 
       const response = await fetch("https://" + defaultUrl + '/api/LoginDetails/Post', {
         method: 'POST',
@@ -61,26 +57,19 @@ const Login = ({ navigation }) => {
 
         if (data?.EmpId) {
           navigation.navigate('VerifyOTP', { data: JSON.stringify(data), user_input: raw, uniqueId })
-          console.log("data: ", data)
           setLoader(false)
         } else {
-          Toast.show(data?.error_msg, {
-            duration: 3000,
-          })
+          alert(data?.error_msg ? data?.error_msg : 'Error In Login')
           setLoader(false)
         }
 
       } else {
-        Toast.show('Internal server error', {
-          duration: 3000,
-        })
+        alert('Internal server error')
         setLoader(false)
       }
 
     } else {
-      Toast.show('Please fill all data', {
-        duration: 3000,
-      })
+      alert('Please fill all data')
     }
   }
 
@@ -96,7 +85,7 @@ const Login = ({ navigation }) => {
         ],
         {
           title: 'Device Permissions Required',
-          message: "Let's Influence needs access to the following permisions",
+          message: "ProteaESS needs access to the following permisions",
           buttonNeutral: 'Ask Me Later',
           buttonNegative: 'Cancel',
           buttonPositive: 'OK',

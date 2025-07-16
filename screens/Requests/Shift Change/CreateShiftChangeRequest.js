@@ -7,8 +7,9 @@ import { fonts } from '../../../config/Fonts';
 import { url, getConvertDate } from '../../../helpers';
 import { userContext } from '../../../context/UserContext';
 import DateTimePickerModal from "react-native-modal-datetime-picker"
+import Toast from 'react-native-root-toast';
 
-const CreateShiftChangeRequest = () => {
+const CreateShiftChangeRequest = ({ navigation }) => {
 
     const { user, defaultUrl } = useContext(userContext)
     const [loader, setLoader] = useState(false)
@@ -25,7 +26,7 @@ const CreateShiftChangeRequest = () => {
     const [reason, setReason] = useState('');
 
     const handleFromDate = (date) => {
-        console.warn("A date has been picked: ", date.toString());
+        // console.warn("A date has been picked: ", date.toString());
 
         const convertedDate = getConvertDate(date.toString());
         setFromDate(convertedDate)
@@ -33,41 +34,102 @@ const CreateShiftChangeRequest = () => {
     };
 
     const handleToDate = (date) => {
-        console.warn("A date has been picked: ", date.toString());
+        // console.warn("A date has been picked: ", date.toString());
 
         const convertedDate = getConvertDate(date.toString());
         setToDate(convertedDate)
         setToDateCalendarShow(false);
     };
 
+    async function fetchShifts() {
+        setLoader(true)
+
+        var raw = JSON.stringify({
+            "EmpId": user?.EmpId,
+            "FromDate": fromDate,
+            "ToDate": toDate
+        });
+
+        const response = await fetch("https://" + defaultUrl + '/api/ShiftChangeRequest/GetShifts', {
+            method: 'POST',
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body: raw
+        })
+
+        if (response.ok == true) {
+            const data = await response.json()
+
+            console.log('all shift data: ', data)
+            setAllShifts(data)
+            setLoader(false)
+
+        } else {
+            Toast.show('Internal server error', {
+                duration: 3000,
+            })
+            setLoader(false)
+        }
+    }
+
+    async function fetchReasons() {
+        setLoader(true)
+
+        var raw = JSON.stringify({
+            "EmpId": user?.EmpId,
+            "ModuleName": "Time Attendance",
+            "FormName": "rbtShiftChangeRequest"
+        });
+
+        const response = await fetch("https://" + defaultUrl + '/api/Requests/SearchReason', {
+            method: 'POST',
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body: raw
+        })
+
+        if (response.ok == true) {
+            const data = await response.json()
+
+            console.log('all reason data: ', data)
+            setAllReasons(data)
+            setLoader(false)
+
+        } else {
+            Toast.show('Internal server error', {
+                duration: 3000,
+            })
+            setLoader(false)
+        }
+    }
+
+    useEffect(() => {
+        fetchShifts();
+    }, [fromDate, toDate])
+
+    useEffect(() => {
+        fetchReasons();
+    }, [])
+
     async function submitReq() {
         setLoader(true)
 
         var raw = JSON.stringify({
             "EmpId": user?.EmpId,
-            "ShiftDate": fromDate,
-            "ReqType": requestType,
-            "RefShiftId": shiftType?.ShiftId,
+            "ShiftChangeFromDate": fromDate,
+            "ShiftChangeToDate": toDate,
+            "ReqType": "ShiftChangeRequest",
             "RId": particularReason?.RId,
-            "ReasonId": purpose,
-            "Place": place,
-            "WeekOff": false,
-            "Holiday": false,
-            "Attatchment": null,
-            "ODDetailList": [
-                {
-                    "TODId": 0,
-                    "FromTime": startTime,
-                    "ToTime": EndTime,
-                    "Place": place,
-                    "Purpose": purpose
-                }
-            ]
+            "Reason": reason,
+            "NewScheduleId": selectedShift?.ShiftId,
+            "NewScheduleType": selectedShift?.ShiftType
         });
 
-        // console.warn('ODRequest consoled here', raw)
+        console.log('shift Req consoled here', raw)
 
-        const response = await fetch("https://" + defaultUrl + '/api/OnDutyRequest/AddOnDutyRequest', {
+        const response = await fetch("https://" + defaultUrl + '/api/ShiftChangeRequest/CreateShiftChangeRequest', {
             method: 'POST',
             headers: {
                 "Content-Type": 'application/json'
@@ -78,7 +140,10 @@ const CreateShiftChangeRequest = () => {
         if (response.ok == true) {
             const data = await response.json()
             // alert(data?.error_msg)
-            Toast.show(data?.error_msg ? data?.error_msg : 'Request Has Been Submitted')
+            console.log('data here new: ',data)
+            Toast.show(data?.error_msg ? data?.error_msg : 'Request Has Been Submitted',{
+                duration: 3000
+            })
             setLoader(false)
             if (!data?.error_msg) {
                 navigation.goBack()
@@ -140,18 +205,18 @@ const CreateShiftChangeRequest = () => {
                     <VStack>
                         <Text style={styles.label}>Select Expected Shift</Text>
                         <TouchableOpacity onPress={() => setShowShifts(true)} style={styles.selectDate}>
-                            <Text style={styles.placeHolder}>{selectedShift ? selectedShift?.RDescription : 'Select Reason'}</Text>
+                            <Text style={styles.placeHolder}>{selectedShift ? selectedShift?.ShiftName : 'Select Shift'}</Text>
                             <Entypo name="chevron-small-down" size={24} color="#737373" />
                         </TouchableOpacity>
 
                         <Actionsheet isOpen={showShifts} onClose={() => setShowShifts(false)}>
                             <Actionsheet.Content>
                                 {allShifts?.length > 0 ? allShifts?.map((item, index) => (
-                                    <Actionsheet.Item onPress={() => {
+                                    <Actionsheet.Item key={index} onPress={() => {
                                         setSelectedShift(item)
                                         setShowShifts(false)
                                     }}>
-                                        <Text fontSize={16} fontFamily={fonts.UrbanSB}>{item?.RDescription}</Text>
+                                        <Text fontSize={16} fontFamily={fonts.UrbanSB}>{item?.ShiftName}</Text>
                                     </Actionsheet.Item>
 
                                 )) : <Actionsheet.Item>No data found</Actionsheet.Item>}

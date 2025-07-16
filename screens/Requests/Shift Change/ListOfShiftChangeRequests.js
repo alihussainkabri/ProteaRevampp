@@ -37,8 +37,8 @@ const ListOfShiftChangeRequests = ({ navigation }) => {
         if (response.ok == true) {
             const data = await response.json()
 
-            console.log('Shift change REQ',data?.ShiftReqList?.slice(0, 3))
-            setAllReqs(data?.ShiftReqList) 
+            console.log('Shift change REQ', data?.ShiftReqList?.slice(0, 3))
+            setAllReqs(data?.ShiftReqList)
             setLoader(false)
 
         } else {

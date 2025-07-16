@@ -28,6 +28,20 @@ import ListOfAttReg from '../screens/Requests/Attendance Regularization/ListOfAt
 import ParticularAttRegRequest from '../screens/Requests/Attendance Regularization/ParticularAttRegRequest';
 import CreateAttRegRequest from '../screens/Requests/Attendance Regularization/CreateAttRegRequest';
 import ParticularShiftChangeReqView from '../screens/Requests/Shift Change/ParticularShiftChangeReqView';
+import ParticularCOffReq from '../screens/Requests/C_Off/ParticularCOffReq';
+import ListOfOptionalHolidays from '../screens/Requests/Optional Holiday/ListOfOptionalHolidays';
+import CreateOptionalHolidays from '../screens/Requests/Optional Holiday/CreateOptionalHolidays';
+import ListOfRequests from '../screens/AdminRequestApprove/ListOfRequests';
+import ApproveOrCancel from '../screens/AdminRequestApprove/ApproveOrCancel';
+import SalarySlip from '../screens/SalarySlip/SalarySlip';
+import ListLCEG from '../screens/Requests/LC EG/ListLCEG';
+import ParticularEHCOTRequest from '../screens/Requests/EHC OT/ParticularEHCOTRequest';
+import ParticularHoliday from '../screens/Requests/Optional Holiday/ParticularHoliday';
+import CreateLCEG from '../screens/Requests/LC EG/CreateLCEG';
+import ParticularLCEGReqView from '../screens/Requests/LC EG/ParticularLCEGReqView';
+import Policy from '../screens/Policy';
+import { Entypo } from 'react-native-vector-icons'
+import QRScanner from '../screens/QRScanner';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -44,6 +58,12 @@ function HomeStack() {
             }}
         >
             <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="ListOfRequests" component={ListOfRequests} />
+            <Stack.Screen name="ApproveOrCancel" component={ApproveOrCancel} />
+            <Stack.Screen options={{
+                headerShown : true,
+                headerTitle : "Scan QR Code"
+            }} name="QRScanner" component={QRScanner} />
         </Stack.Navigator>
     )
 }
@@ -60,6 +80,10 @@ function MobilePunchStack() {
         >
             <Stack.Screen name="MobilePunch" component={MobilePunch} />
             <Stack.Screen name="PunchPhoto" component={PunchPhoto} />
+            <Stack.Screen options={{
+                headerShown : true,
+                headerTitle : "Scan QR Code"
+            }} name="QRScanner" component={QRScanner} />
         </Stack.Navigator>
     )
 }
@@ -87,10 +111,22 @@ function RequestStack() {
             <Stack.Screen name="ListOfShiftChangeRequests" component={ListOfShiftChangeRequests} />
             <Stack.Screen name="CreateShiftChangeRequest" component={CreateShiftChangeRequest} />
             <Stack.Screen name="ListOfEHCRequests" component={ListOfEHCRequests} />
+            <Stack.Screen name="ParticularEHCOTRequest" component={ParticularEHCOTRequest} />
             <Stack.Screen name="CreateEHCRequest" component={CreateEHCRequest} />
             <Stack.Screen name="ListOfCOffRequests" component={ListOfCOffRequests} />
+            <Stack.Screen name="ParticularCOffReq" component={ParticularCOffReq} />
             <Stack.Screen name="CreateCOffRequest" component={CreateCOffRequest} />
             <Stack.Screen name="ParticularShiftChangeReqView" component={ParticularShiftChangeReqView} />
+            <Stack.Screen name="ListOfOptionalHolidays" component={ListOfOptionalHolidays} />
+            <Stack.Screen name="CreateOptionalHolidays" component={CreateOptionalHolidays} />
+            <Stack.Screen name="ParticularHoliday" component={ParticularHoliday} />
+            <Stack.Screen name="ListLCEG" component={ListLCEG} />
+            <Stack.Screen name="CreateLCEG" component={CreateLCEG} />
+            <Stack.Screen name="ParticularLCEGReqView" component={ParticularLCEGReqView} />
+            <Stack.Screen options={{
+                headerShown : true,
+                headerTitle : "Scan QR Code"
+            }} name="QRScanner" component={QRScanner} />
         </Stack.Navigator>
     )
 }
@@ -105,8 +141,50 @@ function BookSeatStack() {
                 }
             }}
         >
-            <Stack.Screen name="Request" component={BookSeat} />
+            <Stack.Screen name="BookSeat" component={BookSeat} />
             <Stack.Screen name="ViewSeats" component={ViewSeats} />
+            <Stack.Screen options={{
+                headerShown : true,
+                headerTitle : "Scan QR Code"
+            }} name="QRScanner" component={QRScanner} />
+        </Stack.Navigator>
+    )
+}
+
+function SalarySlipStack() {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerShown: false,
+                contentStyle: {
+                    backgroundColor: 'white'
+                }
+            }}
+        >
+            <Stack.Screen name="SalarySlip" component={SalarySlip} />
+            <Stack.Screen options={{
+                headerShown : true,
+                headerTitle : "Scan QR Code"
+            }} name="QRScanner" component={QRScanner} />
+        </Stack.Navigator>
+    )
+}
+
+function PolicyStack() {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerShown: false,
+                contentStyle: {
+                    backgroundColor: 'white'
+                }
+            }}
+        >
+            <Stack.Screen name="Policy" component={Policy} />
+            <Stack.Screen options={{
+                headerShown : true,
+                headerTitle : "Scan QR Code"
+            }} name="QRScanner" component={QRScanner} />
         </Stack.Navigator>
     )
 }
@@ -186,6 +264,29 @@ export default function DrawerNavigator() {
                     ),
                     drawerItemStyle: { paddingHorizontal: 16, },
                     title: 'Book Seat',
+                    sceneContainerStyle: { backgroundColor: 'white' }
+                }}
+            />
+
+            <Drawer.Screen name="SalarySlip" component={SalarySlipStack}
+                options={{
+                    drawerIcon: ({ color }) => (
+                        <Image style={{ tintColor: color, width: 20, height: undefined, aspectRatio: 1 }} source={require('../assets/icons/salary.png')} />
+                    ),
+                    drawerItemStyle: { paddingHorizontal: 16, },
+                    title: 'Salary Slip',
+                    sceneContainerStyle: { backgroundColor: 'white' }
+                }}
+            />
+
+            <Drawer.Screen name="Policy" component={PolicyStack}
+                options={{
+                    drawerIcon: ({ color }) => (
+                        // <Image style={{ tintColor: color, width: 20, height: undefined, aspectRatio: 1 }} source={require('../assets/icons/salary.png')} />
+                        <Entypo name="lock" size={24} color={color} />
+                    ),
+                    drawerItemStyle: { paddingHorizontal: 16, },
+                    title: 'Policy',
                     sceneContainerStyle: { backgroundColor: 'white' }
                 }}
             />

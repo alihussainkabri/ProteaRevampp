@@ -71,7 +71,7 @@ const Profile = ({ navigation }) => {
                         <Text fontFamily={fonts.PopSB} fontSize={26} ml={7} color='white'>My Profile</Text>
                     </HStack>
 
-                    <TouchableOpacity onPress={() => alert('Feature will coming soon')}>
+                    <TouchableOpacity onPress={() => navigation.navigate('QRScanner')}>
                         <Image source={require('../assets/icons/QR.png')} style={{ width: 26, height: 26 }} />
                     </TouchableOpacity>
                 </HStack>
@@ -84,8 +84,6 @@ const Profile = ({ navigation }) => {
                     </View>
 
                     <Text color='white' fontFamily={fonts.PopB} fontSize={26} mt={1}>{user?.Name}</Text>
-                    <Text color='white' fontFamily={fonts.UrbanR} fontSize={17}>{user?.EmployeeDetails?.BusinessEmailId}</Text>
-                    <Text color='white' fontFamily={fonts.UrbanB} fontSize={17} mt={1}>{user?.EmployeeDetails?.BusinessPhone}</Text>
                 </VStack>
             </ImageBackground>
 
@@ -97,6 +95,22 @@ const Profile = ({ navigation }) => {
                             <Text style={styles.title}>Employee ID</Text>
                         </HStack>
                         <Text style={styles.value}>{user?.EmployeeDetails?.EmployeeId}</Text>
+                    </HStack>
+
+                    <HStack style={styles.infoCard}>
+                        <HStack alignItems='center'>
+                            <Entypo name="email" size={20} color="black" />
+                            <Text style={styles.title}>Email Address</Text>
+                        </HStack>
+                        <Text style={styles.value}>{user?.EmployeeDetails?.BusinessEmailId}</Text>
+                    </HStack>
+
+                    <HStack style={styles.infoCard}>
+                        <HStack alignItems='center'>
+                            <Entypo name="mobile" size={20} color="black" />
+                            <Text style={styles.title}>Mobile Number</Text>
+                        </HStack>
+                        <Text style={styles.value}>{user?.EmployeeDetails?.BusinessPhone}</Text>
                     </HStack>
 
                     <HStack style={styles.infoCard}>

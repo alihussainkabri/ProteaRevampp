@@ -1,0 +1,15 @@
+diff --git a/node_modules/@react-native-community/datetimepicker/android/build.gradle b/node_modules/@react-native-community/datetimepicker/android/build.gradle
+index 20cc695..cb15c41 100644
+--- a/node_modules/@react-native-community/datetimepicker/android/build.gradle
++++ b/node_modules/@react-native-community/datetimepicker/android/build.gradle
+@@ -40,6 +40,10 @@ android {
+         ndkVersion rootProject.ext.ndkVersion
+     }
+ 
++    buildFeatures {
++        buildConfig true
++    }
++
+     defaultConfig {
+         minSdkVersion getExtOrIntegerDefault('minSdkVersion')
+         targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')

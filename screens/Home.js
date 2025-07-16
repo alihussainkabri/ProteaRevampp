@@ -1,6 +1,6 @@
 import { View, TouchableOpacity, StatusBar, ImageBackground, StyleSheet, Dimensions, Image, ScrollView, Linking, Platform, Alert } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
-import { Entypo, Ionicons } from 'react-native-vector-icons'
+import { Entypo, Ionicons, AntDesign } from 'react-native-vector-icons'
 import { HStack, NativeBaseProvider, Text, VStack } from 'native-base'
 import { fonts } from '../config/Fonts'
 import { userContext } from '../context/UserContext'
@@ -9,6 +9,9 @@ import { url } from '../helpers'
 import LinearGradient from 'react-native-linear-gradient'
 import Loader from '../component/Loader'
 import VersionInfo from 'react-native-version-info';
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import DeviceInfo from 'react-native-device-info'
 
 const Home = ({ navigation }) => {
 
@@ -18,37 +21,9 @@ const Home = ({ navigation }) => {
   const [birthDays, setBirthdays] = useState([])
   const [anniversary, setAnniversary] = useState([])
   const [events, setEvents] = useState('')
-  const { user, defaultUrl } = useContext(userContext)
+  const { user, defaultUrl, setUser } = useContext(userContext)
 
   useEffect(() => {
-
-    async function fetchNotification() {
-      setLoader(true)
-
-      var raw = JSON.stringify({
-        "EmpId": user?.EmpId,
-      });
-
-      const response = await fetch("https://" + defaultUrl + '/api/Requests/PendingNotifications', {
-        method: 'POST',
-        headers: {
-          "Content-Type": 'application/json'
-        },
-        body: raw
-      })
-
-      if (response.ok == true) {
-        const data = await response.json()
-        setNotification(data)
-        setLoader(false)
-
-      } else {
-        Toast.show('Internal server error', {
-          duration: 3000,
-        })
-        setLoader(false)
-      }
-    }
 
     async function fetchMonthlySummary() {
       setLoader(true)
@@ -87,7 +62,8 @@ const Home = ({ navigation }) => {
         "EmpId": user?.EmpId
       });
 
-      const response = await fetch("https://" + defaultUrl + '/api/Dashboard/GetAnniversaryAndBirthdays', {
+      // const response = await fetch("https://" + defaultUrl + '/api/Dashboard/GetAnniversaryAndBirthdays', {
+      const response = await fetch("https://" + defaultUrl + '/api/Dashboard/GetBirthdayList', {
         method: 'POST',
         headers: {
           "Content-Type": 'application/json'
@@ -97,8 +73,8 @@ const Home = ({ navigation }) => {
 
       if (response.ok == true) {
         const data = await response.json()
-        setBirthdays(data?.filter(item => item?.EventType == 'Birthday'))
-        setAnniversary(data?.filter(item => item?.EventType == 'Anniversary'))
+        setBirthdays(data?.filter(item => item?.Title == 'Birthday'))
+        setAnniversary(data?.filter(item => item?.Title == 'Anniversary'))
         setLoader(false)
 
       } else {
@@ -140,6 +116,7 @@ const Home = ({ navigation }) => {
 
     async function checkCompatible() {
       const response = await fetch("https://" + defaultUrl + '/api/Login/GetVersion');
+
       if (response.ok == true) {
         const data = await response.json();
         const appVersion = VersionInfo.appVersion
@@ -166,12 +143,58 @@ const Home = ({ navigation }) => {
     }
 
     checkCompatible();
-    fetchNotification();
     fetchMonthlySummary();
     fetchBirthdayAndWorkAnniversary();
     fetchEvents();
-    // console.log('user data: ', user)
   }, [])
+
+  async function fetchNotification() {
+    setLoader(true)
+
+    DeviceInfo.getUniqueId().then(async id => {
+      var raw = JSON.stringify({
+        "EmpId": user?.EmpId,
+        "IMEINO": id
+      });
+
+      const response = await fetch("https://" + defaultUrl + '/api/Requests/PendingNotifications', {
+        method: 'POST',
+        headers: {
+          "Content-Type": 'application/json'
+        },
+        body: raw
+      })
+
+      if (response.ok == true) {
+        const data = await response.json()
+        if (data?.error_code == "210") {
+          Alert.alert('Error', "You have been logged in into other mobile", [{
+            text: 'Ok', onPress: async () => {
+              await AsyncStorage.removeItem('app_user')
+              await AsyncStorage.removeItem('app_user_imputs')
+              setUser(null)
+            }
+          }]);
+        } else {
+          setNotification(data)
+        }
+        setLoader(false)
+
+      } else {
+        Toast.show('Internal server error', {
+          duration: 3000,
+        })
+        setLoader(false)
+      }
+    })
+  }
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchNotification();
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   function openWhatsApp(Mobile, Name) {
     const message = `Wish you a very Happy Birthday ${Name} 🥳🥳🎂🎂`;
@@ -180,14 +203,24 @@ const Home = ({ navigation }) => {
     Linking.openURL(whatsappLink)
   }
 
+  const inset = useSafeAreaInsets()
+
   return (
     <NativeBaseProvider>
       {loader && < Loader />}
 
-      <StatusBar translucent backgroundColor='transparent' />
+      <View style={{ paddingTop: inset.top }}>
+        <StatusBar backgroundColor='#0F74B3' translucent />
+      </View>
+      {/* <StatusBar translucent backgroundColor='transparent' /> */}
+
+      {/* plus button to redirect at punch screen */}
+      <TouchableOpacity style={styles.addIcon} onPress={() => navigation.navigate('MobilePunch')}>
+        <AntDesign name="pluscircle" size={65} color="#0F74B3" />
+      </TouchableOpacity>
 
       <ImageBackground source={require('../assets/images/dashboard-top-bg.png')} style={styles.titleBG} resizeMode='cover'>
-        <HStack alignItems='center' justifyContent='space-between' mt={12 + StatusBar.currentHeight}>
+        <HStack alignItems='center' justifyContent='space-between' >
           <HStack alignItems='center'>
             <TouchableOpacity onPress={() => navigation.openDrawer()}>
               <Ionicons name="md-menu-sharp" size={32} color="white" />
@@ -196,7 +229,7 @@ const Home = ({ navigation }) => {
             <Text fontFamily={fonts.PopSB} fontSize={28} ml={7} color='white'>Dashboard</Text>
           </HStack>
 
-          <TouchableOpacity onPress={() => alert('Feature will coming soon')}>
+          <TouchableOpacity onPress={() => navigation.navigate("QRScanner")}>
             <Image source={require('../assets/icons/QR.png')} style={{ width: 26, height: 26 }} />
           </TouchableOpacity>
         </HStack>
@@ -210,10 +243,14 @@ const Home = ({ navigation }) => {
 
         <ScrollView showsVerticalScrollIndicator={false}>
           {notification?.length > 0 ? notification.map((item, index) => (
-            <HStack key={index} alignItems='center' justifyContent='space-between' mt={4} mb={notification?.length == index + 1 ? 4 : 0}>
-              <Text style={styles.notificationTitle}>{item?.RequestType}</Text>
-              <Text style={styles.notificationValueTxt}>{item?.NotificationCount}</Text>
-            </HStack>
+            <TouchableOpacity onPress={() => navigation.navigate('ListOfRequests', {
+              Detailitem: item
+            })}>
+              <HStack key={index} alignItems='center' justifyContent='space-between' mt={4} mb={notification?.length == index + 1 ? 4 : 0}>
+                <Text style={styles.notificationTitle}>{item?.RequestType}</Text>
+                <Text style={styles.notificationValueTxt}>{item?.NotificationCount}</Text>
+              </HStack>
+            </TouchableOpacity>
           )) : <Text mt={5} fontFamily={fonts.PopM} color='white' textAlign='center'>No Notification Available</Text>}
         </ScrollView>
       </ImageBackground>
@@ -230,7 +267,8 @@ const Home = ({ navigation }) => {
                   {item?.EmpImage ? <Image source={{ uri: `data:image/png;base64,${item?.EmpImage}` }} style={{ width: 70, height: 70, borderRadius: 100, }} /> :
                     <Image source={require('../assets/images/Bithday-icon.png')} style={{ width: 70, height: 70, borderRadius: 100, }} />}
 
-                  <Text style={styles.BdayName}>{item.Description.match(/(\w+\s+\w+)'s/)[1]}</Text>
+                  {/* <Text style={styles.BdayName}>{item.Description.match(/(\w+\s+\w+)'s/)[1]}</Text> */}
+                  <Text style={styles.BdayName}>{item.Name}</Text>
 
                   <TouchableOpacity onPress={() => openWhatsApp(item?.Mobile, item?.Name)} style={{ width: '100%' }}>
                     <LinearGradient colors={['#0F74B3', 'rgba(15, 116, 179, .5)']} style={styles.linearGradient}>
@@ -303,7 +341,7 @@ const Home = ({ navigation }) => {
             {anniversary?.length > 0 ? anniversary?.map((item, index) => (
               <HStack key={index} alignItems='flex-start' mb={anniversary?.length == index + 1 ? 0 : 2} ml={3}>
                 <Image source={require('../assets/images/party.png')} style={[styles.eventIcon, { width: 20 }]} />
-                <Text fontSize={18} fontFamily={fonts.UrbanM} mt={-1.5} ml={3.5} alignSelf='center'>{item.Description.match(/(\w+\s+\w+)'s/)[1]}</Text>
+                <Text fontSize={18} fontFamily={fonts.UrbanM} mt={-1.5} ml={3.5} alignSelf='center'>{item.Name}</Text>
               </HStack>
             )) :
               <HStack justifyContent='space-between' px={3} alignItems='center'>
@@ -320,7 +358,7 @@ const Home = ({ navigation }) => {
               return (
                 <HStack key={index} alignItems='flex-start' mb={birthDays?.length == index + 1 ? 0 : 2} ml={3}>
                   <Image source={require('../assets/images/cake.png')} style={[styles.eventIcon, { width: 20 }]} />
-                  <Text fontSize={18} fontFamily={fonts.UrbanM} mt={-1.5} ml={3.5} alignSelf='center'>{item.Description.match(/(\w+\s+\w+)'s/)[1]}</Text>
+                  <Text fontSize={18} fontFamily={fonts.UrbanM} mt={-1.5} ml={3.5} alignSelf='center'>{item.Name}</Text>
                 </HStack>
               )
             }) :
@@ -366,9 +404,15 @@ const Home = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
+  addIcon: {
+    position: "absolute",
+    right: 25,
+    bottom: (Dimensions.get('window').height / 100) * 4,
+    zIndex: 2
+  },
   titleBG: {
     width: Dimensions.get('window').width,
-    height: 240,
+    height: 220,
     paddingHorizontal: 18,
   },
   notificationBG: {
@@ -377,7 +421,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     paddingTop: 24,
     paddingBottom: 12,
-    top: -120,
+    top: -140,
   },
   notificationTitle: {
     fontFamily: fonts.UrbanM,

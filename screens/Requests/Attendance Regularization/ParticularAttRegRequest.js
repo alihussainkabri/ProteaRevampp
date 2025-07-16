@@ -1,4 +1,4 @@
-import { View, StatusBar, TouchableOpacity, Image, StyleSheet, ScrollView } from 'react-native'
+import { View, StatusBar, TouchableOpacity, Image, StyleSheet, ScrollView, ActivityIndicator } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { HStack, Text, NativeBaseProvider, VStack, Modal, FormControl, TextArea, Button } from 'native-base';
 import Loader from '../../../component/Loader';
@@ -62,6 +62,8 @@ const ParticularAttRegRequest = ({ navigation, route }) => {
     }
   }
 
+  useEffect(() => console.log('itemDetail:', item), [])
+
   return (
     <NativeBaseProvider>
       {loader && <Loader />}
@@ -79,29 +81,13 @@ const ParticularAttRegRequest = ({ navigation, route }) => {
 
       <ScrollView showsVerticalScrollIndicator={false} style={{ paddingTop: 10, marginTop: 10, paddingBottom: 200 }}>
         <VStack px={4} mb={5}>
-          {/* <HStack style={styles.infoCard}>
-            <HStack alignItems='center'>
-              <Entypo name="v-card" size={20} color="black" />
-              <Text style={styles.title}>Duration</Text>
-            </HStack>
-            <Text style={styles.value}>{item?.ReqType}</Text>
-          </HStack>
-
           <HStack style={styles.infoCard}>
             <HStack alignItems='center'>
               <Entypo name="v-card" size={20} color="black" />
-              <Text style={styles.title}>Shift Date</Text>
+              <Text style={styles.title}>Approval Status</Text>
             </HStack>
-            <Text style={styles.value}>{item?.ShiftDate}</Text>
+            <Text style={styles.value}>{item?.ApprovalStatus}</Text>
           </HStack>
-
-          <HStack style={styles.infoCard}>
-            <HStack alignItems='center'>
-              <Entypo name="v-card" size={20} color="black" />
-              <Text style={styles.title}>Start Time</Text>
-            </HStack>
-            <Text style={styles.value}>{item?.FromTime}</Text>
-          </HStack> */}
 
           <HStack style={styles.infoCard}>
             <HStack alignItems='center'>
@@ -127,14 +113,6 @@ const ParticularAttRegRequest = ({ navigation, route }) => {
             <Text style={styles.value}>{item?.Reason}</Text>
           </HStack>
 
-          <HStack style={styles.infoCard}>
-            <HStack alignItems='center'>
-              <Entypo name="v-card" size={20} color="black" />
-              <Text style={styles.title}>Purpose</Text>
-            </HStack>
-            <Text style={styles.value}>{item?.Remark ? item?.Remark : 'NA'}</Text>
-          </HStack>
-
           {item?.ApprovalStatus == "Pending" && <TouchableOpacity
             onPress={() => setShowModal(true)}
             style={{ backgroundColor: 'red', width: '100%', paddingVertical: 10, marginVertical: 20 }}>
@@ -145,7 +123,7 @@ const ParticularAttRegRequest = ({ navigation, route }) => {
         <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
           <Modal.Content maxWidth="400px">
             <Modal.CloseButton />
-            <Modal.Header>Cancel Leave</Modal.Header>
+            <Modal.Header>Cancel Att. Reg. Request</Modal.Header>
             <Modal.Body>
               <FormControl>
                 <FormControl.Label>Enter Remark</FormControl.Label>
@@ -159,8 +137,12 @@ const ParticularAttRegRequest = ({ navigation, route }) => {
                 }}>
                   Close
                 </Button>
-                <Button colorScheme='danger' onPress={cancelLeave}>
-                  Submit
+                <Button colorScheme='danger' onPress={() => {
+                  if (!loader){
+                    cancelLeave()
+                  }
+                }}>
+                  {loader ? <ActivityIndicator color="white" /> : 'Submit' }
                 </Button>
               </Button.Group>
             </Modal.Footer>
@@ -183,12 +165,15 @@ const styles = StyleSheet.create({
     fontFamily: fonts.PopM,
     fontSize: 15,
     marginLeft: 12,
+    marginRight: 12,
     textTransform: 'capitalize',
     letterSpacing: .1,
   },
   value: {
     fontFamily: fonts.UrbanR,
     fontSize: 15,
+    flex: 1,
+    textAlign: 'right'
   }
 })
 

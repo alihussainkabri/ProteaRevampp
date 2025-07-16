@@ -61,7 +61,7 @@ const ParticularODRequestView = ({ navigation, route }) => {
             var raw = JSON.stringify({
                 "EmpId": user?.EmpId,
                 "requestId": item?.TODId,
-                "RequestType": "OnDutyRequests",
+                "RequestType": "ODRequest",
                 "Remark": reason
             });
 
@@ -101,6 +101,8 @@ const ParticularODRequestView = ({ navigation, route }) => {
         }
     }
 
+    useEffect(() => console.log('single item: ', item), [])
+
     return (
         <NativeBaseProvider>
             {loader && <Loader />}
@@ -137,26 +139,42 @@ const ParticularODRequestView = ({ navigation, route }) => {
                     <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
-                            <Text style={styles.title}>Shift Date</Text>
+                            <Text style={styles.title}>Status</Text>
                         </HStack>
-                        <Text style={styles.value}>{item?.ShiftDate}</Text>
+                        <Text style={styles.value}>{item?.ApprovalStatus}</Text>
                     </HStack>
 
                     <HStack style={styles.infoCard}>
+                        <HStack alignItems='center'>
+                            <Entypo name="v-card" size={20} color="black" />
+                            <Text style={styles.title}>Shift Date</Text>
+                        </HStack>
+                        <Text style={styles.value}>{item?.ShiftDate?.length > 12 ? new Date(item?.ShiftDate).toLocaleDateString('en-GB') : item?.ShiftDate}</Text>
+                    </HStack>
+
+                    {item?.FromTime && <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
                             <Text style={styles.title}>Start Time</Text>
                         </HStack>
                         <Text style={styles.value}>{item?.FromTime}</Text>
-                    </HStack>
+                    </HStack>}
 
-                    <HStack style={styles.infoCard}>
+                    {item?.ToDate && <HStack style={styles.infoCard}>
+                        <HStack alignItems='center'>
+                            <Entypo name="v-card" size={20} color="black" />
+                            <Text style={styles.title}>To Date</Text>
+                        </HStack>
+                        <Text style={styles.value}>{new Date(item?.ToDate).toLocaleDateString('en-GB')}</Text>
+                    </HStack>}
+
+                    {item?.ToTime && <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
                             <Text style={styles.title}>End Time</Text>
                         </HStack>
                         <Text style={styles.value}>{item?.ToTime}</Text>
-                    </HStack>
+                    </HStack>}
 
                     <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
@@ -174,13 +192,13 @@ const ParticularODRequestView = ({ navigation, route }) => {
                         <Text style={styles.value}>{item?.ReasonTemplate}</Text>
                     </HStack>
 
-                    <HStack style={styles.infoCard}>
+                    {item?.Remark && <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
                             <Text style={styles.title}>Purpose</Text>
                         </HStack>
                         <Text style={styles.value}>{item?.Remark}</Text>
-                    </HStack>
+                    </HStack>}
 
                     {item?.ApprovalStatus == "Pending" && <TouchableOpacity
                         onPress={() => setShowModal(true)}
@@ -192,7 +210,7 @@ const ParticularODRequestView = ({ navigation, route }) => {
                 <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
                     <Modal.Content maxWidth="400px">
                         <Modal.CloseButton />
-                        <Modal.Header>Cancel Leave</Modal.Header>
+                        <Modal.Header>Cancel OH Request</Modal.Header>
                         <Modal.Body>
                             <FormControl>
                                 <FormControl.Label>Enter Remark</FormControl.Label>

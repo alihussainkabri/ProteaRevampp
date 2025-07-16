@@ -1,4 +1,4 @@
-import { View, StatusBar, TouchableOpacity, Image, StyleSheet, ScrollView } from 'react-native'
+import { View, StatusBar, TouchableOpacity, Image, StyleSheet, ScrollView, ActivityIndicator } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { HStack, Text, NativeBaseProvider, VStack, Modal, FormControl, TextArea, Button } from 'native-base';
 import Loader from '../../../component/Loader';
@@ -22,7 +22,7 @@ const ParticularShiftChangeReqView = ({ navigation, route }) => {
             var raw = JSON.stringify({
                 "EmpId": user?.EmpId,
                 "requestId": item?.TSId,
-                "RequestType": "Shift Change Request",
+                "RequestType": "ShiftChangeRequest",
                 "Remark": reason
             });
 
@@ -73,7 +73,7 @@ const ParticularShiftChangeReqView = ({ navigation, route }) => {
                         <Ionicons name="md-menu-sharp" size={32} color="white" />
                     </TouchableOpacity>
 
-                    <Text fontFamily={fonts.PopSB} fontSize={22} ml={6} color='white'>OD Request Detail</Text>
+                    <Text fontFamily={fonts.PopSB} fontSize={22} ml={6} color='white'>Shift Change Detail</Text>
                 </HStack>
             </HStack>
 
@@ -145,7 +145,7 @@ const ParticularShiftChangeReqView = ({ navigation, route }) => {
                 <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
                     <Modal.Content maxWidth="400px">
                         <Modal.CloseButton />
-                        <Modal.Header>Cancel Leave</Modal.Header>
+                        <Modal.Header>Cancel Shift Change</Modal.Header>
                         <Modal.Body>
                             <FormControl>
                                 <FormControl.Label>Enter Remark</FormControl.Label>
@@ -159,8 +159,12 @@ const ParticularShiftChangeReqView = ({ navigation, route }) => {
                                 }}>
                                     Close
                                 </Button>
-                                <Button colorScheme='danger' onPress={cancelReq}>
-                                    Submit
+                                <Button colorScheme='danger' onPress={() => {
+                                    if (!loader) {
+                                        cancelReq()
+                                    }
+                                }}>
+                                    {loader ? <ActivityIndicator color="white" /> : 'Submit'}
                                 </Button>
                             </Button.Group>
                         </Modal.Footer>

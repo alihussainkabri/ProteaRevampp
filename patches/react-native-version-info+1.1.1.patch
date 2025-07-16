@@ -1,0 +1,62 @@
+diff --git a/node_modules/react-native-version-info/android/build.gradle b/node_modules/react-native-version-info/android/build.gradle
+index edcd4fb..2942a7c 100644
+--- a/node_modules/react-native-version-info/android/build.gradle
++++ b/node_modules/react-native-version-info/android/build.gradle
+@@ -5,9 +5,12 @@ def safeExtGet(prop, fallback) {
+ apply plugin: 'com.android.library'
+ 
+ android {
++    namespace 'cx.evermeet.versioninfo'
+     compileSdkVersion safeExtGet('compileSdkVersion', 27)
+     buildToolsVersion safeExtGet('buildToolsVersion', '27.0.3')
+-
++    buildFeatures {
++        buildConfig true
++    }
+     defaultConfig {
+         minSdkVersion safeExtGet('minSdkVersion', 16)
+         targetSdkVersion safeExtGet('targetSdkVersion', 27)
+diff --git a/node_modules/react-native-version-info/android/build/intermediates/aar_metadata/debug/aar-metadata.properties b/node_modules/react-native-version-info/android/build/intermediates/aar_metadata/debug/aar-metadata.properties
+new file mode 100644
+index 0000000..776557e
+--- /dev/null
++++ b/node_modules/react-native-version-info/android/build/intermediates/aar_metadata/debug/aar-metadata.properties
+@@ -0,0 +1,5 @@
++aarFormatVersion=1.0
++aarMetadataVersion=1.0
++minCompileSdk=1
++minCompileSdkExtension=0
++minAndroidGradlePluginVersion=1.0.0
+diff --git a/node_modules/react-native-version-info/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties b/node_modules/react-native-version-info/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+new file mode 100644
+index 0000000..961db14
+--- /dev/null
++++ b/node_modules/react-native-version-info/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+@@ -0,0 +1 @@
++#Wed Jul 16 13:58:00 IST 2025
+diff --git a/node_modules/react-native-version-info/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml b/node_modules/react-native-version-info/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+new file mode 100644
+index 0000000..8535b4a
+--- /dev/null
++++ b/node_modules/react-native-version-info/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Volumes/Untitled/development/ProteaRevampp/node_modules/react-native-version-info/android/src/main/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Volumes/Untitled/development/ProteaRevampp/node_modules/react-native-version-info/android/src/main/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Volumes/Untitled/development/ProteaRevampp/node_modules/react-native-version-info/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Volumes/Untitled/development/ProteaRevampp/node_modules/react-native-version-info/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Volumes/Untitled/development/ProteaRevampp/node_modules/react-native-version-info/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated" generated-set="generated$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Volumes/Untitled/development/ProteaRevampp/node_modules/react-native-version-info/android/build/generated/res/resValues/debug"/></dataSet><mergedItems/></merger>
+\ No newline at end of file
+diff --git a/node_modules/react-native-version-info/android/build/intermediates/navigation_json/debug/navigation.json b/node_modules/react-native-version-info/android/build/intermediates/navigation_json/debug/navigation.json
+new file mode 100644
+index 0000000..0637a08
+--- /dev/null
++++ b/node_modules/react-native-version-info/android/build/intermediates/navigation_json/debug/navigation.json
+@@ -0,0 +1 @@
++[]
+\ No newline at end of file
+diff --git a/node_modules/react-native-version-info/android/src/main/AndroidManifest.xml b/node_modules/react-native-version-info/android/src/main/AndroidManifest.xml
+index 224128e..a2f47b6 100644
+--- a/node_modules/react-native-version-info/android/src/main/AndroidManifest.xml
++++ b/node_modules/react-native-version-info/android/src/main/AndroidManifest.xml
+@@ -1,3 +1,2 @@
+-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-          package="cx.evermeet.versioninfo">
++<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+ </manifest>
