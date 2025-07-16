@@ -12,7 +12,7 @@ import { userContext } from '../../context/UserContext';
 
 const VerifyOTP = ({ navigation, route }) => {
 
-    const [otp, setOtp] = useState("999999")
+    const [otp, setOtp] = useState("")
     const [loader, setLoader] = useState(false)
     const { setUser,defaultUrl } = useContext(userContext)
 
@@ -115,7 +115,6 @@ const VerifyOTP = ({ navigation, route }) => {
                         <Text textAlign='center' mt={10} mb={6} fontSize={26} fontFamily={fonts.PopSB}>Enter Your OTP</Text>
 
                         <OTPTextInput
-                            defaultValue='999999'
                             inputCount={6}
                             tintColor='gray'
                             containerStyle={styles.OTPBoxes}

@@ -37,7 +37,7 @@ const ListofOnDutyRequests = ({ navigation }) => {
         if (response.ok == true) {
             const data = await response.json()
 
-            console.log('OD REQ',data?.ODReqList?.slice(0, 10))
+            console.log('OD REQ', data?.ODReqList?.slice(0, 10))
             setAllReqs(data?.ODReqList)
             setLoader(false)
 
@@ -95,23 +95,25 @@ const ListofOnDutyRequests = ({ navigation }) => {
 
                                     <HStack alignItems='center' mt={4}>
                                         <VStack>
-                                            <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{new Date(item?.LeaveFrom).toLocaleDateString('en-GB')}</Text>
-                                            <Text color='#bbbbbb' fontFamily={fonts.PopM} fontSize={12}>From Time</Text>
+                                            <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>
+                                                {new Date(item?.ShiftDate)?.toLocaleDateString('en-GB')}
+                                            </Text>
+                                            <Text color='#bbbbbb' fontFamily={fonts.PopM} fontSize={12}>From Date</Text>
                                         </VStack>
 
                                         <View style={{ backgroundColor: '#c6c6c6', height: 2, width: 40, marginHorizontal: 20 }}></View>
 
                                         <VStack>
-                                            <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{new Date(item?.LeaveTo).toLocaleDateString('en-GB')}</Text>
-                                            <Text color='#bbbbbb' fontFamily={fonts.PopM} fontSize={12}>To Time</Text>
+                                            <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{new Date(item?.ToDate)?.toLocaleDateString('en-GB')}</Text>
+                                            <Text color='#bbbbbb' fontFamily={fonts.PopM} fontSize={12}>To Date</Text>
                                         </VStack>
 
                                     </HStack>
                                 </VStack>
 
                                 <VStack backgroundColor='#f0f0f0' px={2} pb={3} flexGrow={1} justifyContent='flex-end' style={{ borderTopRightRadius: 8, borderBottomRightRadius: 8 }}>
-                                    <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{new Date(item?.ShiftDate).toLocaleDateString('en-GB')}</Text>
-                                    <Text color='#bbbbbb' fontFamily={fonts.PopM} fontSize={12}>Shift Date</Text>
+                                    <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{new Date(item?.AddedOn)?.toLocaleDateString('en-GB')}</Text>
+                                    <Text color='#bbbbbb' fontFamily={fonts.PopM} fontSize={12}>OD Date</Text>
                                 </VStack>
                             </HStack>
                         </TouchableOpacity>

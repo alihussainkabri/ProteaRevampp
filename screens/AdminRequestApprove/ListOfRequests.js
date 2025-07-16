@@ -173,12 +173,17 @@ const ListOfRequests = ({ navigation, route }) => {
                                 </VStack>
 
                                 <VStack backgroundColor='#f0f0f0' px={2} pb={3} flexGrow={1} justifyContent='flex-end' style={{ borderTopRightRadius: 8, borderBottomRightRadius: 8 }}>
+                                    
+                                    
                                     {item?.RequestDate ? <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{item?.RequestDate?.length > 12 ? new Date(item?.RequestDate).toLocaleDateString('en-GB') : item?.RequestDate}</Text>
                                         :
                                         item?.ShiftChangeRequestDate ? <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{new Date(item?.ShiftChangeRequestDate).toLocaleDateString('en-GB')}</Text>
                                             :
-                                            <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>NA</Text>
+                                            <></>
                                     }
+
+                                    {item?.CoffRequestDate && <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{new Date(item?.CoffRequestDate)?.toLocaleDateString('en-GB')}</Text>}
+                                    {item?.ODReqDate && <Text color='#3b3b3b' fontFamily={fonts.PopSB} fontSize={12}>{new Date(item?.ODReqDate)?.toLocaleDateString('en-GB')}</Text>}
                                     <Text color='#bbbbbb' fontFamily={fonts.PopM} fontSize={12}>Requested On</Text>
                                 </VStack>
                             </HStack>

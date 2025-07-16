@@ -29,6 +29,7 @@ const ViewSeats = ({ navigation, route }) => {
     const [toDateCalendarShow, setToDateCalendarShow] = useState(false)
     const [fromDate, setFromDate] = useState(getCurrentFormattedDate())
     const [toDate, setToDate] = useState(getCurrentFormattedDate())
+    const [colorCodes, setColorCodes] = useState([])
     const [showSeatBook, setShowSeatBook] = useState({
         show: false,
         detail: null
@@ -121,76 +122,51 @@ const ViewSeats = ({ navigation, route }) => {
         }
     }
 
+    async function fetchColors() {
+        setLoader(true)
+
+        var raw = JSON.stringify({
+            "CompanyId": user?.EmployeeDetails?.CompanyId,
+            "SBUId": 2,
+            "CCId": particularBranch?.CCID,
+            "DepartmentId": 0,
+            "DivisionId": 0,
+            "BuildingId": Building?.BuildingID,
+            "BuildingAreaId": BuildingArea == null ? 0 : BuildingArea?.BuildAreaID,
+            "ShiftId": 0,
+            "FromDate": date,
+            "ToDate": date,
+            "EmployeeId": user?.EmpId
+        });
+
+        const response = await fetch("https://" + defaultUrl + '/api/TimeAttendance/GetSeatSelectionColorCode', {
+            method: 'POST',
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body: raw
+        })
+
+        if (response.ok == true) {
+            const data = await response.json()
+            setColorCodes(data?.ListColorCode)
+
+        } else {
+            Toast.show('Internal server error', {
+                duration: 3000,
+            })
+            setLoader(false)
+        }
+    }
+
     useEffect(() => {
         fetchSeats()
         fetchSeatsCount()
+        fetchColors()
     }, [])
 
     function getColor(seat) {
-        if (seat?.Seat_Id == 1) {
-            console.log('seat 1: ', seat)
-        }
-        if (seat.IsActive == 0) {
-            return "#c5c5c5" // disable
-        } else if (seat.IsActive == 2) {
-            var iscontingency = true;
-
-            for (let i = 0; i < seatData?.SeatSelectionList2?.length; i++) {
-                let emp = seatData?.SeatSelectionList2[i]
-                if (seat?.Seat_Id == emp.SeatId) {
-                    if (emp.RequestStatus == 'P') {
-                        return "red" //pending
-                    }
-                    else {
-                        if (emp.RequestStatus == 'A') {
-                            if (emp.IsSubbmitQrCode == 2) {
-                                return "yellow" //"Occupied"
-                            }
-                            else {
-                                return "orange" //"booked"
-                            }
-                        }
-                    }
-                    iscontingency = false;
-                }
-
-            }
-
-            if (iscontingency == true) {
-                return "#8188fa" //"contingency"
-            }
-        } else {
-            let isbooked = false;
-
-            for (let i = 0; i < seatData?.SeatSelectionList2?.length; i++) {
-                let emp = seatData?.SeatSelectionList2[i]
-
-                if (seat.Seat_Id == emp.SeatId) {
-                    // console.log('new data',seat,emp)
-                    if (emp.RequestStatus == 'P') {
-                        return "red" //"pending"
-                    } else {
-                        if (emp.RequestStatus == 'A') {
-                            if (emp.IsSubbmitQrCode == 2) {
-                                // console.log("2", seat?.Seat_Id)
-                                return "#1d810f" //"Occupied"
-                            }
-                            else {
-                                // console.log("3", seat?.Seat_Id)
-                                return "orange" //"Booked"
-                            }
-                        }
-                    }
-                    isbooked = true;
-                }
-
-
-            }
-
-            if (isbooked == false) {
-                return "#5cb1f6" //"available"
-            }
-        }
+        return colorCodes?.filter(item => item?.Seat_Id == seat?.Seat_Id)[0]?.SeatColor?.toLowerCase()
     }
 
     const handleFromDate = (date) => {
@@ -252,8 +228,6 @@ const ViewSeats = ({ navigation, route }) => {
                     }
                 ])
             } else {
-                fetchSeats()
-                fetchSeatsCount()
                 Alert.alert("Success", data?.Message, [
                     {
                         text: 'Ok',
@@ -262,6 +236,8 @@ const ViewSeats = ({ navigation, route }) => {
                                 show: false,
                                 detail: null
                             })
+
+                            navigation.goBack()
                         }
                     }
                 ])
@@ -292,43 +268,47 @@ const ViewSeats = ({ navigation, route }) => {
             <ScrollView style={{}} showsVerticalScrollIndicator={false}>
 
 
-                <Text style={{ ...styles.seatType, textAlign: 'center',marginVertical : 8 }} fontWeight={600}>Total Seats: {seatCountData?.TOTALSEATS}</Text>
-                <View style={{paddingHorizontal : 10}}>
-                <HStack justifyContent="space-between" mb={1}>
-                    <HStack alignItems='center'>
-                        <View style={[styles.seatClr, { backgroundColor: '#1d810f' }]}></View>
-                        <Text style={styles.seatType}>Booked Seats: {seatCountData?.TOTALSEATSBOOKEDA}</Text>
-                    </HStack>
-
-                    <HStack alignItems='center'>
-                        <View style={[styles.seatClr, { backgroundColor: '#c5c5c5' }]}></View>
-                        <Text style={styles.seatType}>Disabled Seats: {seatCountData?.TOTALINACTIVE}</Text>
-                    </HStack>
+                <HStack style={{ marginVertical: 8, justifyContent: 'space-between', paddingHorizontal: 11, borderBottomColor: 'gray', borderBottomWidth: 1, paddingBottom: 4 }} >
+                    <Text style={styles.seatType} fontWeight={600}>Total Seats: {seatCountData?.TOTALSEATS}</Text>
+                    <Text style={styles.seatType} fontWeight={600}>Date : {date}</Text>
                 </HStack>
 
-                <HStack justifyContent="space-between" mb={1}>
-                    <HStack alignItems='center'>
-                        <View style={[styles.seatClr, { backgroundColor: '#5cb1f6' }]}></View>
-                        <Text style={styles.seatType}>Available Seats: {seatCountData?.TOTALSEATSAVAILABLE}</Text>
+                <View style={{ paddingHorizontal: 10 }}>
+                    <HStack justifyContent="space-between" mb={1}>
+                        <HStack alignItems='center'>
+                            <View style={[styles.seatClr, { backgroundColor: '#1d810f' }]}></View>
+                            <Text style={styles.seatType}>Booked Seats: {seatCountData?.TOTALSEATSBOOKEDA}</Text>
+                        </HStack>
+
+                        <HStack alignItems='center'>
+                            <View style={[styles.seatClr, { backgroundColor: '#c5c5c5' }]}></View>
+                            <Text style={styles.seatType}>Disabled Seats: {seatCountData?.TOTALINACTIVE}</Text>
+                        </HStack>
                     </HStack>
 
-                    <HStack alignItems='center'>
-                        <View style={[styles.seatClr, { backgroundColor: '#f3bdbc' }]}></View>
-                        <Text style={styles.seatType}>Pending Seats: {seatCountData?.TOTALSEATSBOOKEDP}</Text>
-                    </HStack>
-                </HStack>
+                    <HStack justifyContent="space-between" mb={1}>
+                        <HStack alignItems='center'>
+                            <View style={[styles.seatClr, { backgroundColor: '#5cb1f6' }]}></View>
+                            <Text style={styles.seatType}>Available Seats: {seatCountData?.TOTALSEATSAVAILABLE}</Text>
+                        </HStack>
 
-                <HStack justifyContent="space-between">
-                    <HStack alignItems='center'>
-                        <View style={[styles.seatClr, { backgroundColor: '#f86a76' }]}></View>
-                        <Text style={styles.seatType}>Occupied Seats: {seatCountData?.TOTALSEATSOCCUPIED}</Text>
+                        <HStack alignItems='center'>
+                            <View style={[styles.seatClr, { backgroundColor: '#f3bdbc' }]}></View>
+                            <Text style={styles.seatType}>Pending Seats: {seatCountData?.TOTALSEATSBOOKEDP}</Text>
+                        </HStack>
                     </HStack>
 
-                    <HStack alignItems='center'>
-                        <View style={[styles.seatClr, { backgroundColor: '#8188fa' }]}></View>
-                        <Text style={styles.seatType}>Contingency Seats: {seatCountData?.TOTALCONTINGENCY}</Text>
+                    <HStack justifyContent="space-between">
+                        <HStack alignItems='center'>
+                            <View style={[styles.seatClr, { backgroundColor: '#f86a76' }]}></View>
+                            <Text style={styles.seatType}>Occupied Seats: {seatCountData?.TOTALSEATSOCCUPIED}</Text>
+                        </HStack>
+
+                        <HStack alignItems='center'>
+                            <View style={[styles.seatClr, { backgroundColor: '#8188fa' }]}></View>
+                            <Text style={styles.seatType}>Contingency Seats: {seatCountData?.TOTALCONTINGENCY}</Text>
+                        </HStack>
                     </HStack>
-                </HStack>
                 </View>
 
 
@@ -350,7 +330,7 @@ const ViewSeats = ({ navigation, route }) => {
                 <Modal style={{ zIndex: -1 }} isOpen={showSeatBook.show} onClose={() => setShowSeatBook({ show: false, detail: null })}>
                     <Modal.Content maxWidth="400px">
                         {!loader && <Modal.CloseButton />}
-                        
+
                         <Modal.Body style={{ marginTop: 26 }}>
                             <Text fontFamily={fonts.PopSB} color='green.800' fontSize={18}>Seat Number: {showSeatBook?.detail?.Seat_Id}</Text>
 
@@ -391,11 +371,11 @@ const ViewSeats = ({ navigation, route }) => {
                         <Modal.Footer>
                             <Button.Group space={2}>
                                 <Button onPress={() => {
-                                    if (!loader){
+                                    if (!loader) {
                                         bookSeatFunc()
                                     }
                                 }} colorScheme='green'>
-                                    {!loader ? 'Book Seat' : <ActivityIndicator size='large' color='red' /> }
+                                    {!loader ? 'Book Seat' : <ActivityIndicator size='large' color='red' />}
                                 </Button>
                             </Button.Group>
                         </Modal.Footer>

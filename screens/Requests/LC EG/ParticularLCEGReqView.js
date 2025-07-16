@@ -136,7 +136,7 @@ const ParticularLCEGReqView = ({ navigation, route }) => {
                     <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
                             <Entypo name="v-card" size={20} color="black" />
-                            <Text style={styles.title}>Request Status</Text>
+                            <Text style={styles.title}>Reason</Text>
                         </HStack>
                         <Text style={styles.value}>{item?.Reason ? item?.Reason : item?.ReasonTemplate}</Text>
                     </HStack>
