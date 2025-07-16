@@ -86,11 +86,14 @@ android {
         applicationId "com.proteaESS"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 22
-        versionName "1.8.1"
+        versionCode 23
+        versionName "2.0.0"
 
         buildConfigField("boolean", "REACT_NATIVE_UNSTABLE_USE_RUNTIME_SCHEDULER_ALWAYS", (findProperty("reactNative.unstable_useRuntimeSchedulerAlways") ?: true).toString())
         missingDimensionStrategy 'react-native-camera', 'general'
+    }
+    buildFeatures {
+        buildConfig true
     }
     signingConfigs {
         debug {

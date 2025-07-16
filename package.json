@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "expo start --dev-client",
+    "postinstall": "patch-package",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web"
@@ -27,9 +28,7 @@
     "react-native-calendars": "^1.1303.0",
     "react-native-camera": "^4.2.1",
     "react-native-check-version": "^1.1.1",
-    "react-native-compressor": "^1.10.3",
     "react-native-device-info": "^10.12.0",
-    "react-native-fast-image": "^8.6.3",
     "react-native-file-viewer": "^2.1.5",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "^2.14.0",
@@ -62,7 +61,8 @@
     "Camera"
   ],
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "patch-package": "^8.0.0"
   },
   "private": true
 }

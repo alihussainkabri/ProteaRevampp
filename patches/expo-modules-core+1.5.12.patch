@@ -1,0 +1,12 @@
+diff --git a/node_modules/expo-modules-core/android/build.gradle b/node_modules/expo-modules-core/android/build.gradle
+index 8f9e0dc..c1cab8a 100644
+--- a/node_modules/expo-modules-core/android/build.gradle
++++ b/node_modules/expo-modules-core/android/build.gradle
+@@ -195,6 +195,7 @@ android {
+   }
+ 
+   buildFeatures {
++    buildConfig true
+     prefab true
+   }
+ 

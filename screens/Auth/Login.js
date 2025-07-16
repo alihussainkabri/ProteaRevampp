@@ -42,6 +42,8 @@ const Login = ({ navigation }) => {
         "imei": uniqueId
       });
 
+      console.log(raw)
+
       const response = await fetch("https://" + defaultUrl + '/api/LoginDetails/Post', {
         method: 'POST',
         headers: {

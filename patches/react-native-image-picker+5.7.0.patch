@@ -1,0 +1,15 @@
+diff --git a/node_modules/react-native-image-picker/android/build.gradle b/node_modules/react-native-image-picker/android/build.gradle
+index ab6f320..7a9d01c 100644
+--- a/node_modules/react-native-image-picker/android/build.gradle
++++ b/node_modules/react-native-image-picker/android/build.gradle
+@@ -24,6 +24,10 @@ android {
+         ndkVersion rootProject.ext.ndkVersion
+     }
+     
++    buildFeatures {
++      buildConfig true
++    }
++
+     defaultConfig {
+         minSdkVersion 21
+         targetSdkVersion 33
