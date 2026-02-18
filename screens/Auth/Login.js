@@ -164,6 +164,12 @@ const Login = ({ navigation }) => {
                     style={[styles.input, { paddingLeft: 16 }]}
                     type={show ? 'text' : 'password'}
                     placeholder="Password" variant='unstyled' borderBottomColor='gray.400' borderBottomWidth={2} value={password} onChangeText={setPassword} />
+
+                    <TouchableOpacity onPress={() => {
+                      navigation.navigate("ResetIMEI")
+                    }} style={{alignSelf : 'flex-end',marginTop : 10}}>
+                      <Text style={{color : 'blue',textDecorationLine : 'underline'}}>Reset IMEI</Text>
+                    </TouchableOpacity>
                 </VStack>
               </VStack>
             </View>
