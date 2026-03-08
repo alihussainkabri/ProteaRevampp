@@ -42,6 +42,9 @@ import ParticularLCEGReqView from '../screens/Requests/LC EG/ParticularLCEGReqVi
 import Policy from '../screens/Policy';
 import { Entypo } from 'react-native-vector-icons'
 import QRScanner from '../screens/QRScanner';
+import AddOptions from '../screens/AddEmployee/AddOptions';
+import CreateFixedEmployee from '../screens/AddEmployee/CreateFixedEmployee';
+import CreateContractEmployee from '../screens/AddEmployee/CreateContractEmployee';
 
 const Drawer = createDrawerNavigator();
 const Stack = createNativeStackNavigator();
@@ -189,6 +192,24 @@ function PolicyStack() {
     )
 }
 
+function AddEmployeeStack() {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerShown: false,
+                contentStyle: {
+                    backgroundColor: 'white'
+                }
+            }}
+        >
+            <Stack.Screen name="AddEmployee" component={AddOptions} />
+            <Stack.Screen name="AddFixedEmployee" component={CreateFixedEmployee} />
+            <Stack.Screen name="CreateContractEmployee" component={CreateContractEmployee} />
+            
+        </Stack.Navigator>
+    )
+}
+
 
 export default function DrawerNavigator() {
     return (
@@ -287,6 +308,18 @@ export default function DrawerNavigator() {
                     ),
                     drawerItemStyle: { paddingHorizontal: 16, },
                     title: 'Policy',
+                    sceneContainerStyle: { backgroundColor: 'white' }
+                }}
+            />
+
+            <Drawer.Screen name="AddEmployee" component={AddEmployeeStack}
+                options={{
+                    drawerIcon: ({ color }) => (
+                        // <Image style={{ tintColor: color, width: 20, height: undefined, aspectRatio: 1 }} source={require('../assets/icons/salary.png')} />
+                        <Entypo name="plus" size={24} color={color} />
+                    ),
+                    drawerItemStyle: { paddingHorizontal: 16, },
+                    title: 'Add Employee',
                     sceneContainerStyle: { backgroundColor: 'white' }
                 }}
             />

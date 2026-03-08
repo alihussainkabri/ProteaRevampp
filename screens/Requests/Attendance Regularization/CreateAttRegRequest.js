@@ -55,7 +55,7 @@ const CreateAttRegRequest = ({ navigation }) => {
       "ShiftDate": fromDate
     });
 
-    const response = await fetch("https://" + defaultUrl + '/api/RegularizationRequest/GetPunches', {
+    const response = await fetch("https://" + defaultUrl + '/api/RegularizationRequest/GetPunches&UserId=15', {
       method: 'POST',
       headers: {
         "Content-Type": 'application/json'
