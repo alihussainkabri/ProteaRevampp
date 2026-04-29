@@ -136,7 +136,7 @@ const CreateOnDutyRequest = ({ navigation }) => {
       "Place": place,
       "WeekOff": false,
       "Holiday": false,
-      "Attatchment": null,
+      "Attachment": null,
       "ODDetailList": [
         {
           "TODId": 0,
@@ -160,7 +160,7 @@ const CreateOnDutyRequest = ({ navigation }) => {
 
     if (response.ok == true) {
       const data = await response.json()
-      // alert(data?.error_msg)
+      console.log(data)
       Toast.show(data?.error_msg ? data?.error_msg : 'Request Has Been Submitted')
       setLoader(false)
       if(!data?.error_msg){

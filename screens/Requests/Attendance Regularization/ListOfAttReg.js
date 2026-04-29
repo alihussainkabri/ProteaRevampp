@@ -21,8 +21,6 @@ const ListOfAttReg = ({ navigation }) => {
             "TRegId": null
         });
 
-        console.log("raw is here:", raw)
-
         const response = await fetch("https://" + defaultUrl + '/api/RegularizationRequest/GetRegularizationRequest', {
             method: 'POST',
             headers: {

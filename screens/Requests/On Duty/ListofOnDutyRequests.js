@@ -24,8 +24,6 @@ const ListofOnDutyRequests = ({ navigation }) => {
             "TODId": null
         });
 
-        console.log("raw is here ok:", raw)
-
         const response = await fetch("https://" + defaultUrl + '/api/OnDutyRequest/GetOnDutyRequests', {
             method: 'POST',
             headers: {
@@ -36,8 +34,6 @@ const ListofOnDutyRequests = ({ navigation }) => {
 
         if (response.ok == true) {
             const data = await response.json()
-
-            console.log('OD REQ', data?.ODReqList?.slice(0, 10))
             setAllReqs(data?.ODReqList)
             setLoader(false)
 

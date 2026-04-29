@@ -49,7 +49,7 @@ const CreateLeave = ({ navigation }) => {
 
             if (response.ok == true) {
                 const data = await response.json()
-                // console.log(data)
+                console.log("leave balance",data)
 
                 setLeaveBalance(data)
                 setLoader(false)
@@ -122,7 +122,7 @@ const CreateLeave = ({ navigation }) => {
 
         if (response.ok == true) {
             const data = await response.json()
-            // console.warn('leave types :', data)
+            console.log('leave types :', data)
 
             setAllLeaveType(data)
             setLoader(false)
@@ -209,7 +209,7 @@ const CreateLeave = ({ navigation }) => {
         setLoader(true)
 
         var raw = JSON.stringify({
-            "Id": 0,
+            "Id": particularLeaveType?.Id,
             "EmpId": user?.EmpId,
             "LeaveDuration": leaveDuration,
             "LeaveFrom": fromDate,
@@ -238,10 +238,13 @@ const CreateLeave = ({ navigation }) => {
             "DoctorsCertificateFilePath": null,
             "ExtensionOfLeave": false,
             "ReductionOfLeave": false,
-            "LeaveCancellationAllowed": false
+            "LeaveCancellationAllowed": false,
+            "leaveId" : particularLeaveType?.Id,
+            "LYId" : particularLeaveType?.LYId
         });
 
-        // console.log('leave consoled', raw)
+        console.log('leave consoled', raw)
+        console.log("https://" + defaultUrl + '/api/LeaveRequests/AddLeaveRequest')
 
         const response = await fetch("https://" + defaultUrl + '/api/LeaveRequests/AddLeaveRequest', {
             method: 'POST',

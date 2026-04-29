@@ -55,7 +55,11 @@ const CreateAttRegRequest = ({ navigation }) => {
       "ShiftDate": fromDate
     });
 
-    const response = await fetch("https://" + defaultUrl + '/api/RegularizationRequest/GetPunches&UserId=15', {
+    console.log(user)
+    console.log("https://" + defaultUrl + `/api/RegularizationRequest/GetPunches&UserId=${user?.EmpId}`)
+    console.log(raw)
+
+    const response = await fetch("https://" + defaultUrl + `/api/RegularizationRequest/GetPunches`, {
       method: 'POST',
       headers: {
         "Content-Type": 'application/json'
@@ -71,7 +75,7 @@ const CreateAttRegRequest = ({ navigation }) => {
       setLoader(false)
 
     } else {
-      Toast.show('Internal server error', {
+      Toast.show('Internal server error 1', {
         duration: 3000,
       })
       setLoader(false)
@@ -111,7 +115,9 @@ const CreateAttRegRequest = ({ navigation }) => {
   }
 
   useEffect(() => {
-    fetchDetails();
+    if (fromDate){
+      fetchDetails();
+    }
   }, [fromDate])
 
   useEffect(() => {
@@ -158,7 +164,7 @@ const CreateAttRegRequest = ({ navigation }) => {
 
     if (response.ok == true) {
       const data = await response.json()
-      // alert(data?.error_msg)
+      console.log(data)
       Toast.show(data?.error_msg ? data?.error_msg : 'Request Has Been Submitted')
       setLoader(false)
       
