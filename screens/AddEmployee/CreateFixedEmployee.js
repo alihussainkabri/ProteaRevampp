@@ -86,6 +86,8 @@ export default function CreateEmployee({ navigation }) {
             })
         })
 
+        console.log("https://" + defaultUrl + '/api/Employee/GetEnrollmentDetails')
+
         if (response.ok == true) {
             const data = await response.json()
 

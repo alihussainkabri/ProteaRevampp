@@ -223,7 +223,7 @@ const Home = ({ navigation }) => {
         <HStack alignItems='center' justifyContent='space-between' >
           <HStack alignItems='center'>
             <TouchableOpacity onPress={() => navigation.openDrawer()}>
-              <Ionicons name="md-menu-sharp" size={32} color="white" />
+              <Ionicons name="menu-sharp" size={32} color="white" />
             </TouchableOpacity>
 
             <Text fontFamily={fonts.PopSB} fontSize={28} ml={7} color='white'>Dashboard</Text>

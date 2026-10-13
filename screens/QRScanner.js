@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Linking, Alert } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
-import QRCodeScanner from 'react-native-qrcode-scanner';
-import { RNCamera } from 'react-native-camera';
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import { CameraView } from 'expo-camera';
 import { userContext } from '../context/UserContext';
 import { getTimeZoneOffsetISOString } from '../helpers';
 import Geolocation from '@react-native-community/geolocation'
@@ -19,6 +18,14 @@ const QRScanner = ({navigation}) => {
     })
     const [uniqueId, setUniqueId] = useState('')
     const [load,setLoad] = useState(false)
+    const scannedRef = useRef(false)
+
+    function handleBarcodeScanned({ data }) {
+        if (scannedRef.current) return
+        scannedRef.current = true
+        submitQR(data)
+        setTimeout(() => { scannedRef.current = false }, 2000)
+    }
 
     async function submitQR(qrdata) {
 
@@ -162,18 +169,11 @@ const QRScanner = ({navigation}) => {
         <>
         {load && <Loader />}
         <View>
-            <QRCodeScanner
-                reactivate={true}
-                reactivateTimeout={2000}
-                onRead={(e) => submitQR(e.data)}
-                showMarker={true}
-                flashMode={RNCamera.Constants.FlashMode.auto}
-                cameraStyle={{
-                    height: Dimensions.get('window').height
-                }}
-                cameraContainerStyle={{
-                    height: Dimensions.get('window').height
-                }}
+            <CameraView
+                style={{ height: Dimensions.get('window').height }}
+                facing="back"
+                barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
+                onBarcodeScanned={handleBarcodeScanned}
             />
         </View>
         </>

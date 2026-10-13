@@ -73,7 +73,7 @@ const ParticularHoliday = ({ navigation, route }) => {
             <HStack backgroundColor='#0F74B3' justifyContent='space-between' alignItems='center' px={4} pb={3} pt={12 + StatusBar.currentHeight}>
                 <HStack alignItems='center'>
                     <TouchableOpacity onPress={() => navigation.openDrawer()}>
-                        <Ionicons name="md-menu-sharp" size={32} color="white" />
+                        <Ionicons name="menu-sharp" size={32} color="white" />
                     </TouchableOpacity>
 
                     <Text fontFamily={fonts.PopSB} fontSize={22} ml={6} color='white'>Optional Holiday Detail</Text>

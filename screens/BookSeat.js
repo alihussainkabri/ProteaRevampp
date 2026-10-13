@@ -181,7 +181,7 @@ const BookSeat = ({ navigation }) => {
             <HStack backgroundColor='#0F74B3' alignItems='center' justifyContent='space-between' px={4} pb={2} pt={12 + StatusBar.currentHeight}>
                 <HStack alignItems='center'>
                     <TouchableOpacity onPress={() => navigation.openDrawer()}>
-                        <Ionicons name="md-menu-sharp" size={32} color="white" />
+                        <Ionicons name="menu-sharp" size={32} color="white" />
                     </TouchableOpacity>
 
                     <Text fontFamily={fonts.PopSB} fontSize={24} ml={6} color='white'>Book Seat</Text>

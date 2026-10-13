@@ -14,6 +14,8 @@ web-build/
 *.p12
 *.key
 *.mobileprovision
+android/.kotlin/
+android/app/.cxx/
 
 # Metro
 .metro-health-check*

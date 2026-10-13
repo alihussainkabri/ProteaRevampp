@@ -219,7 +219,10 @@ export default function DrawerNavigator() {
                 drawerActiveBackgroundColor: '#3a7bd5',
                 drawerActiveTintColor: '#fff',
                 drawerInactiveTintColor: '#333333',
-                drawerLabelStyle: { marginLeft: -20, fontSize: 17 },
+                // v7's DrawerItem already applies marginStart: 12 between icon and
+                // label; v6 used a larger offset, which the old marginLeft: -20 was
+                // compensating for. Keeping it here cancels out v7's gap.
+                drawerLabelStyle: { fontSize: 17 },
                 // drawerHideStatusBarOnOpen: true,
                 // headerStatusBarHeight: Platform.select({ android: 0 }),
             }}

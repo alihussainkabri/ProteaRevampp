@@ -65,7 +65,7 @@ const Profile = ({ navigation }) => {
                 <HStack alignItems='center' justifyContent='space-between' mt={12 + StatusBar.currentHeight}>
                     <HStack alignItems='center'>
                         <TouchableOpacity onPress={() => navigation.openDrawer()}>
-                            <Ionicons name="md-menu-sharp" size={32} color="white" />
+                            <Ionicons name="menu-sharp" size={32} color="white" />
                         </TouchableOpacity>
 
                         <Text fontFamily={fonts.PopSB} fontSize={26} ml={7} color='white'>My Profile</Text>
@@ -171,7 +171,7 @@ const Profile = ({ navigation }) => {
 
                     <HStack style={styles.infoCard}>
                         <HStack alignItems='center'>
-                            <Ionicons name="ios-bandage-outline" size={20} color="black" />
+                            <Ionicons name="bandage-outline" size={20} color="black" />
                             <Text style={styles.title}>band</Text>
                         </HStack>
                         <Text style={styles.value}>{user?.EmployeeDetails?.Band}</Text>

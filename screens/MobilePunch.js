@@ -215,7 +215,7 @@ const MobilePunch = ({ navigation }) => {
                         <HStack alignItems='center' justifyContent='space-between' mt={12 + StatusBar.currentHeight}>
                             <HStack alignItems='center'>
                                 <TouchableOpacity onPress={() => navigation.openDrawer()}>
-                                    <Ionicons name="md-menu-sharp" size={32} color="white" />
+                                    <Ionicons name="menu-sharp" size={32} color="white" />
                                 </TouchableOpacity>
 
                                 <Text fontFamily={fonts.PopSB} fontSize={26} ml={7} color='white'>Mobile Punch</Text>

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import {
   View,
   Modal,
@@ -6,7 +6,7 @@ import {
   Text,
   StyleSheet,
 } from "react-native";
-import { RNCamera } from "react-native-camera";
+import { CameraView } from "expo-camera";
 
 const CameraModal = ({modalVisible,setModalVisible,capturePunchImage}) => {
   const cameraRef = useRef()
@@ -26,7 +26,7 @@ const CameraModal = ({modalVisible,setModalVisible,capturePunchImage}) => {
 
   return (
     <View style={styles.container}>
-      
+
       <Modal
         animationType="slide"
         transparent={false}
@@ -37,19 +37,20 @@ const CameraModal = ({modalVisible,setModalVisible,capturePunchImage}) => {
         })}
       >
         <View style={styles.modalContainer}>
-          <RNCamera
-            ref={cameraRef}
-            style={styles.preview}
-            type={RNCamera.Constants.Type.front}
-            flashMode={RNCamera.Constants.FlashMode.off}
-            captureAudio={false} // Set to false if audio is not needed
-          />
+          {modalVisible?.show && (
+            <CameraView
+              ref={cameraRef}
+              style={styles.preview}
+              facing="front"
+              flash="off"
+            />
+          )}
 
-          
+
           <TouchableOpacity style={styles.capture} onPress={takePicture}>
           </TouchableOpacity>
 
-          
+
           <TouchableOpacity
             style={styles.closeButton}
             onPress={() => setModalVisible({
